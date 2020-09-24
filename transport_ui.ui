@@ -39,7 +39,7 @@
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-     qproperty-icon: url(:/images/pause.png);
+     qproperty-icon: url(:/images/pngegg.png);
 }
 
 QPushButton {
@@ -181,7 +181,7 @@ QPushButton:pressed {
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-     qproperty-icon: url(:/images/stop.png);
+     qproperty-icon: url(:/images/Media-Controls-Stop-icon.png);
 }
 
 QPushButton {
@@ -228,7 +228,7 @@ QPushButton:pressed {
   </layout>
  </widget>
  <resources>
-  <include location="../resources.qrc"/>
+  <include location="resources.qrc"/>
   <include location="resources.qrc"/>
  </resources>
  <connections/>
