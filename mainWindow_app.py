@@ -10,6 +10,8 @@ from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 from transport_app import TransportWidget
 from meas_display_app import MeasurmentDisplayWindow
+import settingsWindow_app
+
 # from settingsWindow_form import Ui_SettingsWindow  # Import qtdesigner object
 
 baseUIClass, baseUIWidget = uic.loadUiType('main_window_ui.ui')
@@ -36,9 +38,16 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         meas_display_toolbar.addWidget(self.meas_disp_window)
         transport_toolbar.addWidget(self.transport)
 
+        """Connecting settings button to settings window"""
+        self.toolBar.actionTriggered.connect(self.show_settings)
+
         # End main UI code
 
         self.show()
+
+    def show_settings(self):
+        self.s = settingsWindow_app.SettingsWindow()
+        self.s.show()
 
 
 if __name__ == '__main__':
