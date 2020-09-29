@@ -5,13 +5,23 @@ Settings Window
 """""
 import sys
 from PyQt5 import QtWidgets as qtw
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 # from settingsWindow_form import Ui_SettingsWindow  # Import qtdesigner object
 import json
+import re
 
 baseUIClass, baseUIWidget = uic.loadUiType('settings_ui.ui')
+
+
+class StorageSignals(qtc.QObject):
+    settingsStored = qtc.pyqtSignal()
+    settingsClosed = qtc.pyqtSignal()
+
+
+"""End StorageSignals Class"""
 
 
 class SettingsWindow(baseUIWidget, baseUIClass):
@@ -20,12 +30,60 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
-        # Main UI code goes here
-        self.pushButton_2.clicked.connect(self.fill_json)  # End main UI code
-        self.buttonBox.accepted.connect(self.fill_json)
-        self.show()
 
-    def fill_json(self):
+        # --------------------------- Data Members -----------------------------
+        # Bookkeeping variables
+        self.settingsEmpty = True
+        self.storageSignals = StorageSignals()
+        # ----------------------------------------------------------------------
+
+        # ------------------- Initialize Signal Connections --------------------
+        # Create connections for the settings window button box from
+        # the Ok button (accepted) and the Cancel button (rejected)
+        self.buttonBox.accepted.connect(self.settings_check)
+        self.buttonBox.rejected.connect(self.settings_rejected)
+        # ----------------------------------------------------------------------
+
+    @qtc.pyqtSlot()
+    def settings_rejected(self):
+        self.settingsEmpty = True
+
+    @qtc.pyqtSlot()
+    def settings_check(self):
+        # properties of popup
+        msg = QMessageBox()
+        msg.setWindowTitle("Warning!")
+        msg.setText("Input Error")
+        msg.setIcon(QMessageBox.Critical)
+        # msg.exec_() # shows pop-up error
+
+        # error checking
+        if len(self.pos_alias_lineEdit_6.text()) > 0 and self.pos_alias_lineEdit_6.text().isnumeric():
+            if len(self.lineEdit_list_5.text()) == 0:
+                if (len(self.lineEdit_stop_4.text()) > 0 and len(self.lineEdit_start_4.text()) > 0 and
+                        self.lineEdit_stop_4.text().isnumeric() and self.lineEdit_start_4.text().isnumeric()):
+                    self.settings_accepted()
+                else:
+                    msg.setDetailedText("Invalid start/stop frequency.")
+                    msg.exec_()
+            elif re.search("^(( )*(([0-9]*\.([0-9]+))|[0-9]+))(,( )*(([0-9]*\.([0-9]+))|[0-9]+)){0,29}$",
+                           self.lineEdit_list_5.text()):
+                temp_ar = str(self.lineEdit_list_5.text()).split(",")
+
+                if self.traverse(temp_ar, 0.03, 6000):  # check if list array values are [0.03, 6000] MHz
+                    self.settings_accepted()
+                else:
+                    msg.setDetailedText("Some frequencies in the list are out of range.")
+                    msg.exec_()
+            else:
+                msg.setDetailedText("Please enter list frequencies as numerical values separated by commas.")
+                msg.exec_()
+        else:
+            msg.setDetailedText("Invalid positioner alias (e.g.: enter '3' for COM3).")
+            msg.exec_()
+
+    @qtc.pyqtSlot()
+    def settings_accepted(self):
         settings_dict = {
             "linear": {
                 "start": None,
@@ -33,10 +91,10 @@ class SettingsWindow(baseUIWidget, baseUIClass):
                 "points": None
             },
             "list": None,
-            "impedance": None,
-            "calibration": None,
+            "impedance": False,
+            "calibration": False,
             "averaging": None,
-            "positioner_mv": None,
+            "positioner_mv": "step",
             "offset": {
                 "pan": None,
                 "tilt": None
@@ -48,27 +106,27 @@ class SettingsWindow(baseUIWidget, baseUIClass):
             "alias": None,
             "baud_rate": None
         }
-        if len(str(self.lineEdit_start_4.text())) > 0:
+
+        if len(self.lineEdit_stop_4.text()) > 0 and len(self.lineEdit_start_4.text()) > 0:
             settings_dict["linear"]["start"] = int(self.lineEdit_start_4.text())
-        if len((self.lineEdit_stop_4.text())) > 0:
             settings_dict["linear"]["stop"] = int(self.lineEdit_stop_4.text())
-        settings_dict["linear"]["points"] = int(self.comboBox_4.currentText())
-        settings_dict["list"] = str(self.lineEdit_list_5.text()).split(",")
-        for i in range(0, len(settings_dict["list"])):
-            settings_dict["list"][i] = int(settings_dict["list"][i])
+            settings_dict["linear"]["points"] = int(self.comboBox_4.currentText())
+
+        if len(self.lineEdit_list_5.text()) > 0:
+            settings_dict["list"] = str(self.lineEdit_list_5.text()).split(",")
+            for i in range(0, len(settings_dict["list"])):
+                settings_dict["list"][i] = int(settings_dict["list"][i])
+
         if self.Impedance_radioButton_y_7.isChecked():
             settings_dict["impedance"] = True
-        else:
-            settings_dict["impedance"] = False
+
         if self.Calibration_radioButton_y_7.isChecked():
             settings_dict["calibration"] = True
-        else:
-            settings_dict["calibration"] = False
+
         settings_dict["averaging"] = int(self.Averaging_comboBox_7.currentText())
+
         if self.cont_radioButton_7.isChecked():
             settings_dict["positioner_mv"] = "continuous"
-        else:
-            settings_dict["positioner_mv"] = "step"
 
         settings_dict["offset"]["pan"] = self.pan_lcdNumber_4.intValue()
         settings_dict["offset"]["tilt"] = self.tilt_lcdNumber_4.intValue()
@@ -80,7 +138,24 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         settings_dict["baud_rate"] = int(self.BaudRate_comboBox_6.currentText())
         with open("pivot.json", "w") as file:
             json.dump(settings_dict, file)
+        self.settingsEmpty = False
+        self.storageSignals.settingsStored.emit()
 
+    def closeEvent(self, event):
+        event.accept()
+        self.settingsEmpty = True
+        self.storageSignals.settingsClosed.emit()
+
+    def traverse(self, temp_list, low, high):
+        for i in range(0, len(temp_list)):  # change list to integer
+            temp_list[i] = float(temp_list[i])
+        for x in temp_list:  # traverse in the list
+            if x < low or x > high:  # condition check
+                return False
+        return True
+
+
+"""End SettingsWindow Class"""
 
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
