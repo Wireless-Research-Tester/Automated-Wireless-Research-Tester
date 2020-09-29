@@ -1,0 +1,35 @@
+
+{
+    "linear":{
+        "start": null,
+        "stop": null,
+        "points": null
+    },
+
+    "list":[1000, 3000],
+
+    "impedance":true,
+
+    "calibration":true,
+
+    "averaging":8,
+
+    "positioner_mv":"step",
+	
+	"offset":{
+		"pan": 0,
+		"tilt": 0
+	},
+	
+	"sweep_axis":"pan",
+	
+	"fixed_angle": 0,
+
+    "resolution":5,
+
+    "gpib_addr":16,
+
+    "alias":null,
+
+    "baud_rate":null
+}
