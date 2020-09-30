@@ -48,6 +48,13 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.s = SettingsWindow()
         self.progress_bar = ProgressBar()
 
+        # self.toolBar.setStyleSheet(
+        #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
+        #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
+        # self.toolBar.setStyleSheet(
+        #     "QToolButton#actionHelp:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
+        #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
+
         # Add custom toolbars to MainWindow Widget
         transport_toolbar = self.addToolBar('Transport_ToolBar')
         meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
