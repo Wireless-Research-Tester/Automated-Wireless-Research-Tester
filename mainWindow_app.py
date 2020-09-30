@@ -108,6 +108,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
                 self.mc.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
                 self.mc.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
+                self.mc.signals.progress.connect(self.progress_bar.progressBar.setValue)
                 self.mc.signals.setupComplete.connect(self.run_mc)
                 self.mc.signals.runComplete.connect(self.run_completed)
 
