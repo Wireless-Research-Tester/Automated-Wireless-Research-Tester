@@ -20,10 +20,7 @@ from integer import Coordinate
 import data_storage
 from time import sleep
 from threading import Lock, Thread
-import json
 import sys
-from PyQt5 import QtWidgets as qtw
-from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 
 
@@ -32,7 +29,7 @@ class MeasurementCtrlSignals(qtc.QObject):
     runComplete   = qtc.pyqtSignal()
     runPaused     = qtc.pyqtSignal()
     runStopped    = qtc.pyqtSignal()
-    progress      = qtc.pyqtSignal(float)
+    progress      = qtc.pyqtSignal(int)
     currentPan    = qtc.pyqtSignal(float)
     currentTilt   = qtc.pyqtSignal(float)
 """End MeasurementCtrlSignals Class"""
@@ -48,7 +45,7 @@ class MeasurementCtrl:
         if len(args['list']) != 0:          # list or vna_comms.lin_freq obj
             self.freq = args['list']
         else:
-            self.freq = vna_comms.lin_freq(args['linear']['start'], args['linear']['end'], args['linear']['points'])
+            self.freq = vna_comms.LinFreq(args['linear']['start'], args['linear']['end'], args['linear']['points'])
         self.cal = args['calibration'] # true or false
         self.avg = args['averaging'] # e.g. 8, 16, etc.
         self.sweep_mode = args['positioner_mv'] # either 'continuous' or 'step'
@@ -56,9 +53,9 @@ class MeasurementCtrl:
         self.exe_mode = args['sweep_axis'] # 'pan' for pan sweep or 'tilt' for tilt sweep
         self.const_angle = args['fixed_angle'] # angle at which non-changing coordinate is set to
         self.resolution = args['resolution']
-        self.vna = vna_comms.session('GPIB0::' + str(args['gpib_addr']) + '::INSTR')
+        self.vna = vna_comms.Session('GPIB0::' + str(args['gpib_addr']) + '::INSTR')
         self.qpt = positioner.Positioner('ASRL' + str(args['alias']) + '::INSTR', args['baud_rate'])
-        self.progress = 0 # percentage, e.g. 0.11 for 11%
+        self.progress = 0 # percentage, e.g. 11 for 11%
         self.vna_avg_delay = 0
         self.vna_S11_delay = 0
         self.vna_S21_delay = 0
@@ -97,7 +94,7 @@ class MeasurementCtrl:
         data_storage.create_file(self.file)
         
         # Calibrate vna if needed
-        if self.cal == True:
+        if self.cal is True:
             self.vna.calibrate() # cal prompts have to be changed for GUI integration
         
         # Configure the vna and calculate vna delays
@@ -126,7 +123,7 @@ class MeasurementCtrl:
 
 
     def run(self):
-        if self.impedance == True:
+        if self.impedance is True:
             self.vna.rst_avg('S11')
             sleep(self.vna_avg_delay)
             self.record_data('S11', self.file)    # need to create_file prior
@@ -138,7 +135,9 @@ class MeasurementCtrl:
                 for i in range(0, int(360/self.resolution)):
                     self.step_delay()
                     self.record_data('S21', self.file)
-                    self.progress = (i+1) * self.resolution / 360
+                    self.progress = int((i+1) * self.resolution / 360 * 100)
+                    if self.progress > 100:
+                        self.progress = 100
                     self.signals.progress.emit(self.progress)
                     if self.is_step_pan_complete() is True:
                         break
@@ -150,7 +149,9 @@ class MeasurementCtrl:
                 for i in range(0, int(180/self.resolution)):
                     self.step_delay()
                     self.record_data('S21', self.file)
-                    self.progress = (i+1) * self.resolution / 180
+                    self.progress = int((i+1) * self.resolution / 180 * 100)
+                    if self.progress > 100:
+                        self.progress = 100
                     self.signals.progress.emit(self.progress)
                     if self.is_step_tilt_complete() is True:
                         break
@@ -170,16 +171,18 @@ class MeasurementCtrl:
                     while lock.acquire(blocking=False) is not True:
                         while self.pan < target:
                             sleep(.08)
-                            self.qpt.jog_cw(self.pan_speed, Coordinate(180,0))
+                            self.qpt.jog_cw(self.pan_speed, Coordinate(180, 0))
                             self.update_position()
                     self.record_data('S21', self.file)
-                    self.progress = (target + 180) / 360
+                    self.progress = int((target + 180) / 360 * 100)
+                    if self.progress > 100:
+                        self.progress = 100
                     self.signals.progress.emit(self.progress)
                     if self.is_continuous_pan_complete() is True:
                         self.halt()
                         break
                     else:
-                        self.qpt.jog_cw(self.pan_speed, Coordinate(180,0))
+                        self.qpt.jog_cw(self.pan_speed, Coordinate(180, 0))
             # Tilt Case
             else:
                 self.init_continuous_sweep()
@@ -190,16 +193,18 @@ class MeasurementCtrl:
                     while lock.acquire(blocking=False) is not True:
                         while self.tilt < target:
                             sleep(.08)
-                            self.qpt.jog_up(self.tilt_speed, Coordinate(0,90))
+                            self.qpt.jog_up(self.tilt_speed, Coordinate(0, 90))
                             self.update_position()
                     self.record_data('S21', self.file)
-                    self.progress = (target + 90) / 180
+                    self.progress = int((target + 90) / 180 * 100)
+                    if self.progress > 100:
+                        self.progress = 100
                     self.signals.progress.emit(self.progress)
                     if self.is_continuous_tilt_complete() is True:
                         self.halt()
                         break
                     else:
-                        self.qpt.jog_up(self.tilt_speed, Coordinate(0,90))
+                        self.qpt.jog_up(self.tilt_speed, Coordinate(0, 90))
         
         with open(self.file, 'a') as file:
             file.write("null,null,null,null,null,null\n")
@@ -236,13 +241,13 @@ class MeasurementCtrl:
 
 
     def is_step_pan_complete(self):
-        if self.progress > 1:
+        if self.progress >= 100:
             return True
         return False
 
 
     def is_step_tilt_complete(self):
-        if self.progress > 1:
+        if self.progress >= 100:
             return True
         return False
 
@@ -265,13 +270,13 @@ class MeasurementCtrl:
 
 
     def is_continuous_pan_complete(self):
-        if self.progress >= 1:
+        if self.progress >= 100:
             return True
         return False
 
 
     def is_continuous_tilt_complete(self):
-        if self.progress >= 1:
+        if self.progress >= 100:
             return True
         return False
 
