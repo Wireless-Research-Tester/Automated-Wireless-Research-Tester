@@ -88,6 +88,8 @@ class MeasurementCtrl:
             self.qpt.move_to(-180+self.offset, self.const_angle, 'abs')
         else:
             self.qpt.move_to(self.offset+self.const_angle, -90, 'abs')
+        while self.qpt.status_executing:
+            sleep(0.2)
         self.update_position()
 
         # Reset vna and create data storage file
@@ -145,6 +147,8 @@ class MeasurementCtrl:
                     else:
                         target = ((i+1) * self.resolution) - 180
                         self.qpt.move_to(target, self.const_angle, 'abs')
+                        while self.qpt.status_executing:
+                            sleep(0.2)                        
             # Tilt Case
             else:
                 for i in range(0, int(180/self.resolution)):
@@ -159,7 +163,8 @@ class MeasurementCtrl:
                     else:
                         target = ((i+1) * self.resolution) - 90
                         self.qpt.move_to(self.const_angle, target, 'abs')
-
+                        while self.qpt.status_executing:
+                            sleep(0.2)                        
         # Continuous Case
         else:
             # Pan Case

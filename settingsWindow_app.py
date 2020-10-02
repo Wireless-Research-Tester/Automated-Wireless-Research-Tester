@@ -123,8 +123,8 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         if self.cont_radioButton_7.isChecked():
             settings_dict["positioner_mv"] = "continuous"
 
-        settings_dict["offset"]["pan"] = self.pan_lcdNumber_4.intValue()
-        settings_dict["offset"]["tilt"] = self.tilt_lcdNumber_4.intValue()
+        settings_dict["offset"]["pan"] = 0 #self.pan_lcdNumber_4.intValue()
+        settings_dict["offset"]["tilt"] = 0 #self.tilt_lcdNumber_4.intValue()
         settings_dict["sweep_axis"] = "pan"
         settings_dict["fixed_angle"] = self.sweep_elevation_spinBox.value()
         settings_dict["resolution"] = self.res_doubleSpinBox_7.value()

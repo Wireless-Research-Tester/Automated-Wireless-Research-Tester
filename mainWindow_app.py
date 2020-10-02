@@ -113,15 +113,17 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.qpt = Positioner(port, int(baud))
         if self.qpt.comms.connected:
             self.connectStatus.setChecked(True)
+
             self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
             self.qpt.signals.currentPan.connect(self.s.pan_lcdNumber_4.display)
             self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
             self.qpt.signals.currentTilt.connect(self.s.tilt_lcdNumber_4.display)
-            # self.qpt.update_positioner_stats()
+
             self.s.right_toolButton_4.clicked.connect(self.q_jog_cw)
             self.s.left_toolButton_4.clicked.connect(self.q_jog_ccw)
             self.s.up_toolButton_4.clicked.connect(self.q_jog_up)
             self.s.down_toolButton_4.clicked.connect(self.q_jog_down)
+
             print('QPT Connected!')
         else:
             print('Connection Failed')
@@ -166,10 +168,6 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.meas_in_progress = True
                 self.meas_running = True
 
-                # self.mc.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
-                # self.mc.qpt.signals.currentPan.connect(self.s.pan_lcdNumber_4.display)
-                # self.mc.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
-                # self.mc.qpt.signals.currentTilt.connect(self.s.tilt_lcdNumber_4.display)
                 self.mc.signals.progress.connect(self.progress_bar.progressBar.setValue)
                 self.mc.signals.setupComplete.connect(self.run_mc)
                 self.mc.signals.runComplete.connect(self.run_completed)
@@ -232,42 +230,50 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         try:
             msg = self.mc_q.get_nowait()
         except Empty as e:
-            msg = 'GetStatus'
+            msg = ['GetStatus']
 
-        if msg == 'GetStatus':
+        if msg[0] == 'Stop':
+            self.qpt.move_to(0,0,'stop')
+        elif msg[0] == 'GetStatus':
             self.qpt.get_status()
-        elif msg == 'JogCW':
+        elif msg[0] == 'JogCW':
             self.qpt.jog_cw(127, Coordinate(180,0))
-        elif msg == 'JogCCW':
+        elif msg[0] == 'JogCCW':
             self.qpt.jog_ccw(127, Coordinate(-180,0))
-        elif msg == 'JogUp':
+        elif msg[0] == 'JogUp':
             self.qpt.jog_up(127, Coordinate(0, 90))
-        elif msg == 'JogDown':
-            self.qpt.jog_down(127, Coordinate(0, -90))
+        elif msg[0] == 'JogDown':
+            self.qpt.jog_down(127, Coordinate(0, -90))        
+
+
+    # @qtc.pyqtSlot()
+    # def q_fault_reset(self, things):
+    #     if not self.mc_q.full():
+    #         self.mc_q.put_nowait(things)
 
 
     @qtc.pyqtSlot()
     def q_jog_cw(self):
         if not self.mc_q.full():
-            self.mc_q.put_nowait('JogCW')
+            self.mc_q.put_nowait(['JogCW'])
 
 
     @qtc.pyqtSlot()
     def q_jog_ccw(self):
         if not self.mc_q.full():
-            self.mc_q.put_nowait('JogCCW')        
+            self.mc_q.put_nowait(['JogCCW'])        
 
 
     @qtc.pyqtSlot()
     def q_jog_up(self):
         if not self.mc_q.full():
-            self.mc_q.put_nowait('JogUp')        
+            self.mc_q.put_nowait(['JogUp'])        
             
 
     @qtc.pyqtSlot()
     def q_jog_down(self):
         if not self.mc_q.full():
-            self.mc_q.put_nowait('JogDown')        
+            self.mc_q.put_nowait(['JogDown'])        
 
 
     def closeEvent(self, event):

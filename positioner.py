@@ -157,8 +157,10 @@ class Positioner:
 
 
     def move_to(self, pan, tilt, move_type='stop'):
-        self.p.parse(self.comms.positioner_query(pkt.set_minimum_speeds(40,40)),self)
-        
+        # Set min speed high enough the motors wont timeout while stopping
+        self.p.parse(self.comms.positioner_query(pkt.set_minimum_speeds(50,50)),self)
+
+        # Issue the appropriate movement command
         if move_type == 'abs':
             coord = qi.Coordinate(pan,tilt)
             self.p.parse(self.comms.positioner_query(pkt.move_to_entered_coords(coord)),self)
@@ -170,15 +172,12 @@ class Positioner:
         else:
             self.p.parse(self.comms.positioner_query(pkt.stop()),self)
 
-        time.sleep(.08)
+        # Force the positioner to update status before letting it do anything
+        # else. This is to ensure that the status_executing flag gets updated
+        # after issuing the move command
+        time.sleep(.12)
         self.p.parse(self.comms.positioner_query(pkt.get_status()),self)
         time.sleep(.12)
-
-        while self.status_executing is True:
-            self.p.parse(self.comms.positioner_query(pkt.get_status()),self)
-            time.sleep(.08)
-
-        self.p.parse(self.comms.positioner_query(pkt.set_minimum_speeds(8,17)),self)
 
 
     def get_position(self):
@@ -192,6 +191,7 @@ class Positioner:
 
 
     def jog_cw(self, pan_speed, target):
+        self.p.parse(self.comms.positioner_query(pkt.set_minimum_speeds(8,17)),self)
         if self.curr_position.pan_angle() < target.pan_angle():
             rx = self.comms.positioner_query(pkt.jog_positioner(pan_speed, 1, 0, 0))
             self.p.parse(rx, self)
@@ -200,6 +200,7 @@ class Positioner:
 
 
     def jog_ccw(self, pan_speed, target):
+        self.p.parse(self.comms.positioner_query(pkt.set_minimum_speeds(8,17)),self)
         if self.curr_position.pan_angle() > target.pan_angle():
             rx = self.comms.positioner_query(pkt.jog_positioner(pan_speed, 0, 0, 0))
             self.p.parse(rx, self)
@@ -208,6 +209,7 @@ class Positioner:
 
 
     def jog_up(self, tilt_speed, target):
+        self.p.parse(self.comms.positioner_query(pkt.set_minimum_speeds(8,17)),self)
         if self.curr_position.tilt_angle() < target.tilt_angle():
             rx = self.comms.positioner_query(pkt.jog_positioner(0, 0, tilt_speed, 1))
             self.p.parse(rx, self)
@@ -216,43 +218,12 @@ class Positioner:
             
 
     def jog_down(self, tilt_speed, target):
+        self.p.parse(self.comms.positioner_query(pkt.set_minimum_speeds(8,17)),self)
         if self.curr_position.tilt_angle() > target.tilt_angle():
             rx = self.comms.positioner_query(pkt.jog_positioner(0, 0, tilt_speed, 0))
             self.p.parse(rx, self)
         else:
             self.move_to(0,0,'stop')
-
-
-    # def sw_jog_cw(self, pan_speed, target):
-    #     if self.curr_position.pan_angle() < target.pan_angle():
-    #         rx = self.comms.positioner_query(pkt.jog_positioner(pan_speed, 1, 0, 0))
-    #         self.p.parse(rx, self)
-    #     else:
-    #         self.move_to(0,0,'stop')
-
-
-    # def sw_jog_ccw(self, pan_speed, target):
-    #     if self.curr_position.pan_angle() > target.pan_angle():
-    #         rx = self.comms.positioner_query(pkt.jog_positioner(pan_speed, 0, 0, 0))
-    #         self.p.parse(rx, self)
-    #     else:
-    #         self.move_to(0,0,'stop')
-
-
-    # def sw_jog_up(self, tilt_speed, target):
-    #     if self.curr_position.tilt_angle() < target.tilt_angle():
-    #         rx = self.comms.positioner_query(pkt.jog_positioner(0, 0, tilt_speed, 1))
-    #         self.p.parse(rx, self)
-    #     else:
-    #         self.move_to(0,0,'stop')
-            
-
-    # def sw_jog_down(self, tilt_speed, target):
-    #     if self.curr_position.tilt_angle() > target.tilt_angle():
-    #         rx = self.comms.positioner_query(pkt.jog_positioner(0, 0, tilt_speed, 0))
-    #         self.p.parse(rx, self)
-    #     else:
-    #         self.move_to(0,0,'stop')
 
 
     def print_curr(self):
