@@ -223,6 +223,38 @@ class Positioner:
             self.move_to(0,0,'stop')
 
 
+    # def sw_jog_cw(self, pan_speed, target):
+    #     if self.curr_position.pan_angle() < target.pan_angle():
+    #         rx = self.comms.positioner_query(pkt.jog_positioner(pan_speed, 1, 0, 0))
+    #         self.p.parse(rx, self)
+    #     else:
+    #         self.move_to(0,0,'stop')
+
+
+    # def sw_jog_ccw(self, pan_speed, target):
+    #     if self.curr_position.pan_angle() > target.pan_angle():
+    #         rx = self.comms.positioner_query(pkt.jog_positioner(pan_speed, 0, 0, 0))
+    #         self.p.parse(rx, self)
+    #     else:
+    #         self.move_to(0,0,'stop')
+
+
+    # def sw_jog_up(self, tilt_speed, target):
+    #     if self.curr_position.tilt_angle() < target.tilt_angle():
+    #         rx = self.comms.positioner_query(pkt.jog_positioner(0, 0, tilt_speed, 1))
+    #         self.p.parse(rx, self)
+    #     else:
+    #         self.move_to(0,0,'stop')
+            
+
+    # def sw_jog_down(self, tilt_speed, target):
+    #     if self.curr_position.tilt_angle() > target.tilt_angle():
+    #         rx = self.comms.positioner_query(pkt.jog_positioner(0, 0, tilt_speed, 0))
+    #         self.p.parse(rx, self)
+    #     else:
+    #         self.move_to(0,0,'stop')
+
+
     def print_curr(self):
         with self.curr_lock:
             print('Current Position => PAN: {:3.2f}, TILT: {:2.2f}, TIME: {:3.4f}'.format(

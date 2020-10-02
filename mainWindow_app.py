@@ -2,7 +2,7 @@
 =============
 Main Window
 =============
-"""""
+"""
 import sys
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
@@ -14,6 +14,7 @@ from settingsWindow_app import SettingsWindow
 from progress_bar_app import ProgressBar
 from measurement_ctrl import MeasurementCtrl
 from positioner import Positioner
+from integer import Coordinate
 import json
 from queue import Queue, Empty, Full
 from time import time, sleep
@@ -24,7 +25,6 @@ baseUIClass, baseUIWidget = uic.loadUiType('main_window_ui.ui')
 
 
 class MyMainWindow(baseUIWidget, baseUIClass):
-
     def __init__(self):
         """MainWindow constructor"""
         super().__init__()
@@ -97,7 +97,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.disconnectQPT.clicked.connect(self.disconnect_positioner)
         self.faultReset.clicked.connect(self.reset_positioner)
 
-
+        self.timer = qtc.QTimer()
+        self.timer.setInterval(120)
+        self.timer.timeout.connect(self.recurring_qpt_command)
+        self.timer.start()
         #----------------------------------------------------------------------
         self.show()
 
@@ -111,8 +114,14 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         if self.qpt.comms.connected:
             self.connectStatus.setChecked(True)
             self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
+            self.qpt.signals.currentPan.connect(self.s.pan_lcdNumber_4.display)
             self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
-            self.qpt.update_positioner_stats()
+            self.qpt.signals.currentTilt.connect(self.s.tilt_lcdNumber_4.display)
+            # self.qpt.update_positioner_stats()
+            self.s.right_toolButton_4.clicked.connect(self.q_jog_cw)
+            self.s.left_toolButton_4.clicked.connect(self.q_jog_ccw)
+            self.s.up_toolButton_4.clicked.connect(self.q_jog_up)
+            self.s.down_toolButton_4.clicked.connect(self.q_jog_down)
             print('QPT Connected!')
         else:
             print('Connection Failed')
@@ -157,8 +166,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.meas_in_progress = True
                 self.meas_running = True
 
-                self.mc.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
-                self.mc.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
+                # self.mc.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
+                # self.mc.qpt.signals.currentPan.connect(self.s.pan_lcdNumber_4.display)
+                # self.mc.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
+                # self.mc.qpt.signals.currentTilt.connect(self.s.tilt_lcdNumber_4.display)
                 self.mc.signals.progress.connect(self.progress_bar.progressBar.setValue)
                 self.mc.signals.setupComplete.connect(self.run_mc)
                 self.mc.signals.runComplete.connect(self.run_completed)
@@ -211,6 +222,52 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.mc = None
         self.meas_in_progress = False
         self.meas_running = False
+
+
+    @qtc.pyqtSlot()
+    def recurring_qpt_command(self):
+        if not self.qpt:
+            return None
+        
+        try:
+            msg = self.mc_q.get_nowait()
+        except Empty as e:
+            msg = 'GetStatus'
+
+        if msg == 'GetStatus':
+            self.qpt.get_status()
+        elif msg == 'JogCW':
+            self.qpt.jog_cw(127, Coordinate(180,0))
+        elif msg == 'JogCCW':
+            self.qpt.jog_ccw(127, Coordinate(-180,0))
+        elif msg == 'JogUp':
+            self.qpt.jog_up(127, Coordinate(0, 90))
+        elif msg == 'JogDown':
+            self.qpt.jog_down(127, Coordinate(0, -90))
+
+
+    @qtc.pyqtSlot()
+    def q_jog_cw(self):
+        if not self.mc_q.full():
+            self.mc_q.put_nowait('JogCW')
+
+
+    @qtc.pyqtSlot()
+    def q_jog_ccw(self):
+        if not self.mc_q.full():
+            self.mc_q.put_nowait('JogCCW')        
+
+
+    @qtc.pyqtSlot()
+    def q_jog_up(self):
+        if not self.mc_q.full():
+            self.mc_q.put_nowait('JogUp')        
+            
+
+    @qtc.pyqtSlot()
+    def q_jog_down(self):
+        if not self.mc_q.full():
+            self.mc_q.put_nowait('JogDown')        
 
 
     def closeEvent(self, event):
