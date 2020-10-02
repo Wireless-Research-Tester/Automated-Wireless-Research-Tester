@@ -13,10 +13,12 @@ from meas_display_app import MeasurmentDisplayWindow
 from settingsWindow_app import SettingsWindow
 from progress_bar_app import ProgressBar
 from measurement_ctrl import MeasurementCtrl
+from positioner import Positioner
 import json
 from queue import Queue, Empty, Full
 from time import time, sleep
 from threading import Lock, Thread
+import pyvisa as visa
 
 baseUIClass, baseUIWidget = uic.loadUiType('main_window_ui.ui')
 
@@ -28,7 +30,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         super().__init__()
         self.setupUi(self)
 
-        # --------------------------- Data Members -----------------------------
+        #--------------------------- Data Members -----------------------------
         # Bookkeeping variables
         self.meas_in_progress = False  # Indicates if measurement is in progress (could be actively running or paused)
         self.meas_running = False  # Indicates if measurement is actively running
@@ -39,9 +41,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.mc_q = Queue()  # Message queue for communication btwn Gui and mc_thread
         self.mc_lock = Lock()  # Lock for synchronizing start/pause/resume
         self.mc_thread = None  # Placeholder for thread to run MeasurementCtrl in
-        # ----------------------------------------------------------------------
 
-        # ----------------------- Initialize Gui Components --------------------
+        self.qpt = None # Placeholder for Positioner object
+        #----------------------------------------------------------------------
+
+        #----------------------- Initialize Gui Components --------------------
         # Construct the necessary widgets for MainWindow
         self.transport = TransportWidget()
         self.meas_disp_window = MeasurmentDisplayWindow()
@@ -64,11 +68,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         meas_display_toolbar.addWidget(self.meas_disp_window)
         transport_toolbar.addWidget(self.transport)
         progress_display_toolbar.addWidget(self.progress_bar)
-        # ----------------------------------------------------------------------
+        #----------------------------------------------------------------------
 
-        # ------------------- Initialize Signal Connections --------------------
+        #------------------- Initialize Signal Connections --------------------
         # Create connections between Settings button on toolbar
-        # and the s
+        # and the settings window
         self.actionSettings.triggered.connect(self.toggle_settings)
         self.s.storageSignals.settingsStored.connect(self.actionSettings.trigger)
         self.s.storageSignals.settingsClosed.connect(self.actionSettings.trigger)
@@ -78,8 +82,54 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.transport.playButton.clicked.connect(self.start_mc)
         self.transport.pauseButton.clicked.connect(self.pause_mc)
         self.transport.stopButton.clicked.connect(self.stop_mc)
-        # ----------------------------------------------------------------------
+        #----------------------------------------------------------------------
+
+
+        #----------------------------------------------------------------------
+        rm = visa.ResourceManager()
+        ports = rm.list_resources()
+        for i in ports:
+            self.portCombo.addItem(i)
+
+        self.connectStatus.setDisabled(True)
+        
+        self.connectQPT.clicked.connect(self.connect_positioner)
+        self.disconnectQPT.clicked.connect(self.disconnect_positioner)
+        self.faultReset.clicked.connect(self.reset_positioner)
+
+
+        #----------------------------------------------------------------------
         self.show()
+
+
+    @qtc.pyqtSlot()
+    def connect_positioner(self):
+        port = self.portCombo.currentText()
+        baud = self.baudRateCombo.currentText()
+        
+        self.qpt = Positioner(port, int(baud))
+        if self.qpt.comms.connected:
+            self.connectStatus.setChecked(True)
+            self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
+            self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
+            self.qpt.update_positioner_stats()
+            print('QPT Connected!')
+        else:
+            print('Connection Failed')
+
+
+    @qtc.pyqtSlot()
+    def disconnect_positioner(self):
+        self.connectStatus.setChecked(False)
+        if self.qpt:
+            del self.qpt
+            self.qpt = None
+
+
+    @qtc.pyqtSlot()
+    def reset_positioner(self):
+        pass
+
 
     @qtc.pyqtSlot()
     def toggle_settings(self):
@@ -89,6 +139,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         else:
             self.s.show()
             self.is_settings_open = True
+
 
     @qtc.pyqtSlot()
     def start_mc(self):
@@ -102,7 +153,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             if ~self.s.settingsEmpty:
                 with open('pivot.json') as file:
                     dict = json.load(file)
-                self.mc = MeasurementCtrl(dict)
+                self.mc = MeasurementCtrl(dict, self.qpt)
                 self.meas_in_progress = True
                 self.meas_running = True
 
@@ -116,18 +167,16 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             else:
                 print("Need to submit settings first before starting measurements")
 
+
     @qtc.pyqtSlot()
     def stop_mc(self):
         # Quiescent state, nothing to do, call run_completed guarentee system
         # that system enters known state regardless, acts as user triggered reset
         # of the system
-        if ~self.meas_in_progress and ~self.meas_running:
-            self.run_completed()
-        # else if  self.meas_in_progress and ~self.meas_running:
+        if self.qpt is not None:
+            self.qpt.move_to(0,0,'stop')
+        self.run_completed()
 
-        # self.mc.halt()
-        self.meas_in_progress = False
-        self.meas_running = False
 
     @qtc.pyqtSlot()
     def pause_mc(self):
@@ -140,16 +189,19 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.meas_in_progress = True
         self.meas_running = False
 
+
     def setup_mc(self):
         s_thread = Thread(target=self.mc.setup, args=(), daemon=True)
         s_thread.start()
         return s_thread
+
 
     @qtc.pyqtSlot()
     def run_mc(self):
         r_thread = Thread(target=self.mc.run, args=(), daemon=True)
         r_thread.start()
         return r_thread
+
 
     @qtc.pyqtSlot()
     def run_completed(self):
@@ -161,7 +213,14 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.meas_running = False
 
 
+    def closeEvent(self, event):
+        event.accept()
+        if self.qpt:
+            del self.qpt
+
+
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
     mw = MyMainWindow()
     sys.exit(app.exec())
+

@@ -39,6 +39,7 @@ class MeasurementCtrl:
     def __init__(
             self,
             args,
+            qpt,
             data_file='data\\data0.csv'):
 
         self.impedance = args['impedance']  # if true, S11 and S21 will be measured. Else, only S21
@@ -54,7 +55,7 @@ class MeasurementCtrl:
         self.const_angle = args['fixed_angle'] # angle at which non-changing coordinate is set to
         self.resolution = args['resolution']
         self.vna = vna_comms.Session('GPIB0::' + str(args['gpib_addr']) + '::INSTR')
-        self.qpt = positioner.Positioner('ASRL' + str(args['alias']) + '::INSTR', args['baud_rate'])
+        self.qpt = qpt
         self.progress = 0 # percentage, e.g. 11 for 11%
         self.vna_avg_delay = 0
         self.vna_S11_delay = 0

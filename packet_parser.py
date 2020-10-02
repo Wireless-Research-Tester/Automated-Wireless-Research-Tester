@@ -28,8 +28,6 @@ from constants import BIT0, BIT1, BIT2, BIT3, BIT4, BIT5, BIT6, BIT7
 
 
 class Parser:
-
-
     def __init__(self):
         self.active = True 
 
@@ -97,7 +95,8 @@ class Parser:
 
 
     def update_qpt_status(self, rx, qpt):
-        self.update_curr_position(rx, qpt)
+        if rx[1] == 0x31:
+            self.update_curr_position(rx, qpt)
         self.update_pan_status(rx, qpt)
         self.update_tilt_status(rx, qpt)
         self.update_general_status(rx, qpt)

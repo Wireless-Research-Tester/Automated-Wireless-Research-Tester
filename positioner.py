@@ -89,8 +89,6 @@ class PositionerSignals(qtc.QObject):
 
 
 class Positioner:
-
-
     def __init__(self, com_port, baud_rate):
         self.comms = Comms(com_port, baud_rate)
         self.p = Parser()
