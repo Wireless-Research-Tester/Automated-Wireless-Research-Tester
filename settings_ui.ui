@@ -607,11 +607,20 @@
             <property name="shortcut">
              <string>A</string>
             </property>
+            <property name="autoRepeat">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
             <property name="autoRepeatDelay">
              <number>120</number>
             </property>
             <property name="autoRepeatInterval">
              <number>120</number>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
             </property>
             <property name="arrowType">
              <enum>Qt::LeftArrow</enum>
@@ -626,11 +635,20 @@
             <property name="shortcut">
              <string>S</string>
             </property>
+            <property name="autoRepeat">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
             <property name="autoRepeatDelay">
              <number>120</number>
             </property>
             <property name="autoRepeatInterval">
              <number>120</number>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
             </property>
             <property name="arrowType">
              <enum>Qt::DownArrow</enum>
@@ -645,11 +663,20 @@
             <property name="shortcut">
              <string>W</string>
             </property>
+            <property name="autoRepeat">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
             <property name="autoRepeatDelay">
              <number>120</number>
             </property>
             <property name="autoRepeatInterval">
              <number>120</number>
+            </property>
+            <property name="autoRaise">
+             <bool>false</bool>
             </property>
             <property name="arrowType">
              <enum>Qt::UpArrow</enum>

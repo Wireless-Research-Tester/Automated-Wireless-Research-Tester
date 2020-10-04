@@ -30,7 +30,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
 
         # --------------------------- Data Members -----------------------------
         # Bookkeeping variables
-        self.settingsEmpty = True
+        self.settings_empty = True
         self.storageSignals = StorageSignals()
         # ----------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
 
     @qtc.pyqtSlot()
     def settings_rejected(self):
-        self.settingsEmpty = True
+        self.settings_empty = True
 
 
     @qtc.pyqtSlot()
@@ -131,13 +131,13 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         settings_dict["gpib_addr"] = int(self.GPIB_addr_comboBox_6.currentText())
         with open("pivot.json", "w") as file:
             json.dump(settings_dict, file)
-        self.settingsEmpty = False
+        self.settings_empty = False
         self.storageSignals.settingsStored.emit()
 
 
     def closeEvent(self, event):
         event.accept()
-        self.settingsEmpty = True
+        self.settings_empty = True
         self.storageSignals.settingsClosed.emit()
 
 
