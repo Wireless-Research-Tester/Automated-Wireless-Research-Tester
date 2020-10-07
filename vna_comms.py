@@ -182,7 +182,7 @@ class Session:
         input('Connect matched LOAD to PORT 1. Press enter when ready...')
         self.vna.write(cal_s11_1_port_load(self.model))
         self.vna.write(save_1_port_cal(self.model))
-        print('Calibration is complete!')
+        input('Calibration is complete! Press enter to continue...')
         self.using_correction = True
 
     def rst_avg(self, data_type):  # the S11 and S21 commands automatically trigger an averaging reset in the VNA
