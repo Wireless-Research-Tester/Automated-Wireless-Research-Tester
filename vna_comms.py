@@ -173,17 +173,17 @@ class Session:
                     temp_data_set.append(Data('S11', freq, theta, phi, mag_temp, phase_temp))
         return temp_data_set
 
-    def calibrate(self):
+    def calibrate_open(self):
         self.vna.write(cal_s11_1_port(self.model))
-        input('Connect OPEN circuit to PORT 1. Press enter when ready...')
         self.vna.write(cal_s11_1_port_open(self.model))
-        input('Connect SHORT circuit to PORT 1. Press enter when ready...')
+        self.using_correction = True
+
+    def calibrate_short(self):
         self.vna.write(cal_s11_1_port_short(self.model))
-        input('Connect matched LOAD to PORT 1. Press enter when ready...')
+
+    def calibrate_load(self):
         self.vna.write(cal_s11_1_port_load(self.model))
         self.vna.write(save_1_port_cal(self.model))
-        input('Calibration is complete! Press enter to continue...')
-        self.using_correction = True
 
     def rst_avg(self, data_type):  # the S11 and S21 commands automatically trigger an averaging reset in the VNA
         if data_type == 'S11':

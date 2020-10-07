@@ -38,6 +38,7 @@ class MeasurementCtrlSignals(qtc.QObject):
     requestJogDown = qtc.pyqtSignal(list )
     requestMoveTo  = qtc.pyqtSignal(list )
     startLockClock = qtc.pyqtSignal()
+    calReady       = qtc.pyqtSignal()
 """End MeasurementCtrlSignals Class"""
 
 
@@ -74,6 +75,10 @@ class MeasurementCtrl():
         self.stop            = False # stop measurement flag
         self.finished        = False # measurement finished flag
         self.paused_loop_idx = 0 # saved loop index to enable measurement to be resumed
+        self.open_proceed = False   # flags for proceeding in calibration
+        self.short_proceed = False  # flags for proceeding in calibration
+        self.load_proceed = False   # flags for proceeding in calibration
+        self.cal_finished = False   # flag for completing calibration
 
         self.signals = MeasurementCtrlSignals()
         self.update_position()
@@ -94,13 +99,37 @@ class MeasurementCtrl():
         """
 
         # Reset vna and create data storage file
-        self.vna.reset()
+        if self.cal is True:
+            self.vna.reset_all()
+        else:
+            self.vna.reset()
         data_storage.create_file(self.file)
         # Calibrate vna if needed
         if self.cal is True:
-            self.vna.calibrate() # TODO: cal prompts have to be changed for GUI integration    
+            self.signals.calReady.emit()
+            while True:
+                if self.open_proceed is True:
+                    self.vna.calibrate_open()
+                    break
+            self.signals.calReady.emit()
+            while True:
+                if self.short_proceed is True:
+                    self.vna.calibrate_short()
+                    break
+            self.signals.calReady.emit()
+            while True:
+                if self.load_proceed is True:
+                    self.vna.calibrate_load()
+                    break
+            self.signals.calReady.emit()
+            while True:
+                if self.cal_finished is True:
+                    break
+
         # Configure the vna and calculate vna delays
         self.vna.setup(self.freq, self.avg, 3700)
+        if self.impedance is True:
+            self.vna.using_correction = True
         [self.vna_avg_delay, self.vna_S11_delay, self.vna_S21_delay] = self.compute_vna_delay()
         # Calculate positioner speed needed based on vna delays, if needed
         if self.sweep_mode == 'continuous': # check if a continuous sweep is possible

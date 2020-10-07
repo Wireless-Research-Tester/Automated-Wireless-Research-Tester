@@ -173,6 +173,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.mc.signals.requestMoveTo.connect(self.q_move_to)
                 self.mc.signals.requestJogCW.connect(self.q_jog_cw_list)
                 self.mc.signals.requestJogUp.connect(self.q_jog_up_list)
+                self.mc.signals.calReady.connect(self.cal_prompt)
                 # Toggle enabled for relevant transport buttons
                 self.transport.playButton.setDisabled(True)
                 self.transport.pauseButton.setEnabled(True)
@@ -462,6 +463,32 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.s.show()
             self.is_settings_open = True
 #------------------------------------------------------------------------------
+
+# ----------------------------- Calibration Prompt Slot ---------------------------
+    @qtc.pyqtSlot()
+    def cal_prompt(self):
+        cal_msg = qtw.QMessageBox()
+        cal_msg.setIcon(qtw.QMessageBox.Warning)
+        cal_msg.setStandardButtons(qtw.QMessageBox.Ok)
+        cal_msg.setInformativeText("Press Ok when ready to proceed.")
+        cal_msg.setWindowTitle("Calibration Instructions")
+        if self.mc.open_proceed is False:
+            cal_msg.setText("Please connect the OPEN calibration standard to port 1 on the VNA.")
+            cal_msg.exec_()
+            self.mc.open_proceed = True
+        elif self.mc.short_proceed is False:
+            cal_msg.setText("Please connect the SHORT calibration standard to port 1 on the VNA.")
+            cal_msg.exec_()
+            self.mc.short_proceed = True
+        elif self.mc.load_proceed is False:
+            cal_msg.setText("Please connect the LOAD calibration standard to port 1 on the VNA.")
+            cal_msg.exec_()
+            self.mc.load_proceed = True
+        else:
+            cal_msg.setText("Calibration is now complete. Please reconnect the antenna to port 1 on the VNA.")
+            cal_msg.exec_()
+            self.mc.cal_finished = True
+# ------------------------------------------------------------------------------
 
 
 #----------------------------- Window CLose Event -----------------------------
