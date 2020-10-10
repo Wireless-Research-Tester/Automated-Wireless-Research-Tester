@@ -19,10 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f0e81cd-a0d7-4a7c-9f58-e08def3f7710" name="Default Changelist" comment="Settings Window v1">
+    <list default="true" id="1f0e81cd-a0d7-4a7c-9f58-e08def3f7710" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_window_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/main_window_ui.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/settings_ui.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainWindow_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainWindow_app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/positioner_toolbar_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/positioner_toolbar_app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,6 +192,14 @@
       <workItem from="1601421191359" duration="1828000" />
       <workItem from="1601423684101" duration="843000" />
     </task>
+    <task id="LOCAL-00001" summary="size adjustments">
+      <created>1602288858218</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1602288858218</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -211,6 +219,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="size adjustments" />
+    <option name="LAST_COMMIT_MESSAGE" value="size adjustments" />
   </component>
   <component name="WindowStateProjectService">
     <state x="137" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602102587681">
@@ -219,42 +229,46 @@
     <state x="137" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1602102587681" />
     <state x="192" y="0" width="1092" height="763" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1601473047877" />
     <state x="128" y="23" width="1024" height="777" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.777@0.23.1280.777" timestamp="1601420937187" />
+    <state x="217" y="23" key="CommitChangelistDialog2" timestamp="1602288857975">
+      <screen x="0" y="23" width="1280" height="777" />
+    </state>
+    <state x="217" y="23" key="CommitChangelistDialog2/0.23.1280.777@0.23.1280.777" timestamp="1602288857975" />
     <state x="463" y="126" key="FileChooserDialogImpl" timestamp="1602102586682">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="463" y="126" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1602102586682" />
-    <state width="1238" height="245" key="GridCell.Tab.0.bottom" timestamp="1602288804834">
+    <state width="1238" height="170" key="GridCell.Tab.0.bottom" timestamp="1602290692288">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1602102775628" />
     <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1601475121380" />
-    <state width="1238" height="245" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1602288804834" />
-    <state width="1238" height="245" key="GridCell.Tab.0.center" timestamp="1602288804833">
+    <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1602290692288" />
+    <state width="1238" height="170" key="GridCell.Tab.0.center" timestamp="1602290692287">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1602102775628" />
     <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1601475121379" />
-    <state width="1238" height="245" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1602288804833" />
-    <state width="1238" height="245" key="GridCell.Tab.0.left" timestamp="1602288804833">
+    <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
+    <state width="1238" height="170" key="GridCell.Tab.0.left" timestamp="1602290692287">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1602102775628" />
     <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1601475121379" />
-    <state width="1238" height="245" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1602288804833" />
-    <state width="1238" height="245" key="GridCell.Tab.0.right" timestamp="1602288804834">
+    <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
+    <state width="1238" height="170" key="GridCell.Tab.0.right" timestamp="1602290692287">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1602102775628" />
     <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1601475121379" />
-    <state width="1238" height="245" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1602288804834" />
-    <state x="127" y="220" key="Vcs.Push.Dialog.v2" timestamp="1602288447022">
+    <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
+    <state x="127" y="220" key="Vcs.Push.Dialog.v2" timestamp="1602288861279">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="127" y="220" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1602288447022" />
-    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1602284164040">
+    <state x="127" y="220" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1602288861279" />
+    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1602288831236">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.777@0.23.1280.777" timestamp="1602284164040" />
+    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.777@0.23.1280.777" timestamp="1602288831236" />
     <state x="370" y="320" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1601421112385">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
@@ -263,13 +277,13 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/alpha_gui$settingsWindow_base.coverage" NAME="settingsWindow_base Coverage Results" MODIFIED="1600131593330" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Documents/qtDesignerFiles" />
     <SUITE FILE_PATH="coverage/alpha_gui$SeniorDesign.coverage" NAME="SeniorDesign Coverage Results" MODIFIED="1601420985213" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$positioner_toolbar_app.coverage" NAME="positioner_toolbar_app Coverage Results" MODIFIED="1602286098225" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/alpha_gui$positioner_toolbar_app.coverage" NAME="positioner_toolbar_app Coverage Results" MODIFIED="1602290676875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$transport_app.coverage" NAME="transport_app Coverage Results" MODIFIED="1600964394623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$meas_display_app.coverage" NAME="meas_display_app Coverage Results" MODIFIED="1600966953342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$pyqt_template.coverage" NAME="pyqt_template Coverage Results" MODIFIED="1600142207879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$progress_bar_app.coverage" NAME="progress_bar_app Coverage Results" MODIFIED="1601421586393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$settingsWindow_app.coverage" NAME="settingsWindow_app Coverage Results" MODIFIED="1600963718115" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$scratch_2.coverage" NAME="scratch_2 Coverage Results" MODIFIED="1600824407495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/alpha_gui$mainWindow_app.coverage" NAME="mainWindow_app Coverage Results" MODIFIED="1602288804823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/alpha_gui$mainWindow_app.coverage" NAME="mainWindow_app Coverage Results" MODIFIED="1602290692277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
