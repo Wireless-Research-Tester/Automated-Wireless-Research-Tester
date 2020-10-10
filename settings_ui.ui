@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>427</width>
-    <height>525</height>
+    <width>437</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -73,8 +73,8 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>250</width>
-           <height>100</height>
+           <width>383</width>
+           <height>140</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -176,6 +176,13 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="list_MHz_label_5">
+               <property name="text">
+                <string>MHz</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="1">
               <widget class="QLineEdit" name="lineEdit_list_5">
                <property name="text">
@@ -183,10 +190,10 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="list_MHz_label_5">
+             <item row="1" column="2">
+              <widget class="QToolButton" name="toolButton">
                <property name="text">
-                <string>MHz</string>
+                <string>...</string>
                </property>
               </widget>
              </item>
@@ -358,29 +365,6 @@
          <property name="verticalSpacing">
           <number>6</number>
          </property>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="sweep_elevation_spinBox">
-           <property name="minimum">
-            <double>-90.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>90.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>-45.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="sweep_elevation_label_6">
-           <property name="text">
-            <string>Sweep Elevation : </string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="GPIB_addr_comboBox_6">
            <property name="currentIndex">
@@ -546,12 +530,45 @@
            </item>
           </widget>
          </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="sweep_elevation_spinBox">
+           <property name="minimum">
+            <double>-90.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>90.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="value">
+            <double>-45.000000000000000</double>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="GPIB_addr_label_6">
            <property name="text">
             <string>GPIB Address : </string>
            </property>
           </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="sweep_elevation_label_6">
+           <property name="text">
+            <string>Sweep Elevation : </string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Project Directory:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lineEdit"/>
          </item>
         </layout>
        </item>
