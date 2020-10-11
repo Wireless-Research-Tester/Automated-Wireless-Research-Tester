@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>230</width>
+    <width>172</width>
     <height>92</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>200</width>
+    <height>16777215</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -16,6 +22,18 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QFrame" name="frame">
+     <property name="minimumSize">
+      <size>
+       <width>148</width>
+       <height>68</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>250</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
@@ -78,13 +96,6 @@ QPushButton:pressed {
         <attribute name="buttonGroup">
          <string notr="true">transportBtnGroup</string>
         </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
        </widget>
       </item>
       <item>
@@ -153,16 +164,6 @@ QPushButton:pressed {
         <attribute name="buttonGroup">
          <string notr="true">transportBtnGroup</string>
         </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line_2">
-        <property name="midLineWidth">
-         <number>0</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
        </widget>
       </item>
       <item>
