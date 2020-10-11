@@ -37,7 +37,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.meas_disp_window = MeasurmentDisplayWindow()
         self.s = SettingsWindow()
         self.progress_bar = ProgressBar()
-        self.pos_control_tb = PositionerToolBarWidget()
+        self.pos_control = PositionerToolBarWidget()
 
         # self.toolBar.setStyleSheet(
         #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
@@ -56,7 +56,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         meas_display_toolbar.addWidget(self.meas_disp_window)
         transport_toolbar.addWidget(self.transport)
         progress_display_toolbar.addWidget(self.progress_bar)
-        positioner_control_toolbar.addWidget(self.pos_control_tb)
+        positioner_control_toolbar.addWidget(self.pos_control)
         # --------------------------------------------------------------------------
 
         # ------------------- Initialize Gui Signal Connections --------------------
@@ -89,25 +89,25 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # --------------------------------------------------------------------------
 
         # --------------- Initialize Positioner Signal Connections------------------
-        # rm = visa.ResourceManager()
-        # ports = rm.list_resources()
-        # for i in ports:
-        #     if i[0:4] == 'ASRL':
-        #         self.portCombo.addItem(i)
+        rm = visa.ResourceManager()
+        ports = rm.list_resources()
+        for i in ports:
+            if i[0:4] == 'ASRL':
+                self.pos_control.portCombo.addItem(i)
 
-        # self.connectStatus.setDisabled(True)
+        self.pos_control.connectStatus.setDisabled(True)
 
-        # self.connectQPT.clicked.connect(self.connect_positioner)
-        # self.disconnectQPT.clicked.connect(self.disconnect_positioner)
-        # self.faultReset.clicked.connect(self.reset_positioner)
-        #
-        # self.disconnectQPT.setDisabled(True)
-        # self.faultReset.setDisabled(True)
+        self.pos_control.connectQPT.clicked.connect(self.connect_positioner)
+        self.pos_control.disconnectQPT.clicked.connect(self.disconnect_positioner)
+        self.pos_control.faultReset.clicked.connect(self.reset_positioner)
+        
+        self.pos_control.disconnectQPT.setDisabled(True)
+        self.pos_control.faultReset.setDisabled(True)
 
-        self.timer = qtc.QTimer()
-        self.timer.setInterval(120)
-        self.timer.timeout.connect(self.recurring_qpt_command)
-        self.timer.start()
+        self.pos_control.timer = qtc.QTimer()
+        self.pos_control.timer.setInterval(120)
+        self.pos_control.timer.timeout.connect(self.recurring_qpt_command)
+        self.pos_control.timer.start()
         # --------------------------------------------------------------------------
         self.show()
 
@@ -131,7 +131,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             # Create and start thread for MeasurementCtrl.run() to execute in
             self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
             self.mc_thread.start()
-            self.lineEdit.setText('SetupRunning')
+            self.pos_control.lineEdit.setText('SetupRunning')
             # Toggle enabled for relevant transport buttons
             self.transport.playButton.setDisabled(True)
             self.transport.pauseButton.setEnabled(True)
@@ -143,7 +143,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 # means pivot.json is empty, display window telling user know they need
                 # to accept the measurement settings in the SettingsWindow before any
                 # measurement can be started
-                self.lineEdit.setText('NotRunning')
+                self.pos_control.lineEdit.setText('NotRunning')
                 msg.setDetailedText(
                     'Need to submit settings before the measurement can begin'
                 )
@@ -184,7 +184,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.mc_state = 'SetupRunning'
                 self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
                 self.mc_thread.start()
-                self.lineEdit.setText('SetupRunning')
+                self.pos_control.lineEdit.setText('SetupRunning')
 
     @qtc.pyqtSlot()
     def stop_mc(self):
@@ -230,7 +230,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # than setting up flag here to prevent missing data at a needed position
         # due to timing considerations.
         self.mc.pause_move = True
-        self.lineEdit.setText('Paused')
+        self.pos_control.lineEdit.setText('Paused')
 
     @qtc.pyqtSlot()
     def run_mc(self):
@@ -242,7 +242,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # Update the state of MeasurementCtrl and toggle relevant transport buttons
         self.mc_state = 'Running'
         self.transport.playButton.setEnabled(False)
-        self.lineEdit.setText('Running')
+        self.pos_control.lineEdit.setText('Running')
 
     @qtc.pyqtSlot()
     def run_completed(self):
@@ -273,7 +273,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             del self.mc
             self.mc = None
             print('Measurement ended, destroying MeasurementCtrl')
-        self.lineEdit.setText('NotRunning')
+        self.pos_control.lineEdit.setText('NotRunning')
 
     def enable_play(self):
         """Re-enables the play transport button if the system gets paused"""
@@ -390,59 +390,59 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.qpt_q.put_nowait(['MoveTo'])
         # ------------------------------------------------------------------------------
 
-    # # ----------------- Positioner Connection Management Slots ---------------------
-    # @qtc.pyqtSlot()
-    # def connect_positioner(self):
-    #     msg = qtw.QMessageBox()
-    #     msg.setWindowTitle('Warning!')
-    #     msg.setText('Positioner failed to connect!')
-    #     msg.setIcon(qtw.QMessageBox.Critical)
-    #
-    #     port = self.portCombo.currentText()
-    #     baud = self.baudRateCombo.currentText()
-    #
-    #     self.qpt = Positioner(port, int(baud))
-    #     if self.qpt.comms.connected:
-    #         self.connectStatus.setChecked(True)
-    #
-    #         self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
-    #         self.qpt.signals.currentPan.connect(self.s.pan_lcdNumber_4.display)
-    #         self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
-    #         self.qpt.signals.currentTilt.connect(self.s.tilt_lcdNumber_4.display)
-    #
-    #         self.s.right_toolButton_4.clicked.connect(self.q_jog_cw)
-    #         self.s.left_toolButton_4.clicked.connect(self.q_jog_ccw)
-    #         self.s.up_toolButton_4.clicked.connect(self.q_jog_up)
-    #         self.s.down_toolButton_4.clicked.connect(self.q_jog_down)
-    #
-    #         self.connectQPT.setDisabled(True)
-    #         self.disconnectQPT.setEnabled(True)
-    #         self.faultReset.setEnabled(True)
-    #     else:
-    #         del self.qpt
-    #         self.qpt = None
-    #         msg.setDetailedText(
-    #             'Positioner timed out while trying to connect, ' +
-    #             'verify power supply and USB are plugged in, ' +
-    #             'and correct USB port alias and baud rate are selected.'
-    #         )
-    #         msg.exec_()
-    #
-    # @qtc.pyqtSlot()
-    # def disconnect_positioner(self):
-    #     self.connectStatus.setChecked(False)
-    #     self.connectQPT.setEnabled(True)
-    #     self.disconnectQPT.setDisabled(True)
-    #     self.faultReset.setDisabled(True)
-    #     if self.qpt:
-    #         del self.qpt
-    #         self.qpt = None
-    #
-    # @qtc.pyqtSlot()
-    # def reset_positioner(self):
-    #     pass
-    #
-    # # ------------------------------------------------------------------------------
+    # ----------------- Positioner Connection Management Slots ---------------------
+    @qtc.pyqtSlot()
+    def connect_positioner(self):
+        msg = qtw.QMessageBox()
+        msg.setWindowTitle('Warning!')
+        msg.setText('Positioner failed to connect!')
+        msg.setIcon(qtw.QMessageBox.Critical)
+    
+        port = self.pos_control.portCombo.currentText()
+        baud = self.pos_control.baudRateCombo.currentText()
+    
+        self.qpt = Positioner(port, int(baud))
+        if self.qpt.comms.connected:
+            self.pos_control.connectStatus.setChecked(True)
+    
+            self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
+            self.qpt.signals.currentPan.connect(self.s.pan_lcdNumber_4.display)
+            self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
+            self.qpt.signals.currentTilt.connect(self.s.tilt_lcdNumber_4.display)
+    
+            self.s.right_toolButton_4.clicked.connect(self.q_jog_cw)
+            self.s.left_toolButton_4.clicked.connect(self.q_jog_ccw)
+            self.s.up_toolButton_4.clicked.connect(self.q_jog_up)
+            self.s.down_toolButton_4.clicked.connect(self.q_jog_down)
+    
+            self.pos_control.connectQPT.setDisabled(True)
+            self.pos_control.disconnectQPT.setEnabled(True)
+            self.pos_control.faultReset.setEnabled(True)
+        else:
+            del self.qpt
+            self.qpt = None
+            msg.setDetailedText(
+                'Positioner timed out while trying to connect, ' +
+                'verify power supply and USB are plugged in, ' +
+                'and correct USB port alias and baud rate are selected.'
+            )
+            msg.exec_()
+    
+    @qtc.pyqtSlot()
+    def disconnect_positioner(self):
+        self.pos_control.connectStatus.setChecked(False)
+        self.pos_control.connectQPT.setEnabled(True)
+        self.pos_control.disconnectQPT.setDisabled(True)
+        self.pos_control.faultReset.setDisabled(True)
+        if self.qpt:
+            del self.qpt
+            self.qpt = None
+    
+    @qtc.pyqtSlot()
+    def reset_positioner(self):
+        pass
+    
+    # ------------------------------------------------------------------------------
 
     # ----------------------------- Settings Button Slot ---------------------------
     @qtc.pyqtSlot()
