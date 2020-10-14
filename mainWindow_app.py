@@ -165,8 +165,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 # MeasurementCtrl object
                 with open('pivot.json') as file:
                     dict = json.load(file)
-                self.data_file = strftime("%b%d_%H%M_%S", time.localtime()) + '.csv'
-                self.data_file = self.settings.project_dir + data_file
+                self.data_file = '\\' + strftime("%b%d_%H%M_%S", localtime()) + '.csv'
+                self.data_file = self.settings.project_dir + self.data_file
                 self.mc = MeasurementCtrl(dict, self.qpt, self.data_file)
                 # Connect signals and slots between MeasurementCtrl object,
                 # transport model handlers, positioner queue, and gui

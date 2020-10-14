@@ -41,7 +41,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         self.buttonBox.accepted.connect(self.settings_check)
         self.buttonBox.rejected.connect(self.settings_rejected)
         self.dir_Button.clicked.connect(self.get_project_dir)
-        self.show()
+        
         # ----------------------------------------------------------------------
 
 
@@ -49,6 +49,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
     def get_project_dir(self):
         temp = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if temp is not None:
+            temp = temp.replace("/", "\\")
             self.project_dir = temp
             self.dir_label.setText(self.project_dir)
             print("Project directory: " + self.project_dir)
