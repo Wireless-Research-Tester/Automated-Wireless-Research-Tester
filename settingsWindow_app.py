@@ -5,7 +5,7 @@ Settings Window
 """
 import sys
 from PyQt5 import QtWidgets as qtw
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QFileDialog
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from PyQt5 import uic
@@ -32,6 +32,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         # Bookkeeping variables
         self.settings_empty = True
         self.storageSignals = StorageSignals()
+        self.project_dir = None
         # ----------------------------------------------------------------------
 
         # ------------------- Initialize Signal Connections --------------------
@@ -39,7 +40,18 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         # the Ok button (accepted) and the Cancel button (rejected)
         self.buttonBox.accepted.connect(self.settings_check)
         self.buttonBox.rejected.connect(self.settings_rejected)
+        self.dir_Button.clicked.connect(self.get_project_dir)
+        self.show()
         # ----------------------------------------------------------------------
+
+
+    @qtc.pyqtSlot()
+    def get_project_dir(self):
+        temp = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        if temp is not None:
+            self.project_dir = temp
+            self.dir_label.setText(self.project_dir)
+            print("Project directory: " + self.project_dir)
 
 
     @qtc.pyqtSlot()
@@ -56,7 +68,10 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         msg.setIcon(QMessageBox.Critical)
         # msg.exec_() # shows pop-up error
 
-        if len(self.lineEdit_list_5.text()) == 0:
+        if self.project_dir is None:
+            msg.setDetailedText("Please select a project directory.")
+            msg.exec_()
+        elif len(self.lineEdit_list_5.text()) == 0:
             if (len(self.lineEdit_stop_4.text()) > 0 and len(self.lineEdit_start_4.text()) > 0 and
                     self.lineEdit_stop_4.text().isnumeric() and self.lineEdit_start_4.text().isnumeric()):
                 self.settings_accepted()

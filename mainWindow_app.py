@@ -21,6 +21,7 @@ from queue import Queue, Empty, Full
 from time import time, sleep
 from threading import Lock, Thread
 import pyvisa as visa
+from time import localtime, strftime
 
 baseUIClass, baseUIWidget = uic.loadUiType('main_window_ui.ui')
 
@@ -35,7 +36,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # Construct the necessary widgets for MainWindow
         self.transport = TransportWidget()
         self.meas_disp_window = MeasurmentDisplayWindow()
-        self.s = SettingsWindow()
+        self.settings = SettingsWindow()
         self.progress_bar = ProgressBar()
         self.pos_control = PositionerToolBarWidget()
 
@@ -63,8 +64,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # Create connections between Settings button on toolbar
         # and the settings window
         self.actionSettings.triggered.connect(self.toggle_settings)
-        self.s.storageSignals.settingsStored.connect(self.actionSettings.trigger)
-        self.s.storageSignals.settingsClosed.connect(self.actionSettings.trigger)
+        self.settings.storageSignals.settingsStored.connect(self.actionSettings.trigger)
+        self.settings.storageSignals.settingsClosed.connect(self.actionSettings.trigger)
 
         # Create connections between transport buttons and the functions
         # creating the Gui's control flow for MeasurementCtrl
@@ -86,6 +87,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
         self.qpt = None  # Placeholder for Positioner object
         self.qpt_q = Queue()  # Message queue for communication btwn Gui and qpt_thread
+
+        self.data_file = None
         # --------------------------------------------------------------------------
 
         # --------------- Initialize Positioner Signal Connections------------------
@@ -137,7 +140,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.transport.pauseButton.setEnabled(True)
         elif self.mc_state == 'NotRunning':
             # Attempts to start a new measurement
-            if self.s.settings_empty:
+            if self.settings.settings_empty:
                 # If settings_empty, then the user has not gone into SettingsWindow
                 # and configured the settings for a measurement to be performed, which
                 # means pivot.json is empty, display window telling user know they need
@@ -162,7 +165,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 # MeasurementCtrl object
                 with open('pivot.json') as file:
                     dict = json.load(file)
-                self.mc = MeasurementCtrl(dict, self.qpt)
+                self.data_file = strftime("%b%d_%H%M_%S", time.localtime()) + '.csv'
+                self.data_file = self.settings.project_dir + data_file
+                self.mc = MeasurementCtrl(dict, self.qpt, self.data_file)
                 # Connect signals and slots between MeasurementCtrl object,
                 # transport model handlers, positioner queue, and gui
                 self.mc.signals.progress.connect(self.progress_bar.progressBar.setValue)
@@ -406,14 +411,14 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.pos_control.connectStatus.setChecked(True)
     
             self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
-            self.qpt.signals.currentPan.connect(self.s.pan_lcdNumber_4.display)
+            self.qpt.signals.currentPan.connect(self.settings.pan_lcdNumber_4.display)
             self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
-            self.qpt.signals.currentTilt.connect(self.s.tilt_lcdNumber_4.display)
+            self.qpt.signals.currentTilt.connect(self.settings.tilt_lcdNumber_4.display)
     
-            self.s.right_toolButton_4.clicked.connect(self.q_jog_cw)
-            self.s.left_toolButton_4.clicked.connect(self.q_jog_ccw)
-            self.s.up_toolButton_4.clicked.connect(self.q_jog_up)
-            self.s.down_toolButton_4.clicked.connect(self.q_jog_down)
+            self.settings.right_toolButton_4.clicked.connect(self.q_jog_cw)
+            self.settings.left_toolButton_4.clicked.connect(self.q_jog_ccw)
+            self.settings.up_toolButton_4.clicked.connect(self.q_jog_up)
+            self.settings.down_toolButton_4.clicked.connect(self.q_jog_down)
     
             self.pos_control.connectQPT.setDisabled(True)
             self.pos_control.disconnectQPT.setEnabled(True)
@@ -448,10 +453,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     @qtc.pyqtSlot()
     def toggle_settings(self):
         if self.is_settings_open:
-            self.s.hide()
+            self.settings.hide()
             self.is_settings_open = False
         else:
-            self.s.show()
+            self.settings.show()
             self.is_settings_open = True
 
     # ------------------------------------------------------------------------------
