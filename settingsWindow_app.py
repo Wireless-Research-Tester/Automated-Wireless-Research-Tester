@@ -33,6 +33,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         self.settings_empty = True
         self.storageSignals = StorageSignals()
         self.project_dir = None
+        self.pivot_file = None
         # ----------------------------------------------------------------------
 
         # ------------------- Initialize Signal Connections --------------------
@@ -41,7 +42,6 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         self.buttonBox.accepted.connect(self.settings_check)
         self.buttonBox.rejected.connect(self.settings_rejected)
         self.dir_Button.clicked.connect(self.get_project_dir)
-        
         # ----------------------------------------------------------------------
 
 
@@ -49,9 +49,9 @@ class SettingsWindow(baseUIWidget, baseUIClass):
     def get_project_dir(self):
         temp = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if temp is not None:
-            temp = temp.replace("/", "\\")
             self.project_dir = temp
             self.dir_label.setText(self.project_dir)
+            self.pivot_file = self.project_dir + '/pivot.json'
             print("Project directory: " + self.project_dir)
 
 
@@ -145,7 +145,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         settings_dict["fixed_angle"] = self.sweep_elevation_spinBox.value()
         settings_dict["resolution"] = self.res_doubleSpinBox_7.value()
         settings_dict["gpib_addr"] = int(self.GPIB_addr_comboBox_6.currentText())
-        with open("pivot.json", "w") as file:
+        with open(self.pivot_file, "w") as file:
             json.dump(settings_dict, file)
         self.settings_empty = False
         self.storageSignals.settingsStored.emit()

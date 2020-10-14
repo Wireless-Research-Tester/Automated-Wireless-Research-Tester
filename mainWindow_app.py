@@ -163,9 +163,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 # Open the pivot file to retrieve the settings selected by user in
                 # SettingsWindow, parse them into a dictonary, then initialize
                 # MeasurementCtrl object
-                with open('pivot.json') as file:
+                with open(self.settings.pivot_file) as file:
                     dict = json.load(file)
-                self.data_file = '\\' + strftime("%b%d_%H%M_%S", localtime()) + '.csv'
+                self.data_file = '/' + strftime("%b%d_%H%M_%S", localtime()) + '.csv'
                 self.data_file = self.settings.project_dir + self.data_file
                 self.mc = MeasurementCtrl(dict, self.qpt, self.data_file)
                 # Connect signals and slots between MeasurementCtrl object,
