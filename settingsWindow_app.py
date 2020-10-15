@@ -42,6 +42,11 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         self.buttonBox.accepted.connect(self.settings_check)
         self.buttonBox.rejected.connect(self.settings_rejected)
         self.dir_Button.clicked.connect(self.get_project_dir)
+        self.toolButton.clicked.connect(self.import_list)
+        # ----------------------------------------------------------------------
+
+        # -------------------Adding Popup Tips----------------------------------
+
         # ----------------------------------------------------------------------
 
 
@@ -54,6 +59,11 @@ class SettingsWindow(baseUIWidget, baseUIClass):
             self.pivot_file = self.project_dir + '/pivot.json'
             print("Project directory: " + self.project_dir)
 
+    @qtc.pyqtSlot()
+    def import_list(self):
+        filename = QFileDialog.getOpenFileName(self, 'Import list','C:\\',"Text Files (*.txt *.csv)")[0]
+        with open(filename, 'r') as f:
+            self.lineEdit_list_5.setText(f.read().replace(',\n', ',').replace('\n',','))
 
     @qtc.pyqtSlot()
     def settings_rejected(self):
