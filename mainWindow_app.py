@@ -31,6 +31,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(qtg.QIcon('icon_transparent.png'))
 
         # ------------------------- Initialize Gui Components ----------------------
         # Construct the necessary widgets for MainWindow

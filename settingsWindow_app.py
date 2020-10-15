@@ -10,7 +10,7 @@ from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 # from settingsWindow_form import Ui_SettingsWindow  # Import qtdesigner object
-import json
+from json import dump
 import re
 
 baseUIClass, baseUIWidget = uic.loadUiType('settings_ui.ui')
@@ -19,6 +19,8 @@ baseUIClass, baseUIWidget = uic.loadUiType('settings_ui.ui')
 class StorageSignals(qtc.QObject):
     settingsStored = qtc.pyqtSignal()
     settingsClosed = qtc.pyqtSignal()
+
+
 """End StorageSignals Class"""
 
 
@@ -27,6 +29,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(qtg.QIcon('icon_transparent.png'))
 
         # --------------------------- Data Members -----------------------------
         # Bookkeeping variables
@@ -43,15 +46,17 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         self.buttonBox.rejected.connect(self.settings_rejected)
         self.dir_Button.clicked.connect(self.get_project_dir)
         self.toolButton.clicked.connect(self.import_list)
+        self.Impedance_radioButton_y_7.toggled.connect(self.toggle_cal)
         # ----------------------------------------------------------------------
 
         # -------------------Adding Popup Tips----------------------------------
 
         # ----------------------------------------------------------------------
 
-
     @qtc.pyqtSlot()
     def get_project_dir(self):
+        """Saves the project directory path and settings file path.
+        Also displays the selected directory."""
         temp = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if temp is not None:
             self.project_dir = temp
@@ -61,6 +66,8 @@ class SettingsWindow(baseUIWidget, baseUIClass):
 
     @qtc.pyqtSlot()
     def import_list(self):
+        """Parses a .txt or .csv file where frequencies are separated
+        by a comma or a newline (or both). Result is displayed in the text box."""
         filename = QFileDialog.getOpenFileName(self, 'Import list','C:\\',"Text Files (*.txt *.csv)")[0]
         with open(filename, 'r') as f:
             self.lineEdit_list_5.setText(f.read().replace(',\n', ',').replace('\n',','))
@@ -68,7 +75,6 @@ class SettingsWindow(baseUIWidget, baseUIClass):
     @qtc.pyqtSlot()
     def settings_rejected(self):
         self.settings_empty = True
-
 
     @qtc.pyqtSlot()
     def settings_check(self):
@@ -101,7 +107,6 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         else:
             msg.setDetailedText("Please enter list frequencies as numerical values separated by commas.")
             msg.exec_()
-
 
     @qtc.pyqtSlot()
     def settings_accepted(self):
@@ -156,16 +161,14 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         settings_dict["resolution"] = self.res_doubleSpinBox_7.value()
         settings_dict["gpib_addr"] = int(self.GPIB_addr_comboBox_6.currentText())
         with open(self.pivot_file, "w") as file:
-            json.dump(settings_dict, file)
+            dump(settings_dict, file)
         self.settings_empty = False
         self.storageSignals.settingsStored.emit()
-
 
     def closeEvent(self, event):
         event.accept()
         self.settings_empty = True
         self.storageSignals.settingsClosed.emit()
-
 
     def traverse(self, temp_list, low, high):
         for i in range(0, len(temp_list)):  # change list to integer
@@ -174,6 +177,14 @@ class SettingsWindow(baseUIWidget, baseUIClass):
             if x < low or x > high:  # condition check
                 return False
         return True
+
+    def toggle_cal(self):
+        """In the event when impedance is toggled to yes,
+        calibration will automatically toggle to yes as well."""
+        if self.Impedance_radioButton_y_7.isChecked():
+            self.Calibration_radioButton_y_7.setChecked(True)
+
+
 """End SettingsWindow Class"""
 
 
