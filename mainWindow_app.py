@@ -13,7 +13,9 @@ from meas_display_app import MeasurmentDisplayWindow
 from settingsWindow_app import SettingsWindow
 from progress_bar_app import ProgressBar
 from positioner_toolbar_app import PositionerToolBarWidget
+from DataProcessingLatest import DataProcessing
 from measurement_ctrl import MeasurementCtrl
+from data_storage import create_file
 from positioner import Positioner
 from integer import Coordinate
 import json
@@ -40,6 +42,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.settings = SettingsWindow()
         self.progress_bar = ProgressBar()
         self.pos_control = PositionerToolBarWidget()
+        self.data_processing = DataProcessing()
 
         # self.toolBar.setStyleSheet(
         #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
@@ -49,16 +52,20 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
 
         # Add custom toolbars to MainWindow Widget
-        transport_toolbar = self.addToolBar('Transport_ToolBar')
-        meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
-        progress_display_toolbar = self.addToolBar('Progress_Display_ToolBar')
-        positioner_control_toolbar = self.addToolBar('Positioner_Control_ToolBar')
+        self.transport_toolbar = self.addToolBar('Transport_ToolBar')
+        self.meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
+        self.progress_display_toolbar = self.addToolBar('Progress_Display_ToolBar')
+        self.positioner_control_toolbar = self.addToolBar('Positioner_Control_ToolBar')
+        self.addToolBarBreak()
+        self.data_processing_toolbar = self.addToolBar('Data_Processing_ToolBar')
 
         # Add the custom widgets to the toolbars
-        meas_display_toolbar.addWidget(self.meas_disp_window)
-        transport_toolbar.addWidget(self.transport)
-        progress_display_toolbar.addWidget(self.progress_bar)
-        positioner_control_toolbar.addWidget(self.pos_control)
+        self.meas_display_toolbar.addWidget(self.meas_disp_window)
+        self.transport_toolbar.addWidget(self.transport)
+        self.progress_display_toolbar.addWidget(self.progress_bar)
+        self.positioner_control_toolbar.addWidget(self.pos_control)
+        self.data_processing_toolbar.addWidget(self.data_processing)
+        self.data_processing_toolbar.hide()
         # --------------------------------------------------------------------------
 
         # ------------------- Initialize Gui Signal Connections --------------------
@@ -169,6 +176,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.data_file = '/' + strftime("%b%d_%H%M_%S", localtime()) + '.csv'
                 self.data_file = self.settings.project_dir + self.data_file
                 self.mc = MeasurementCtrl(dict, self.qpt, self.data_file)
+                create_file(self.data_file)
                 # Connect signals and slots between MeasurementCtrl object,
                 # transport model handlers, positioner queue, and gui
                 self.mc.signals.progress.connect(self.progress_bar.progressBar.setValue)
@@ -191,6 +199,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
                 self.mc_thread.start()
                 self.pos_control.lineEdit.setText('SetupRunning')
+                self.data_processing.begin_measurement(pivot_file=self.settings.pivot_file, data_file=self.data_file)
+                self.data_processing_toolbar.show()
 
     @qtc.pyqtSlot()
     def stop_mc(self):
