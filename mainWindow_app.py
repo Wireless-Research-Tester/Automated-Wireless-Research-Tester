@@ -34,9 +34,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(qtg.QIcon('icon_transparent.png'))
+        self.setWindowIcon(qtg.QIcon('window_icon.png'))
         self.palette = qtg.QPalette()
-        self.background_orig = qtg.QImage('background.png')
+        self.background_orig = qtg.QImage('window_background.png')
         self.background = self.background_orig.scaledToWidth(self.width())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)

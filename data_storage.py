@@ -1,3 +1,15 @@
+################################################################################
+#  data_storage
+#
+#  Description: Contains functions used to store the data collected from the
+#               positioner and VNA into a csv file.
+#  Dependencies: None
+#
+#  Author(s): Eric Li
+#  Date: 2020/10/17
+#  Built with Python Version: 3.8.5
+################################################################################
+
 def append_data(filename, data):
     file = open(filename, 'a')
     for i in range(0, len(data)):

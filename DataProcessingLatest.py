@@ -1,7 +1,7 @@
 """
 Data Processing Widget v10.0
 10/17/2020
-
+Author: Stephen Wood
 """
 
 import sys

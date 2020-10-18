@@ -1,6 +1,6 @@
 """"
 =============
-Measurment Display Widget
+Measurement Display Widget
 =============
 Displays empty window
 """""
