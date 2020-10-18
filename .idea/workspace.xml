@@ -20,12 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f0e81cd-a0d7-4a7c-9f58-e08def3f7710" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/icon_transparent.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/alpha.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/alpha.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/background.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataProcessingLatest.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataProcessingLatest.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainWindow_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainWindow_app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settingsWindow_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/settingsWindow_app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meas_display_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/meas_display_ui.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/progress_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/progress_ui.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/settings_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/settings_ui.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,7 +134,7 @@
       <item itemvalue="Python.mainWindow_app" />
     </list>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -196,32 +196,32 @@
     <state x="463" y="126" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1602102586682" />
     <state x="521" y="143" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1602771517750" />
     <state x="651" y="180" key="FileChooserDialogImpl/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602721135985" />
-    <state width="1345" height="178" key="GridCell.Tab.0.bottom" timestamp="1602964686327">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="745" height="210" key="GridCell.Tab.0.bottom" timestamp="1602981986328">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
-    <state width="1515" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1602773000132" />
+    <state width="745" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1602981986328" />
     <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1602290692288" />
-    <state width="1345" height="178" key="GridCell.Tab.0.center" timestamp="1602964686327">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="745" height="210" key="GridCell.Tab.0.center" timestamp="1602981986328">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
-    <state width="1515" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1602773000132" />
+    <state width="745" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1602981986328" />
     <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
-    <state width="1345" height="178" key="GridCell.Tab.0.left" timestamp="1602964686326">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="745" height="210" key="GridCell.Tab.0.left" timestamp="1602981986328">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1602964686326" />
-    <state width="1515" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1602773000132" />
+    <state width="745" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1602981986328" />
     <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
-    <state width="1345" height="178" key="GridCell.Tab.0.right" timestamp="1602964686327">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state width="745" height="210" key="GridCell.Tab.0.right" timestamp="1602981986328">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
-    <state width="1515" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1602773000132" />
+    <state width="745" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1602981986328" />
     <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
     <state x="277" y="57" key="SettingsEditor" timestamp="1602770594192">

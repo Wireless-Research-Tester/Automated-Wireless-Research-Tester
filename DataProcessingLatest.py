@@ -63,10 +63,11 @@ class DataProcessing(QtWidgets.QMainWindow):
 
         self.show()
 
-    def begin_measurement(self, pivot_file, data_file):
-        with open(pivot_file) as file:
-            args = json.load(file)
-        self.Resolution = args['resolution']
+    def begin_measurement(self, data_file, pivot_file=None):
+        if pivot_file is not None:
+            with open(pivot_file) as file:
+                args = json.load(file)
+            self.Resolution = args['resolution']
         self.Polar = True
         # self.ReqFreq = args['freq']  # Values in MHz
         self.data_file = data_file

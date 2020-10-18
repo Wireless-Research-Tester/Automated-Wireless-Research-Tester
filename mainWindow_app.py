@@ -20,7 +20,7 @@ from positioner import Positioner
 from integer import Coordinate
 import json
 from queue import Queue, Empty, Full
-from time import time, sleep
+from time import sleep
 from threading import Lock, Thread
 import pyvisa as visa
 from time import localtime, strftime
@@ -29,11 +29,18 @@ baseUIClass, baseUIWidget = uic.loadUiType('main_window_ui.ui')
 
 
 class MyMainWindow(baseUIWidget, baseUIClass):
+    resized = qtc.pyqtSignal()
     def __init__(self):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(qtg.QIcon('icon_transparent.png'))
+        self.palette = qtg.QPalette()
+        self.background_orig = qtg.QImage('background.png')
+        self.background = self.background_orig.scaledToWidth(self.width())
+        self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
+        self.setPalette(self.palette)
+        self.resized.connect(self.resize_window)
 
         # ------------------------- Initialize Gui Components ----------------------
         # Construct the necessary widgets for MainWindow
@@ -55,6 +62,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.transport_toolbar = self.addToolBar('Transport_ToolBar')
         self.meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
         self.progress_display_toolbar = self.addToolBar('Progress_Display_ToolBar')
+        self.addToolBarBreak()
         self.positioner_control_toolbar = self.addToolBar('Positioner_Control_ToolBar')
         self.addToolBarBreak()
         self.data_processing_toolbar = self.addToolBar('Data_Processing_ToolBar')
@@ -74,6 +82,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.actionSettings.triggered.connect(self.toggle_settings)
         self.settings.storageSignals.settingsStored.connect(self.actionSettings.trigger)
         self.settings.storageSignals.settingsClosed.connect(self.actionSettings.trigger)
+
+        # Create connection between button to open old data and plotting
+        self.settings.open_data_Button.clicked.connect(self.open_prev_measurement)
 
         # Create connections between transport buttons and the functions
         # creating the Gui's control flow for MeasurementCtrl
@@ -123,6 +134,16 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.show()
 
     """End __init__() of MyMainWindow"""
+
+    def resizeEvent(self, event):
+        self.resized.emit()
+        return super(MyMainWindow, self).resizeEvent(event)
+
+    @qtc.pyqtSlot()
+    def resize_window(self):
+        self.background = self.background_orig.scaledToWidth(self.width())
+        self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
+        self.setPalette(self.palette)
 
     # ------------------- MeasurementCtrl Transport Model Slots --------------------
     @qtc.pyqtSlot()
@@ -497,6 +518,15 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             cal_msg.exec_()
             self.mc.cal_finished = True
 
+    # ------------------------------------------------------------------------------
+
+    # ----------------------------- Open Previous Measurement----------------------
+    def open_prev_measurement(self):
+        filename = qtw.QFileDialog.getOpenFileName(self, 'Open Previous Measurement Data',
+                                               'C:\\', "CSV File (*.csv)")[0]
+        self.data_processing.begin_measurement(filename)
+        self.data_processing_toolbar.show()
+        self.toggle_settings()
     # ------------------------------------------------------------------------------
 
     # ----------------------------- Window CLose Event -----------------------------
