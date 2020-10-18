@@ -103,7 +103,7 @@ class MeasurementCtrl():
             self.vna.reset_all()
         else:
             self.vna.reset()
-        data_storage.create_file(self.file)
+        # data_storage.create_file(self.file)
         # Calibrate vna if needed
         if self.cal is True:
             self.signals.calReady.emit()
@@ -193,7 +193,7 @@ class MeasurementCtrl():
                 # be zero, otherwise it will reperesent the state of a previously
                 # paused measurement sweep, allowing that sweep to be resumed
                 i = self.paused_loop_idx
-                while i < int(360/self.resolution):
+                while i <= int(360/self.resolution):
                 # Core execution loop of the measurement sweep. Continues until
                 # either the full sweep has been performed, or until a flag
                 # variable set by the transport control model causes it to
@@ -209,7 +209,7 @@ class MeasurementCtrl():
                     # Delay for vna reset, take measurement, then update progress
                     self.step_delay()
                     self.record_data('S21', self.file)
-                    self.progress = int((i+1) * self.resolution / 360 * 100)
+                    self.progress = int(i * self.resolution / 360 * 100)
                     if self.progress > 100:
                         self.progress = 100
                     self.signals.progress.emit(self.progress)
@@ -250,7 +250,7 @@ class MeasurementCtrl():
             #----------------------- Tilt Step Case ---------------------------
                 # else:
                 #     i = self.paused_loop_idx
-                #     while i < int(180/self.resolution):
+                #     while i <= int(180/self.resolution):
                 #         # Change i to index MeasurementCtrl was paused at if resuming
                 #         if self.resume is True:
                 #             i = self.paused_loop_idx
@@ -261,7 +261,7 @@ class MeasurementCtrl():
                 #         # Delay for vna reset, take measurement, then update progress
                 #         self.step_delay()
                 #         self.record_data('S21', self.file)
-                #         self.progress = int((i+1) * self.resolution / 180 * 100)
+                #         self.progress = int(i * self.resolution / 180 * 100)
                 #         if self.progress > 100:
                 #             self.progress = 100
                 #         self.signals.progress.emit(self.progress)
@@ -311,7 +311,7 @@ class MeasurementCtrl():
                 Thread_Jog = Thread(target=self.send_pan_jog, args=(), daemon=True)
                 Thread_Jog.start()
                 i = self.paused_loop_idx
-                while i < int(360/self.resolution):
+                while i <= int(360/self.resolution):
                 # Core execution loop of the measurement sweep. Continues until
                 # either the full sweep has been performed, or until a flag variable
                 # set by the transport control model causes it to break out of loop.
@@ -328,7 +328,7 @@ class MeasurementCtrl():
                     # next measurement is not taken too early, while the outer
                     # while loop forces the thread to wait on the lock to be released
                     lock = self.init_cont_lock()
-                    target = ((i+1) * self.resolution) - 180
+                    target = (i * self.resolution) - 180
                     self.update_position()
                     while lock.acquire(blocking=False) is not True:
                         sleep(.2)
@@ -384,7 +384,7 @@ class MeasurementCtrl():
                 #     Thread_Jog = Thread(target=self.send_tilt_jog, args=())
                 #     Thread_Jog.start()
                 #     i = self.paused_loop_idx
-                #     while i < int(180/self.resolution):
+                #     while i <= int(180/self.resolution):
                 #         # Change i to index MeasurementCtrl was paused at if resuming
                 #         if self.resume is True:
                 #             i = self.paused_loop_idx
@@ -394,7 +394,7 @@ class MeasurementCtrl():
 
                 #         # Delay for vna reset, take measurement, then update progress
                 #         lock = self.init_cont_lock()
-                #         target = ((i+1) * self.resolution) - 90
+                #         target = (i * self.resolution) - 90
                 #         self.update_position()
                 #         while lock.acquire(blocking=False) is not True:
                 #             while self.tilt < target:
