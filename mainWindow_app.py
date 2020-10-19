@@ -8,16 +8,16 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from PyQt5 import uic
-from transport_app import TransportWidget
-from meas_display_app import MeasurmentDisplayWindow
-from settingsWindow_app import SettingsWindow
-from progress_bar_app import ProgressBar
-from positioner_toolbar_app import PositionerToolBarWidget
-from DataProcessingLatest import DataProcessing
-from measurement_ctrl import MeasurementCtrl
-from data_storage import create_file
-from positioner import Positioner
-from integer import Coordinate
+from gui.transport_app import TransportWidget
+from gui.meas_display_app import MeasurmentDisplayWindow
+from gui.settingsWindow_app import SettingsWindow
+from gui.progress_bar_app import ProgressBar
+from gui.positioner_toolbar_app import PositionerToolBarWidget
+from data_processing.data_processing import DataProcessing
+from measurement_ctrl.measurement_ctrl import MeasurementCtrl
+from measurement_ctrl.data_storage import create_file
+from measurement_ctrl.positioner import Positioner
+from measurement_ctrl.integer import Coordinate
 import json
 from queue import Queue, Empty, Full
 from time import sleep
@@ -25,18 +25,19 @@ from threading import Lock, Thread
 import pyvisa as visa
 from time import localtime, strftime
 
-baseUIClass, baseUIWidget = uic.loadUiType('main_window_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/main_window_ui.ui')
 
 
 class MyMainWindow(baseUIWidget, baseUIClass):
     resized = qtc.pyqtSignal()
+
     def __init__(self):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(qtg.QIcon('window_icon.png'))
+        self.setWindowIcon(qtg.QIcon('gui/window_icon.png'))
         self.palette = qtg.QPalette()
-        self.background_orig = qtg.QImage('window_background.png')
+        self.background_orig = qtg.QImage('gui/window_background.png')
         self.background = self.background_orig.scaledToWidth(self.width())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
@@ -122,7 +123,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.pos_control.connectQPT.clicked.connect(self.connect_positioner)
         self.pos_control.disconnectQPT.clicked.connect(self.disconnect_positioner)
         self.pos_control.faultReset.clicked.connect(self.reset_positioner)
-        
+
         self.pos_control.disconnectQPT.setDisabled(True)
         self.pos_control.faultReset.setDisabled(True)
 
@@ -434,24 +435,24 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         msg.setWindowTitle('Warning!')
         msg.setText('Positioner failed to connect!')
         msg.setIcon(qtw.QMessageBox.Critical)
-    
+
         port = self.pos_control.portCombo.currentText()
         baud = self.pos_control.baudRateCombo.currentText()
-    
+
         self.qpt = Positioner(port, int(baud))
         if self.qpt.comms.connected:
             self.pos_control.connectStatus.setChecked(True)
-    
+
             self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
             self.qpt.signals.currentPan.connect(self.settings.pan_lcdNumber_4.display)
             self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
             self.qpt.signals.currentTilt.connect(self.settings.tilt_lcdNumber_4.display)
-    
+
             self.settings.right_toolButton_4.clicked.connect(self.q_jog_cw)
             self.settings.left_toolButton_4.clicked.connect(self.q_jog_ccw)
             self.settings.up_toolButton_4.clicked.connect(self.q_jog_up)
             self.settings.down_toolButton_4.clicked.connect(self.q_jog_down)
-    
+
             self.pos_control.connectQPT.setDisabled(True)
             self.pos_control.disconnectQPT.setEnabled(True)
             self.pos_control.faultReset.setEnabled(True)
@@ -464,7 +465,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 'and correct USB port alias and baud rate are selected.'
             )
             msg.exec_()
-    
+
     @qtc.pyqtSlot()
     def disconnect_positioner(self):
         self.pos_control.connectStatus.setChecked(False)
@@ -474,11 +475,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         if self.qpt:
             del self.qpt
             self.qpt = None
-    
+
     @qtc.pyqtSlot()
     def reset_positioner(self):
         pass
-    
+
     # ------------------------------------------------------------------------------
 
     # ----------------------------- Settings Button Slot ---------------------------
@@ -523,10 +524,12 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     # ----------------------------- Open Previous Measurement----------------------
     def open_prev_measurement(self):
         filename = qtw.QFileDialog.getOpenFileName(self, 'Open Previous Measurement Data',
-                                               'C:\\', "CSV File (*.csv)")[0]
-        self.data_processing.begin_measurement(filename)
-        self.data_processing_toolbar.show()
-        self.toggle_settings()
+                                                   'C:/', "CSV File (*.csv)")[0]
+        if len(filename) > 0:
+            self.data_processing.begin_measurement(filename)
+            self.data_processing_toolbar.show()
+            self.toggle_settings()
+
     # ------------------------------------------------------------------------------
 
     # ----------------------------- Window CLose Event -----------------------------

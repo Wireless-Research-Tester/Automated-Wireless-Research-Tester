@@ -9,7 +9,7 @@ from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 
-baseUIClass, baseUIWidget = uic.loadUiType('progress_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/progress_ui.ui')
 
 
 class ProgressBar(baseUIWidget, baseUIClass):

@@ -1,9 +1,9 @@
 <RCC>
   <qresource prefix="images">
-    <file>Help-icon.png</file>
-    <file>Media-Controls-Stop-icon.png</file>
-    <file>play.png</file>
-    <file>gear.png</file>
-    <file>pngegg.png</file>
+    <file>gui/Help-icon.png</file>
+    <file>gui/Media-Controls-Stop-icon.png</file>
+    <file>gui/play.png</file>
+    <file>gui/gear.png</file>
+    <file>gui/pngegg.png</file>
   </qresource>
 </RCC>
