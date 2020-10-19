@@ -1,6 +1,6 @@
 """"
 =============
-Transport
+Measurement Display Widget
 =============
 Displays empty window
 """""
@@ -9,10 +9,10 @@ from PyQt5 import QtWidgets as qtw, uic
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 
-baseUIClass, baseUIWidget = uic.loadUiType('transport_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/meas_display_ui.ui')
 
 
-class TransportWidget(baseUIWidget, baseUIClass):
+class MeasurmentDisplayWindow(baseUIWidget, baseUIClass):
 
     def __init__(self):
         """MainWindow constructor"""
@@ -26,5 +26,5 @@ class TransportWidget(baseUIWidget, baseUIClass):
 
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
-    tw = TransportWidget()
+    mdw = MeasurmentDisplayWindow()
     sys.exit(app.exec())

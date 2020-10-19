@@ -22,8 +22,8 @@
 #  Built with Python Version: 3.8.2
 #
 ################################################################################
-import integer as qi
-from constants import CTRL, ESC, ESC_MASK, STATIC_TX
+import measurement_ctrl.integer as qi
+from measurement_ctrl.constants import CTRL, ESC, ESC_MASK, STATIC_TX
 
 
 ctrl_chars = CTRL.values()

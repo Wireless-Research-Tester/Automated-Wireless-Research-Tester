@@ -13,7 +13,7 @@ from PyQt5 import uic
 from json import dump
 import re
 
-baseUIClass, baseUIWidget = uic.loadUiType('settings_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/settings_ui.ui')
 
 
 class StorageSignals(qtc.QObject):
@@ -69,8 +69,9 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         """Parses a .txt or .csv file where frequencies are separated
         by a comma or a newline (or both). Result is displayed in the text box."""
         filename = QFileDialog.getOpenFileName(self, 'Import list','C:\\',"Text Files (*.txt *.csv)")[0]
-        with open(filename, 'r') as f:
-            self.lineEdit_list_5.setText(f.read().replace(',\n', ',').replace('\n',','))
+        if len(filename) > 0:
+            with open(filename, 'r') as f:
+                self.lineEdit_list_5.setText(f.read().replace(',\n', ',').replace('\n',','))
 
     @qtc.pyqtSlot()
     def settings_rejected(self):

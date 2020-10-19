@@ -18,7 +18,7 @@
 import pyvisa as visa
 import math
 from struct import unpack
-from vna_syntaxes import *
+from measurement_ctrl.vna_syntaxes import *
 
 
 class Data:
