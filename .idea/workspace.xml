@@ -20,10 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f0e81cd-a0d7-4a7c-9f58-e08def3f7710" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/gui/graph_mode_toolbar_app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gui/graph_mode_ui.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/main_window_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/gui/main_window_ui.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/transport_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/gui/transport_ui.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/resources.qrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainWindow_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainWindow_app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,6 +88,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="graph_mode_toolbar_app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="alpha" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gui/graph_mode_toolbar_app.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="mainWindow_app" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="alpha" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -135,7 +157,13 @@
     <list>
       <item itemvalue="Python.mainWindow_app" />
       <item itemvalue="Python.settingsWindow_app" />
+      <item itemvalue="Python.graph_mode_toolbar_app" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.graph_mode_toolbar_app" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="false" />
   <component name="SvnConfiguration">
@@ -165,7 +193,14 @@
       <option name="project" value="LOCAL" />
       <updated>1603142623084</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="updated recouces.qrc location and converted file to .py">
+      <created>1603145553838</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1603145553838</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,7 +222,8 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="size adjustments" />
     <MESSAGE value="Changed pos_ctrl_toolbar to be long" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed pos_ctrl_toolbar to be long" />
+    <MESSAGE value="updated recouces.qrc location and converted file to .py" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated recouces.qrc location and converted file to .py" />
   </component>
   <component name="WindowStateProjectService">
     <state x="154" y="0" width="1092" height="835" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602983387417">
@@ -197,44 +233,44 @@
     <state x="154" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1602983387417" />
     <state x="192" y="0" width="1092" height="835" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602721139158" />
     <state x="128" y="23" width="1024" height="777" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.777@0.23.1280.777" timestamp="1601420937187" />
-    <state x="217" y="23" key="CommitChangelistDialog2" timestamp="1603142617671">
+    <state x="217" y="23" key="CommitChangelistDialog2" timestamp="1603145553539">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="217" y="23" key="CommitChangelistDialog2/0.23.1280.777@0.23.1280.777" timestamp="1603142617671" />
+    <state x="217" y="23" key="CommitChangelistDialog2/0.23.1280.777@0.23.1280.777" timestamp="1603145553539" />
     <state x="521" y="143" key="FileChooserDialogImpl" timestamp="1602771517750">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="463" y="126" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1602102586682" />
     <state x="521" y="143" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1602771517750" />
     <state x="651" y="180" key="FileChooserDialogImpl/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602721135985" />
-    <state width="1238" height="170" key="GridCell.Tab.0.bottom" timestamp="1603145281811">
+    <state width="1238" height="170" key="GridCell.Tab.0.bottom" timestamp="1603147554958">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
     <state width="1515" height="261" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603135029237" />
     <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1603145281811" />
-    <state width="1238" height="170" key="GridCell.Tab.0.center" timestamp="1603145281810">
+    <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1603147554958" />
+    <state width="1238" height="170" key="GridCell.Tab.0.center" timestamp="1603147554957">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
     <state width="1515" height="261" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
     <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1603145281810" />
-    <state width="1238" height="170" key="GridCell.Tab.0.left" timestamp="1603145281810">
+    <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1603147554957" />
+    <state width="1238" height="170" key="GridCell.Tab.0.left" timestamp="1603147554957">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1602964686326" />
     <state width="1515" height="261" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
     <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1603145281810" />
-    <state width="1238" height="170" key="GridCell.Tab.0.right" timestamp="1603145281811">
+    <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1603147554957" />
+    <state width="1238" height="170" key="GridCell.Tab.0.right" timestamp="1603147554957">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
     <state width="1515" height="261" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1603135029236" />
     <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1603145281811" />
+    <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1603147554957" />
     <state width="1515" height="261" key="GridCell.Tab.1.bottom" timestamp="1603135029240">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -255,14 +291,14 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="277" y="57" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1602770594192" />
-    <state x="127" y="220" key="Vcs.Push.Dialog.v2" timestamp="1603142628443">
+    <state x="127" y="220" key="Vcs.Push.Dialog.v2" timestamp="1603145557425">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="127" y="220" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1603142628443" />
-    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603142532539">
+    <state x="127" y="220" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1603145557425" />
+    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603145509477">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.777@0.23.1280.777" timestamp="1603142532539" />
+    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.777@0.23.1280.777" timestamp="1603145509477" />
     <state x="370" y="320" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1601421112385">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
@@ -277,7 +313,8 @@
     <SUITE FILE_PATH="coverage/alpha_gui$pyqt_template.coverage" NAME="pyqt_template Coverage Results" MODIFIED="1600142207879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$progress_bar_app.coverage" NAME="progress_bar_app Coverage Results" MODIFIED="1601421586393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$settingsWindow_app.coverage" NAME="settingsWindow_app Coverage Results" MODIFIED="1600963718115" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/alpha_gui$graph_mode_toolbar_app.coverage" NAME="graph_mode_toolbar_app Coverage Results" MODIFIED="1603147065499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/alpha_gui$scratch_2.coverage" NAME="scratch_2 Coverage Results" MODIFIED="1600824407495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/alpha_gui$mainWindow_app.coverage" NAME="mainWindow_app Coverage Results" MODIFIED="1603145281795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/alpha_gui$mainWindow_app.coverage" NAME="mainWindow_app Coverage Results" MODIFIED="1603147554944" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
