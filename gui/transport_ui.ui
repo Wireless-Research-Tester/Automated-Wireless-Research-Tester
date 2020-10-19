@@ -57,7 +57,7 @@
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-     qproperty-icon: url(:/images/pngegg.png);
+     qproperty-icon: url(:/images/gui/pngegg.png);
 }
 
 QPushButton {
@@ -114,7 +114,7 @@ QPushButton:pressed {
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-     qproperty-icon: url(:/images/play.png);
+     qproperty-icon: url(:/images/gui/play.png);
 }
 QPushButton {
     color: #333;
@@ -182,7 +182,7 @@ QPushButton:pressed {
         </property>
         <property name="styleSheet">
          <string notr="true">QPushButton {
-     qproperty-icon: url(:/images/Media-Controls-Stop-icon.png);
+     qproperty-icon: url(:/images/gui/Media-Controls-Stop-icon.png);
 }
 
 QPushButton {
@@ -229,8 +229,8 @@ QPushButton:pressed {
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
  <buttongroups>

@@ -64,8 +64,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/images/gear.png</normaloff>:/images/gear.png</iconset>
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/gui/gear.png</normaloff>:/images/gui/gear.png</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
@@ -82,8 +82,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/images/Help-icon.png</normaloff>:/images/Help-icon.png</iconset>
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/gui/Help-icon.png</normaloff>:/images/gui/Help-icon.png</iconset>
    </property>
    <property name="text">
     <string>Help</string>
@@ -94,7 +94,7 @@
   </action>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

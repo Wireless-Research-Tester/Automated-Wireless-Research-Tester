@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="images">
+    <file>gui/window_background.png</file>
+    <file>gui/window_icon.png</file>
     <file>gui/Help-icon.png</file>
     <file>gui/Media-Controls-Stop-icon.png</file>
     <file>gui/play.png</file>
