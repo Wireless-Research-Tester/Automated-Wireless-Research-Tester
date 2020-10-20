@@ -56,6 +56,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.menu = self.menuBar()
         self.menu.setNativeMenuBar(False)
         self.help_menu_item = self.menu.addMenu("Help")
+        self.help_menu_item.addMenu("Quick Help")
+        self.help_menu_item.addMenu("Documentation")
+
 
         # self.toolBar.setStyleSheet(
         #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
