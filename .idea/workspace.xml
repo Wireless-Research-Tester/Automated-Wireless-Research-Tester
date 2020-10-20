@@ -271,31 +271,31 @@
     <state x="463" y="126" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1602102586682" />
     <state x="521" y="143" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1602771517750" />
     <state x="651" y="180" key="FileChooserDialogImpl/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602721135985" />
-    <state width="1238" height="170" key="GridCell.Tab.0.bottom" timestamp="1603224757395">
-      <screen x="0" y="23" width="1280" height="777" />
+    <state width="1345" height="178" key="GridCell.Tab.0.bottom" timestamp="1603231141393">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
+    <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
     <state width="1515" height="261" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603135029237" />
     <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1603224757395" />
-    <state width="1238" height="170" key="GridCell.Tab.0.center" timestamp="1603224757393">
-      <screen x="0" y="23" width="1280" height="777" />
+    <state width="1345" height="178" key="GridCell.Tab.0.center" timestamp="1603231141393">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
+    <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
     <state width="1515" height="261" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
     <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1603224757393" />
-    <state width="1238" height="170" key="GridCell.Tab.0.left" timestamp="1603224757392">
-      <screen x="0" y="23" width="1280" height="777" />
+    <state width="1345" height="178" key="GridCell.Tab.0.left" timestamp="1603231141393">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1602964686326" />
+    <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
     <state width="1515" height="261" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
     <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1603224757392" />
-    <state width="1238" height="170" key="GridCell.Tab.0.right" timestamp="1603224757394">
-      <screen x="0" y="23" width="1280" height="777" />
+    <state width="1345" height="178" key="GridCell.Tab.0.right" timestamp="1603231141393">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
+    <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
     <state width="1515" height="261" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1603135029236" />
     <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
     <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1603224757394" />
@@ -331,18 +331,5 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="370" y="320" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/0.23.1280.777@0.23.1280.777" timestamp="1601421112385" />
-  </component>
-  <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/alpha_gui$settingsWindow_base.coverage" NAME="settingsWindow_base Coverage Results" MODIFIED="1600131593330" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Documents/qtDesignerFiles" />
-    <SUITE FILE_PATH="coverage/alpha_gui$SeniorDesign.coverage" NAME="SeniorDesign Coverage Results" MODIFIED="1601420985213" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$positioner_toolbar_app.coverage" NAME="positioner_toolbar_app Coverage Results" MODIFIED="1602290676875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$transport_app.coverage" NAME="transport_app Coverage Results" MODIFIED="1600964394623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$meas_display_app.coverage" NAME="meas_display_app Coverage Results" MODIFIED="1600966953342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$pyqt_template.coverage" NAME="pyqt_template Coverage Results" MODIFIED="1600142207879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$progress_bar_app.coverage" NAME="progress_bar_app Coverage Results" MODIFIED="1601421586393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$settingsWindow_app.coverage" NAME="settingsWindow_app Coverage Results" MODIFIED="1600963718115" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$graph_mode_toolbar_app.coverage" NAME="graph_mode_toolbar_app Coverage Results" MODIFIED="1603147065499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/alpha_gui$scratch_2.coverage" NAME="scratch_2 Coverage Results" MODIFIED="1600824407495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/alpha_gui$mainWindow_app.coverage" NAME="mainWindow_app Coverage Results" MODIFIED="1603224757369" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

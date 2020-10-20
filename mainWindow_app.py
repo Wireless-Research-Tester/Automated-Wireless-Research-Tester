@@ -127,7 +127,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         ports = rm.list_resources()
         for i in ports:
             if i[0:4] == 'ASRL':
-                self.pos_control.portCombo.addItem(i)
+                self.pos_control.portCombo_2.addItem(i)
 
         self.pos_control.connectStatus.setDisabled(True)
 
@@ -447,7 +447,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         msg.setText('Positioner failed to connect!')
         msg.setIcon(qtw.QMessageBox.Critical)
 
-        port = self.pos_control.portCombo.currentText()
+        port = self.pos_control.portCombo_2.currentText()
         baud = self.pos_control.baudRateCombo.currentText()
 
         self.qpt = Positioner(port, int(baud))
