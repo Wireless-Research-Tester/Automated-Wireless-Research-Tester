@@ -53,6 +53,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.pos_control = PositionerToolBarWidget()
         self.data_processing = DataProcessing()
         self.graph_mode = GraphModeToolBar()
+        self.menu = self.menuBar()
+        self.menu.setNativeMenuBar(False)
+        self.help_menu_item = self.menu.addMenu("Help")
 
         # self.toolBar.setStyleSheet(
         #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
@@ -66,10 +69,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
         self.progress_display_toolbar = self.addToolBar('Progress_Display_ToolBar')
         self.addToolBarBreak()
+        self.graph_mode_toolbar = self.addToolBar('Graph_Mode_ToolBar')
         self.positioner_control_toolbar = self.addToolBar('Positioner_Control_ToolBar')
         self.addToolBarBreak()
         self.data_processing_toolbar = self.addToolBar('Data_Processing_ToolBar')
-        self.graph_mode_toolbar = self.addToolBar('Graph_Mode_ToolBar')
+
 
         # Add the custom widgets to the toolbars
         self.meas_display_toolbar.addWidget(self.meas_disp_window)

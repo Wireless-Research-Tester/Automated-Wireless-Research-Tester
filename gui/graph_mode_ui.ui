@@ -2,18 +2,21 @@
 <ui version="4.0">
  <class>Form</class>
  <widget class="QWidget" name="Form">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>130</width>
-    <height>116</height>
+    <width>124</width>
+    <height>126</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>130</width>
-    <height>120</height>
+    <width>140</width>
+    <height>130</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -30,14 +33,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>0</width>
-       <height>0</height>
+       <width>100</width>
+       <height>115</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>100000</width>
-       <height>10000000</height>
+       <width>150</width>
+       <height>160</height>
       </size>
      </property>
      <property name="title">
@@ -54,53 +57,61 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QToolButton" name="graph_mode_bttn_polar">
+       <widget class="QComboBox" name="polar_rect_comboBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text">
-         <string>Polar</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
+        <property name="editable">
          <bool>false</bool>
         </property>
-        <property name="autoRaise">
-         <bool>true</bool>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
         </property>
-        <attribute name="buttonGroup">
-         <string notr="true">buttonGroup</string>
-        </attribute>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string>Polar</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Rectangular</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="graph_mode_bttn_s21">
+       <widget class="QComboBox" name="s21_imp_comboBox">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text">
-         <string>S21</string>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
         </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
+        <property name="frame">
          <bool>false</bool>
         </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">buttonGroup</string>
-        </attribute>
+        <item>
+         <property name="text">
+          <string>S21</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Impedance</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

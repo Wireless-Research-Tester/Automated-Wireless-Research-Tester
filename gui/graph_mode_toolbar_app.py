@@ -20,6 +20,7 @@ class GraphModeToolBar(baseUIWidget, baseUIClass):
         self.setupUi(self)
         # Main UI code goes here
 
+
         # End main UI code
         self.show()
 
