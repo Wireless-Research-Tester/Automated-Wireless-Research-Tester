@@ -110,6 +110,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.transport.pauseButton.clicked.connect(self.pause_mc)
         self.transport.stopButton.clicked.connect(self.stop_mc)
 
+        # Create connections between graph mode toolbar and data processing
+        self.graph_mode.polar_rect_comboBox.currentTextChanged.connect(self.update_plot)
+        self.graph_mode.s21_imp_comboBox.currentTextChanged.connect(self.update_plot)
+
         self.transport.pauseButton.setDisabled(True)
         self.transport.stopButton.setDisabled(True)
         # --------------------------------------------------------------------------
@@ -506,9 +510,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         if self.is_settings_open:
             self.settings.hide()
             self.is_settings_open = False
+            self.actionSettings.setChecked(False)
         else:
             self.settings.show()
             self.is_settings_open = True
+            self.actionSettings.setChecked(True)
 
     # ------------------------------------------------------------------------------
 
@@ -575,11 +581,24 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         filename = qtw.QFileDialog.getOpenFileName(self, 'Open Previous Measurement Data',
                                                    'C:/', "CSV File (*.csv)")[0]
         if len(filename) > 0:
-            self.data_processing.begin_measurement(filename)
+            if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
+                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=True)
+                else:
+                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=True)
+            else:
+                if self.graph_mode.s21_imp_comboBox.currentText() == 'Impedance':
+                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
+                else:
+                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
             self.data_processing_toolbar.show()
             self.toggle_settings()
 
     # ------------------------------------------------------------------------------
+
+    # ---------------------------- Change displayed data and format of plot----------
+    def update_plot(self):
+        print("lksjd")
 
     # ----------------------------- Window CLose Event -----------------------------
     # Deal with window being closed via the 'X' button
