@@ -116,7 +116,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\Eric\anaconda3\envs\ece485\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\mikeb\AppData\Local\Programs\Python\Python38\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -256,10 +256,10 @@
     <option name="LAST_COMMIT_MESSAGE" value="Created groupbox with graph mode selection buttons. added to MW" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="192" y="0" width="1092" height="859" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603287758032">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="137" y="0" width="1092" height="859" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603303395922">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="137" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1602708859242" />
+    <state x="137" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1603303395922" />
     <state x="154" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1602983387417" />
     <state x="192" y="0" width="1092" height="859" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603287758032" />
     <state x="128" y="23" width="1024" height="777" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.777@0.23.1280.777" timestamp="1601420937187" />
@@ -273,31 +273,31 @@
     <state x="463" y="126" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1602102586682" />
     <state x="521" y="143" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1602771517750" />
     <state x="651" y="180" key="FileChooserDialogImpl/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602721135985" />
-    <state width="938" height="282" key="GridCell.Tab.0.bottom" timestamp="1603293319414">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1345" height="59" key="GridCell.Tab.0.bottom" timestamp="1603309513034">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
+    <state width="1345" height="59" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1603309513034" />
     <state width="1515" height="261" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603135029237" />
     <state width="938" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603293319414" />
     <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1603224757395" />
-    <state width="938" height="282" key="GridCell.Tab.0.center" timestamp="1603293319414">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1345" height="59" key="GridCell.Tab.0.center" timestamp="1603309513034">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
+    <state width="1345" height="59" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1603309513034" />
     <state width="1515" height="261" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
     <state width="938" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603293319414" />
     <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1603224757393" />
-    <state width="938" height="282" key="GridCell.Tab.0.left" timestamp="1603293319414">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1345" height="59" key="GridCell.Tab.0.left" timestamp="1603309513034">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
+    <state width="1345" height="59" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1603309513034" />
     <state width="1515" height="261" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
     <state width="938" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603293319414" />
     <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1603224757392" />
-    <state width="938" height="282" key="GridCell.Tab.0.right" timestamp="1603293319414">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1345" height="59" key="GridCell.Tab.0.right" timestamp="1603309513034">
+      <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1603231141393" />
+    <state width="1345" height="59" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1603309513034" />
     <state width="1515" height="261" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1603135029236" />
     <state width="938" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603293319414" />
     <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1603224757394" />

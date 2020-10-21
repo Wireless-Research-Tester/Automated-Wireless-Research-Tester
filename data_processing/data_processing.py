@@ -71,6 +71,10 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.data_file = data_file
         self.Live = self.is_live()
 
+        # self.sc.close()
+        # self.sc = MplCanvas(self, width=9, height=6, dpi=80)
+        # self.show()
+
         if self.Live:
             self.ani = animation.FuncAnimation(self.sc.figure, self.animate, interval=1000)
         else:
@@ -207,8 +211,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         """
         self.alt_labels = []
         mhz = self.mhz_or_ghz()
-        type_of_marker = 'D'  # Can be added to MyRadioButtons function as Kwarg
-
+        type_of_marker = 'o'  # Can be added to MyRadioButtons function as Kwarg
         # Starting point in data frame
         index = 0
 
@@ -297,8 +300,8 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.radio = MyRadioButtons(self.sc.bx, self.alt_labels,
                                     marker=type_of_marker,
                                     keep_color=self.Live,  # Bool whether button pushes change color
-                                    size=100,  # if diamond type_of_marker size(100) default: (100)
-                                    ncol=2)  # Number of columns
+                                    size=90,  # if diamond type_of_marker size(100) default: (100)
+                                    ncol=1)  # Number of columns
         if not self.Live:
             self.sc.figure.canvas.mpl_connect('pick_event', self.set_visible)
 

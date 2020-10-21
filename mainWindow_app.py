@@ -243,7 +243,12 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
                 self.mc_thread.start()
                 self.pos_control.lineEdit.setText('SetupRunning')
-                self.data_processing.begin_measurement(pivot_file=self.settings.pivot_file, data_file=self.data_file)
+                self.data_processing_toolbar.clear()
+                del self.data_processing
+                self.data_processing = DataProcessing()
+                self.data_processing_toolbar.addWidget(self.data_processing)
+                self.data_processing.begin_measurement(data_file=self.data_file, pivot_file=self.settings.pivot_file)
+
                 self.data_processing_toolbar.show()
 
     @qtc.pyqtSlot()
@@ -583,22 +588,68 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         if len(filename) > 0:
             if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
                     self.data_processing.begin_measurement(filename, pivot_file=None, polar=True)
                 else:
-                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=True)
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
+                    self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
             else:
-                if self.graph_mode.s21_imp_comboBox.currentText() == 'Impedance':
+                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
                     self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
                 else:
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
                     self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
             self.data_processing_toolbar.show()
+            self.data_file = filename
             self.toggle_settings()
 
     # ------------------------------------------------------------------------------
 
     # ---------------------------- Change displayed data and format of plot----------
     def update_plot(self):
-        print("lksjd")
+        if self.data_file is not None:
+            if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
+                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=True)
+                else:
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=False)
+                    self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
+            else:
+                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=False)
+                else:
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=False)
+
 
     # ----------------------------- Window CLose Event -----------------------------
     # Deal with window being closed via the 'X' button
