@@ -76,7 +76,7 @@
      <normaloff>:/images/gui/Help-icon.png</normaloff>:/images/gui/Help-icon.png</iconset>
    </property>
    <property name="text">
-    <string>Help</string>
+    <string>Help Off</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>

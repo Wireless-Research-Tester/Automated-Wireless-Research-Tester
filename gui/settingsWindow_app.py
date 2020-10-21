@@ -29,7 +29,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(qtg.QIcon('icon_transparent.png'))
+        self.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
 
         # --------------------------- Data Members -----------------------------
         # Bookkeeping variables

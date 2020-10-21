@@ -4,6 +4,7 @@ Main Window
 =============
 """
 import sys
+import os
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
@@ -36,9 +37,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(qtg.QIcon('gui/window_icon.png'))
+        self.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         self.palette = qtg.QPalette()
-        self.background_orig = qtg.QImage('gui/window_background.png')
+        self.background_orig = qtg.QImage(':/images/gui/window_background.png')
         self.background = self.background_orig.scaledToWidth(self.width())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
@@ -56,8 +57,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.menu = self.menuBar()
         self.menu.setNativeMenuBar(False)
         self.help_menu_item = self.menu.addMenu("Help")
-        self.help_menu_item.addMenu("Quick Help")
-        self.help_menu_item.addMenu("Documentation")
+        self.help = self.help_menu_item.addAction("Turn Help On")
+        self.docs = self.help_menu_item.addAction("Documentation")
 
 
         # self.toolBar.setStyleSheet(
@@ -98,6 +99,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # Create connection between button to open old data and plotting
         self.settings.open_data_Button.clicked.connect(self.open_prev_measurement)
 
+        # Create connection between help button and help
+        self.actionHelp.triggered.connect(self.toggle_help)
+        self.help.triggered.connect(self.toggle_help)
+        self.docs.triggered.connect(self.show_docs)
+
         # Create connections between transport buttons and the functions
         # creating the Gui's control flow for MeasurementCtrl
         self.transport.playButton.clicked.connect(self.start_mc)
@@ -110,6 +116,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
         # ----------------------------- Data Members -------------------------------
         self.is_settings_open = False  # Keeps track of settings window toggle
+        self.is_help_on = False  # Keeps tracks of status of popups
 
         # MeasurementCtrl and its necessary synchronization variables
         self.mc = None  # Placeholder for MeasurementCtrl object
@@ -504,6 +511,37 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.is_settings_open = True
 
     # ------------------------------------------------------------------------------
+
+    # ----------------------------- Help Button Toggle Slog ------------------------
+    @qtc.pyqtSlot()
+    def toggle_help(self):
+        if self.is_help_on:
+            # Turning off help, so disable tooltips
+            self.actionHelp.setText('Help Off')
+            self.actionHelp.setChecked(False)
+            self.help.setText('Turn Help On')
+            self.is_help_on = False
+        else:
+            # Turning on help, so enable tooltips
+            self.actionHelp.setText('Help On')
+            self.actionHelp.setChecked(True)
+            self.help.setText('Turn Help Off')
+            self.is_help_on = True
+    # ------------------------------------------------------------------------------
+
+    # ----------------------------- Show Documentation Slot --------------------------
+    @qtc.pyqtSlot()
+    def show_docs(self):
+        if os.path.exists('README.md'):
+            os.startfile('README.md')
+        else:
+            msg = qtw.QMessageBox()
+            msg.setIcon(qtw.QMessageBox.Critical)
+            msg.setStandardButtons(qtw.QMessageBox.Ok)
+            msg.setText('User Manual.pdf was not found within program directory')
+            msg.setWindowTitle('Error')
+            msg.exec_()
+    # --------------------------------------------------------------------------------
 
     # ----------------------------- Calibration Prompt Slot ---------------------------
     @qtc.pyqtSlot()
