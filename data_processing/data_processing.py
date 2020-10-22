@@ -11,7 +11,6 @@ import pandas as pd
 import matplotlib.animation as animation
 from matplotlib.widgets import AxesWidget, RadioButtons
 import os
-import json
 from PyQt5 import QtWidgets
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
@@ -37,6 +36,7 @@ class DataProcessing(QtWidgets.QMainWindow):
 
         self.Resolution = None
         self.Polar = None
+        self.s11 = None
         self.ReqFreq = None  # Values in MHz
         self.data_file = None
         self.Live = None
@@ -61,12 +61,9 @@ class DataProcessing(QtWidgets.QMainWindow):
 
         self.show()
 
-    def begin_measurement(self, data_file, pivot_file=None, polar=True):
-        if pivot_file is not None:
-            with open(pivot_file) as file:
-                args = json.load(file)
-            self.Resolution = args['resolution']
+    def begin_measurement(self, data_file, polar=True, s11=False):
         self.Polar = polar
+        self.s11 = s11
         # self.ReqFreq = args['freq']  # Values in MHz
         self.data_file = data_file
         self.Live = self.is_live()
@@ -130,6 +127,12 @@ class DataProcessing(QtWidgets.QMainWindow):
         else:
             magnitude_val_set = magnitude_val_set['magnitude'] - max_magnitude
 
+        # find smallest value in data set to set visible points
+        min_magnitude = magnitude_val_set.min()
+        if min_magnitude < -40:
+            numpy_magnitude_set = np.array(magnitude_val_set.values.tolist())
+            magnitude_val_set = np.where(numpy_magnitude_set < -40, -40, numpy_magnitude_set).tolist()
+
         # Create a string of requested frequency for legend
         current_freq = (df['freq'].values[index])
         if mhz:
@@ -153,6 +156,10 @@ class DataProcessing(QtWidgets.QMainWindow):
                 magnitude_val_set = magnitude_val_set['magnitude'] + max_magnitude
             else:
                 magnitude_val_set = magnitude_val_set['magnitude'] - max_magnitude
+            min_magnitude = magnitude_val_set.min()
+            if min_magnitude < -40:
+                numpy_magnitude_set = np.array(magnitude_val_set.values.tolist())
+                magnitude_val_set = np.where(numpy_magnitude_set < -40, -40, numpy_magnitude_set).tolist()
             current_freq = (df['freq'].values[index])
             if mhz:
                 current_freq_string = str(int(current_freq))
@@ -237,6 +244,12 @@ class DataProcessing(QtWidgets.QMainWindow):
         else:
             magnitude_val_set = magnitude_val_set['magnitude'] - max_magnitude
 
+        # find smallest value in data set to set visible points
+        min_magnitude = magnitude_val_set.min()
+        if min_magnitude < -40:
+            numpy_magnitude_set = np.array(magnitude_val_set.values.tolist())
+            magnitude_val_set = np.where(numpy_magnitude_set < -40, -40, numpy_magnitude_set).tolist()
+
         # Create the frequency string for legend
         current_freq = (df['freq'].values[index])
         if mhz:
@@ -261,6 +274,10 @@ class DataProcessing(QtWidgets.QMainWindow):
                 magnitude_val_set = magnitude_val_set['magnitude'] + max_magnitude
             else:
                 magnitude_val_set = magnitude_val_set['magnitude'] - max_magnitude
+            min_magnitude = magnitude_val_set.min()
+            if min_magnitude < -40:
+                numpy_magnitude_set = np.array(magnitude_val_set.values.tolist())
+                magnitude_val_set = np.where(numpy_magnitude_set < -40, -40, numpy_magnitude_set).tolist()
             current_freq = (df['freq'].values[index])
             if mhz:
                 current_freq_string = str(int(current_freq))
@@ -305,72 +322,92 @@ class DataProcessing(QtWidgets.QMainWindow):
         if not self.Live:
             self.sc.figure.canvas.mpl_connect('pick_event', self.set_visible)
 
-    def graph_one_rect(self, df):
+    def s11_rectangular_graph(self, df):
         """
-        This function graphs one frequency from a list or linear sweep
-        Rectangular plot - azimuth vs. amplitude
-        Assumes frequencies are in MHz
+        This function graphs all frequencies from a list or linear sweep
+        Rectangular plot - Impedance
 
         :param df: Sorted DataFrame
         :return: None
         """
         self.alt_labels = []
+        mhz = self.mhz_or_ghz()
         type_of_marker = 'D'  # Can be added to MyRadioButtons function as Kwarg
+
+        # Starting point in data frame
+        index = 0
 
         # Number of rows
         number_of_rows = len(df.index)
+        freq_limit = number_of_rows
 
-        # Number of points per freq and freq limit
-        if self.num_of_frequencies > 10:
-            points_per_freq = number_of_rows // 10
-        else:
-            points_per_freq = number_of_rows // self.num_of_frequencies
-
-        # Find the requested frequency index in data frame
-        index = self.freq_index(df)
-
-        # Isolate phi column
-        phi_val_set = df.iloc[index:index + points_per_freq, [3]]
-
-        # Isolate magnitude column and convert to relative zero
-        # max_magnitude is the largest magnitude in the set
-        magnitude_val_set = df.iloc[index:index + points_per_freq, [4]]
-        max_magnitude = float(magnitude_val_set.max())
-        if max_magnitude > 0:
-            magnitude_val_set = magnitude_val_set['magnitude'] + max_magnitude
-        else:
-            magnitude_val_set = magnitude_val_set['magnitude'] - max_magnitude
+        # Find impedance values
+        mag_set = df[['magnitude', 'phase']]
+        r_set = mag_set['magnitude'] / 20
+        r_set = 10 ** r_set
+        mag_set = mag_set.assign(r_set=r_set)
+        cos_phase = np.cos(mag_set['phase'])
+        sin_phase = np.sin(mag_set['phase'])
+        mag_set = mag_set.assign(cos_phase=cos_phase)
+        mag_set = mag_set.assign(sin_phase=sin_phase)
+        x_set = mag_set['r_set'] * mag_set['cos_phase']
+        y_set = mag_set['r_set'] * mag_set['sin_phase']
+        impedance_x_set = x_set * 50
+        impedance_y_set = y_set * 50
+        impedance_real_val = impedance_x_set.values[index]
+        impedance_imag_val = impedance_y_set.values[index]
 
         # Create a string of requested frequency for legend
-        req_freq_string = str(self.ReqFreq)
-        self.alt_labels.append(req_freq_string)  # Allows for push buttons
+        current_freq = df['freq'].values[index]
+        if mhz:
+            """might need to take out int"""
+            current_freq_string = str(int(current_freq))
+        else:
+            current_freq_string = str(float(current_freq / 1000))
 
-        # Create polar plot
+        # Create plot
         self.sc.ax = self.sc.figure.add_subplot(64, 1, (1, 50))
 
-        # Plot data set
-        self.sc.ax.plot(phi_val_set, magnitude_val_set,  # Plots line
-                        label=req_freq_string)
+        # Add frequencies to plot
+        self.sc.ax.plot(impedance_real_val, impedance_imag_val,  # Plots first line
+                        marker=".",
+                        markersize=10,
+                        label=current_freq_string,
+                        color='C0')
+        self.alt_labels.append(current_freq_string)  # Allows for push buttons
+        for x in range(1, freq_limit):
+            index += 1
+            impedance_real_val = impedance_x_set.values[index]
+            impedance_imag_val = impedance_y_set.values[index]
+            current_freq = df['freq'].values[index]
+            if mhz:
+                current_freq_string = str(int(current_freq))
+            else:
+                current_freq_string = str(float(current_freq / 1000))
+            self.sc.ax.plot(impedance_real_val, impedance_imag_val,
+                            marker=".",
+                            markersize=10,
+                            label=current_freq_string,
+                            color='C' + str(x % 10))
+            self.alt_labels.append(current_freq_string)
 
         # Customize Plot
         self.sc.ax.grid(True)
-        self.sc.ax.set_xlim(left=-180,  # x min 0, x max 360
-                            right=180)
-        self.sc.ax.set_ylim(top=0,  # y min 0 dB, y max -40 dB
-                            bottom=-40)
-        self.sc.ax.set_xlabel('Degrees')
-        self.sc.ax.set_ylabel('S11 Amplitude (dB)')
-        self.sc.ax.set_xticks(range(-180, 180, 30))  # Ticks increase every 30 degrees
+        self.sc.ax.set_xlabel('Real')
+        self.sc.ax.set_ylabel('Imaginary')
 
         self.sc.figure.subplots_adjust(left=0.05,
                                        right=0.95)
-        self.sc.figure.suptitle('Normalized Far-field Pattern',
+        self.sc.figure.suptitle('Impedance (Ohms)',
                                 fontweight="bold",
-                                fontsize=25)
+                                fontsize=15)
 
         # Set up legend
         self.sc.bx = self.sc.figure.add_subplot(64, 1, (57, 64))
-        self.sc.bx.set_xlabel('Frequency (GHz)')
+        if mhz:
+            self.sc.bx.set_xlabel('Frequency (MHz)')
+        else:
+            self.sc.bx.set_xlabel('Frequency (GHz)')
         self.sc.bx.spines["top"].set_visible(False)
         self.sc.bx.spines["bottom"].set_visible(False)
         self.sc.bx.spines["right"].set_visible(False)
@@ -380,87 +417,13 @@ class DataProcessing(QtWidgets.QMainWindow):
         # Create buttons (On/Off)
         self.radio = MyRadioButtons(self.sc.bx, self.alt_labels,
                                     marker=type_of_marker,  # string choose from matplotlib markers
-                                    keep_color=True,  # Bool whether button pushes change color
-                                    size=100,  # if diamond type_of_marker size(100) default: (100)
-                                    ncol=10)  # Number of columns
-
-    def graph_one_polar(self, df):
-        """
-        This function graphs one frequency from a list or linear sweep
-        Polar plot - azimuth vs. amplitude
-        Assumes frequencies are in MHz
-
-        :param df: Sorted DataFrame
-        :return: None
-        """
-        self.alt_labels = []
-        type_of_marker = 'D'  # Can be added to MyRadioButtons function as Kwarg
-
-        # Number of rows
-        number_of_rows = len(df.index)
-
-        # Number of points per freq and freq limit
-        if self.num_of_frequencies > 10:
-            points_per_freq = number_of_rows // 10
-        else:
-            points_per_freq = number_of_rows // self.num_of_frequencies
-
-        # Find the requested frequency index in data frame
-        index = self.freq_index(df)
-
-        # Isolate phi column and convert to radians
-        phi_val_set = np.radians(df.iloc[index:index + points_per_freq, [3]])
-
-        # Isolate magnitude column and convert to relative zero
-        # max_magnitude is the largest magnitude in the set
-        magnitude_val_set = df.iloc[index:index + points_per_freq, [4]]
-        max_magnitude = int(magnitude_val_set.max())
-        if max_magnitude > 0:
-            magnitude_val_set = magnitude_val_set['magnitude'] + max_magnitude
-        else:
-            magnitude_val_set = magnitude_val_set['magnitude'] - max_magnitude
-
-        # Create a string of requested frequency for legend
-        req_freq_string = str(self.ReqFreq)
-        self.alt_labels.append(req_freq_string)  # Allows for push buttons
-
-        # Create polar plot
-        self.sc.ax = self.sc.figure.add_subplot(1, 64, (13, 64),
-                                                projection='polar')
-
-        # Plot data set
-        self.sc.ax.plot(phi_val_set, magnitude_val_set,  # Plots line
-                        label=req_freq_string)
-
-        # Customize Plot
-        self.sc.ax.set_xlabel('Frequency (GHz)')
-        self.sc.ax.set_rlabel_position(0)  # r max is 0 dB
-        self.sc.ax.set_theta_zero_location("N")  # 0 degrees at 12 o'clock
-        self.sc.ax.set_theta_direction(-1)  # Degrees increase clockwise
-        self.sc.ax.set_rmin(-40)  # r min is -40 dB
-        self.sc.ax.grid(True)
-        self.sc.ax.set_thetagrids(range(0, 360, 15))  # Ticks increase every 15 degrees
-
-        self.sc.figure.subplots_adjust(left=0.05,
-                                       right=0.80)
-        self.sc.figure.suptitle('Normalized Far-field Pattern',
-                                fontweight="bold",
-                                fontsize=25)
-
-        # Set up legend
-        self.sc.bx = self.sc.figure.add_subplot(1, 64, (1, 9))
-        self.sc.bx.spines["top"].set_visible(False)
-        self.sc.bx.spines["bottom"].set_visible(False)
-        self.sc.bx.spines["right"].set_visible(False)
-        self.sc.bx.spines["left"].set_visible(False)
-        self.plot_lines, self.plot_labels = self.sc.ax.get_legend_handles_labels()
-
-        # Create buttons (On/Off)
-        self.radio = MyRadioButtons(self.sc.bx, self.alt_labels,
-                                    marker=type_of_marker,
                                     keep_color=self.Live,  # Bool whether button pushes change color
                                     size=100,  # if diamond type_of_marker size(100) default: (100)
-                                    ncol=2)  # Number of columns
+                                    ncol=10)  # Number of columns
+        if not self.Live:
+            self.sc.figure.canvas.mpl_connect('pick_event', self.set_visible)
+
+        return
 
     def is_file_empty(self):
         """
@@ -565,8 +528,6 @@ class DataProcessing(QtWidgets.QMainWindow):
         :param df: Unsorted DataFrame
         :return: Number of different frequencies in DataFrame
         """
-        if df.empty:
-            return False
         start_freq = (df['freq'].values[0])
         self.num_of_frequencies = 1
         for x in range(1, len(df.index)):
@@ -600,6 +561,22 @@ class DataProcessing(QtWidgets.QMainWindow):
         found = df['measurement_type'].str.find('S11')
         found = found.loc[0]
         if found != -1:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def check_s21(df):
+        """
+        This function checks to see if S21 measurements are present in DataFrame
+
+        :param df: DataFrame
+        :return: Bool:
+            if True DataFrame contains S21 measurements else only S21 exist
+        """
+        found = df['measurement_type'].str.find('S21')
+        exists = 0 in found
+        if exists:
             return True
         else:
             return False
@@ -651,21 +628,18 @@ class DataProcessing(QtWidgets.QMainWindow):
         if self.num_of_frequencies:
             if self.num_of_frequencies > 10:
                 df = self.limit_ten(df)
-            if self.check_s11(df):
-                df_s11 = self.dataframe_for_s11(df)  # need to create graphing method
-                df_s21 = self.dataframe_for_s21(df)
-                df_s21 = self.sort_file(df_s21)
-            else:
-                df_s21 = self.dataframe_for_s21(df)
-                df_s21 = self.sort_file(df_s21)
-            if self.Polar:
-                if self.ReqFreq:
-                    self.graph_one_polar(df_s21)
+            if self.s11:
+                if self.check_s11(df):
+                    df_s11 = self.dataframe_for_s11(df)
+                    self.s11_rectangular_graph(df_s11)
+                    return
                 else:
+                    return
+            if self.check_s21(df):
+                df_s21 = self.dataframe_for_s21(df)
+                df_s21 = self.sort_file(df_s21)
+                if self.Polar:
                     self.graph_all_polar(df_s21)
-            else:
-                if self.ReqFreq:
-                    self.graph_one_rect(df_s21)
                 else:
                     self.graph_all_rect(df_s21)
         return

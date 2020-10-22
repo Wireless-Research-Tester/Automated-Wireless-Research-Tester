@@ -243,12 +243,33 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
                 self.mc_thread.start()
                 self.pos_control.lineEdit.setText('SetupRunning')
-                self.data_processing_toolbar.clear()
-                del self.data_processing
-                self.data_processing = DataProcessing()
-                self.data_processing_toolbar.addWidget(self.data_processing)
-                self.data_processing.begin_measurement(data_file=self.data_file, pivot_file=self.settings.pivot_file)
-
+                if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
+                    if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                        self.data_processing_toolbar.clear()
+                        del self.data_processing
+                        self.data_processing = DataProcessing()
+                        self.data_processing_toolbar.addWidget(self.data_processing)
+                        self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
+                    else:
+                        self.data_processing_toolbar.clear()
+                        del self.data_processing
+                        self.data_processing = DataProcessing()
+                        self.data_processing_toolbar.addWidget(self.data_processing)
+                        self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+                        self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
+                else:
+                    if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                        self.data_processing_toolbar.clear()
+                        del self.data_processing
+                        self.data_processing = DataProcessing()
+                        self.data_processing_toolbar.addWidget(self.data_processing)
+                        self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
+                    else:
+                        self.data_processing_toolbar.clear()
+                        del self.data_processing
+                        self.data_processing = DataProcessing()
+                        self.data_processing_toolbar.addWidget(self.data_processing)
+                        self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
                 self.data_processing_toolbar.show()
 
     @qtc.pyqtSlot()
@@ -586,19 +607,20 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         filename = qtw.QFileDialog.getOpenFileName(self, 'Open Previous Measurement Data',
                                                    'C:/', "CSV File (*.csv)")[0]
         if len(filename) > 0:
+            self.data_file = filename
             if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=True)
+                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
                     self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
             else:
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
@@ -606,15 +628,14 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(filename, pivot_file=None, polar=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
             self.data_processing_toolbar.show()
-            self.data_file = filename
             self.toggle_settings()
 
     # ------------------------------------------------------------------------------
@@ -628,13 +649,13 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=True)
+                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
                     self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
             else:
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
@@ -642,13 +663,13 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, pivot_file=None, polar=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
 
 
     # ----------------------------- Window CLose Event -----------------------------
