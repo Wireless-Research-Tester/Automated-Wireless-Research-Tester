@@ -14,16 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1280</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -64,8 +54,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/images/gear.png</normaloff>:/images/gear.png</iconset>
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/gui/gear.png</normaloff>:/images/gui/gear.png</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
@@ -82,11 +72,11 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/images/Help-icon.png</normaloff>:/images/Help-icon.png</iconset>
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/gui/Help-icon.png</normaloff>:/images/gui/Help-icon.png</iconset>
    </property>
    <property name="text">
-    <string>Help</string>
+    <string>Help Off</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
@@ -94,7 +84,7 @@
   </action>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,5 +1,11 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
+### Version 0.8.3
+- updated resource file to include all images used in program
+- Added graph mode selection button, and have it working with the plotting
+- Added additional help option to pull up documentation
+- Added impedance as one of the plotting options
+- Added popups
 ### Version 0.8.2
 - Reorganized project directory
 - Fixing gap in plots by recording data at 180 degrees as well

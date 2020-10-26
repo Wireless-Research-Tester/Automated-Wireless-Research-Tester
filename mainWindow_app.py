@@ -4,6 +4,7 @@ Main Window
 =============
 """
 import sys
+import os
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
@@ -13,6 +14,7 @@ from gui.meas_display_app import MeasurmentDisplayWindow
 from gui.settingsWindow_app import SettingsWindow
 from gui.progress_bar_app import ProgressBar
 from gui.positioner_toolbar_app import PositionerToolBarWidget
+from gui.graph_mode_toolbar_app import GraphModeToolBar
 from data_processing.data_processing import DataProcessing
 from measurement_ctrl.measurement_ctrl import MeasurementCtrl
 from measurement_ctrl.data_storage import create_file
@@ -35,9 +37,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         """MainWindow constructor"""
         super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(qtg.QIcon('gui/window_icon.png'))
+        self.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         self.palette = qtg.QPalette()
-        self.background_orig = qtg.QImage('gui/window_background.png')
+        self.background_orig = qtg.QImage(':/images/gui/window_background.png')
         self.background = self.background_orig.scaledToWidth(self.width())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
@@ -51,6 +53,13 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.progress_bar = ProgressBar()
         self.pos_control = PositionerToolBarWidget()
         self.data_processing = DataProcessing()
+        self.graph_mode = GraphModeToolBar()
+        self.menu = self.menuBar()
+        self.menu.setNativeMenuBar(False)
+        self.help_menu_item = self.menu.addMenu("Help")
+        self.help = self.help_menu_item.addAction("Turn Help On")
+        self.docs = self.help_menu_item.addAction("Documentation")
+
 
         # self.toolBar.setStyleSheet(
         #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
@@ -64,9 +73,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
         self.progress_display_toolbar = self.addToolBar('Progress_Display_ToolBar')
         self.addToolBarBreak()
+        self.graph_mode_toolbar = self.addToolBar('Graph_Mode_ToolBar')
         self.positioner_control_toolbar = self.addToolBar('Positioner_Control_ToolBar')
         self.addToolBarBreak()
         self.data_processing_toolbar = self.addToolBar('Data_Processing_ToolBar')
+
 
         # Add the custom widgets to the toolbars
         self.meas_display_toolbar.addWidget(self.meas_disp_window)
@@ -74,6 +85,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.progress_display_toolbar.addWidget(self.progress_bar)
         self.positioner_control_toolbar.addWidget(self.pos_control)
         self.data_processing_toolbar.addWidget(self.data_processing)
+        self.graph_mode_toolbar.addWidget(self.graph_mode)
         self.data_processing_toolbar.hide()
         # --------------------------------------------------------------------------
 
@@ -87,11 +99,20 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # Create connection between button to open old data and plotting
         self.settings.open_data_Button.clicked.connect(self.open_prev_measurement)
 
+        # Create connection between help button and help
+        self.actionHelp.triggered.connect(self.toggle_help)
+        self.help.triggered.connect(self.toggle_help)
+        self.docs.triggered.connect(self.show_docs)
+
         # Create connections between transport buttons and the functions
         # creating the Gui's control flow for MeasurementCtrl
         self.transport.playButton.clicked.connect(self.start_mc)
         self.transport.pauseButton.clicked.connect(self.pause_mc)
         self.transport.stopButton.clicked.connect(self.stop_mc)
+
+        # Create connections between graph mode toolbar and data processing
+        self.graph_mode.polar_rect_comboBox.currentTextChanged.connect(self.update_plot)
+        self.graph_mode.s21_imp_comboBox.currentTextChanged.connect(self.update_plot)
 
         self.transport.pauseButton.setDisabled(True)
         self.transport.stopButton.setDisabled(True)
@@ -99,6 +120,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
         # ----------------------------- Data Members -------------------------------
         self.is_settings_open = False  # Keeps track of settings window toggle
+        self.is_help_on = False  # Keeps tracks of status of popups
 
         # MeasurementCtrl and its necessary synchronization variables
         self.mc = None  # Placeholder for MeasurementCtrl object
@@ -116,7 +138,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         ports = rm.list_resources()
         for i in ports:
             if i[0:4] == 'ASRL':
-                self.pos_control.portCombo.addItem(i)
+                self.pos_control.portCombo_2.addItem(i)
 
         self.pos_control.connectStatus.setDisabled(True)
 
@@ -221,8 +243,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
                 self.mc_thread.start()
                 self.pos_control.lineEdit.setText('SetupRunning')
-                self.data_processing.begin_measurement(pivot_file=self.settings.pivot_file, data_file=self.data_file)
-                self.data_processing_toolbar.show()
+                self.update_plot()
 
     @qtc.pyqtSlot()
     def stop_mc(self):
@@ -436,7 +457,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         msg.setText('Positioner failed to connect!')
         msg.setIcon(qtw.QMessageBox.Critical)
 
-        port = self.pos_control.portCombo.currentText()
+        port = self.pos_control.portCombo_2.currentText()
         baud = self.pos_control.baudRateCombo.currentText()
 
         self.qpt = Positioner(port, int(baud))
@@ -488,11 +509,131 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         if self.is_settings_open:
             self.settings.hide()
             self.is_settings_open = False
+            self.actionSettings.setChecked(False)
         else:
             self.settings.show()
             self.is_settings_open = True
+            self.actionSettings.setChecked(True)
 
     # ------------------------------------------------------------------------------
+
+    # ----------------------------- Help Button Toggle Slog ------------------------
+    @qtc.pyqtSlot()
+    def toggle_help(self):
+        if self.is_help_on:
+            # Turning off help, so disable tooltips
+            self.actionHelp.setText('Help Off')
+            self.actionHelp.setChecked(False)
+            self.help.setText('Turn Help On')
+            self.is_help_on = False
+
+            self.settings.start_label_4.setToolTip('')
+            self.settings.lineEdit_start_4.setToolTip('')
+            self.settings.stop_label_4.setToolTip('')
+            self.settings.lineEdit_stop_4.setToolTip('')
+            self.settings.points_label_4.setToolTip('')
+            self.settings.comboBox_4.setToolTip('')
+            self.settings.list_label_5.setToolTip('')
+            self.settings.lineEdit_list_5.setToolTip('')
+            self.settings.Impedance_label_7.setToolTip('')
+            self.settings.Impedance_radioButton_n_7.setToolTip('')
+            self.settings.Impedance_radioButton_y_7.setToolTip('')
+            self.settings.Calibration_label_7.setToolTip('')
+            self.settings.Calibration_radioButton_y_7.setToolTip('')
+            self.settings.Calibration_radioButton_n_7.setToolTip('')
+            self.settings.Averaging_label_7.setToolTip('')
+            self.settings.Averaging_comboBox_7.setToolTip('')
+            self.settings.posMov_label_7.setToolTip('')
+            self.settings.cont_radioButton_7.setToolTip('')
+            self.settings.discrete_radioButton_7.setToolTip('')
+            self.settings.res_label_7.setToolTip('')
+            self.settings.res_doubleSpinBox_7.setToolTip('')
+            self.settings.GPIB_addr_label_6.setToolTip('')
+            self.settings.GPIB_addr_comboBox_6.setToolTip('')
+            self.settings.sweep_elevation_label_6.setToolTip('')
+            self.settings.sweep_elevation_spinBox.setToolTip('')
+            self.settings.label.setToolTip('')
+            self.settings.dir_label.setToolTip('')
+            self.settings.dir_Button.setToolTip('')
+            self.transport.playButton.setToolTip('')
+            self.progress_bar.progressBar.setToolTip('')
+            self.meas_disp_window.az_lcdNumber.setToolTip('')
+            self.meas_disp_window.el_lcdNumber.setToolTip('')
+            self.pos_control.portLabel_2.setToolTip('')
+            self.pos_control.portCombo_2.setToolTip('')
+            self.pos_control.label_2.setToolTip('')
+            self.pos_control.lineEdit.setToolTip('')
+            self.pos_control.faultReset.setToolTip('')
+            self.data_processing.sc.setToolTip('')
+
+        else:
+            # Turning on help, so enable tooltips
+            self.actionHelp.setText('Help On')
+            self.actionHelp.setChecked(True)
+            self.help.setText('Turn Help Off')
+            self.is_help_on = True
+
+            # settings_ui popups
+            self.settings.start_label_4.setToolTip('Start frequency for sweep')
+            self.settings.lineEdit_start_4.setToolTip('Start frequency for sweep')
+            self.settings.stop_label_4.setToolTip('Stop frequency for sweep')
+            self.settings.lineEdit_stop_4.setToolTip('Stop frequency for sweep')
+            self.settings.points_label_4.setToolTip('Number of data points for frequency sweep')
+            self.settings.comboBox_4.setToolTip('Number of data points for frequency sweep')
+            self.settings.list_label_5.setToolTip('Frequency list of measurements')
+            self.settings.lineEdit_list_5.setToolTip('Frequency list of measurements')
+            self.settings.Impedance_label_7.setToolTip('Measure AUT impedance\n' + '(Requires calibration)')
+            self.settings.Impedance_radioButton_n_7.setToolTip('Measure AUT impedance\n' + '(Requires calibration)')
+            self.settings.Impedance_radioButton_y_7.setToolTip('Measure AUT impedance\n' + '(Requires calibration)')
+            self.settings.Calibration_label_7.setToolTip('Perform S11 single port calibration')
+            self.settings.Calibration_radioButton_y_7.setToolTip('Perform S11 single port calibration')
+            self.settings.Calibration_radioButton_n_7.setToolTip('Perform S11 single port calibration')
+            self.settings.Averaging_label_7.setToolTip('Number of measurements for VNA to average for each measurement')
+            self.settings.Averaging_comboBox_7.setToolTip('Number of measurements for VNA to average for each measurement')
+            self.settings.posMov_label_7.setToolTip('Hover over movement options for more details')
+            self.settings.cont_radioButton_7.setToolTip('Measurements collected with positioner in continuous movement\n' +
+                                               '(Requires slower rotation speed)')
+            self.settings.discrete_radioButton_7.setToolTip('Measurements made with positioner stopped at each azimuth angle')
+            self.settings.res_label_7.setToolTip('Azimuth spacing between measurement points')
+            self.settings.res_doubleSpinBox_7.setToolTip('Azimuth spacing between measurement points')
+            self.settings.GPIB_addr_label_6.setToolTip('GPIB address for VNA')
+            self.settings.GPIB_addr_comboBox_6.setToolTip('GPIB address for VNA')
+            self.settings.sweep_elevation_label_6.setToolTip('AUT elevation angle')
+            self.settings.sweep_elevation_spinBox.setToolTip('AUT elevation angle')
+            self.settings.label.setToolTip('Directory for project data files')
+            self.settings.dir_label.setToolTip('Directory for project data files')
+            self.settings.dir_Button.setToolTip('Directory for project data files')
+
+            # transport_ui popups
+            self.transport.playButton.setToolTip('Begin measurement')
+            # meas_display_ui popups
+            self.meas_disp_window.az_lcdNumber.setToolTip('Current positioner azimuth')
+            self.meas_disp_window.el_lcdNumber.setToolTip('Current positioner elevation')
+            # progress_ui popups
+            self.progress_bar.progressBar.setToolTip('Measurement progress')
+            # pos_control_ui popups
+            self.pos_control.portLabel_2.setToolTip('Serial port for positioner')
+            self.pos_control.portCombo_2.setToolTip('Serial port for positioner')
+            self.pos_control.label_2.setToolTip('Current state of the measurement')
+            self.pos_control.lineEdit.setToolTip('Current state of the measurement')
+            self.pos_control.faultReset.setToolTip('Explain what this does')
+            # data_processing popups
+            self.data_processing.sc.setToolTip('Click on the check boxes in the legend\nto display/hide frequencies')
+    # ------------------------------------------------------------------------------
+
+    # ----------------------------- Show Documentation Slot --------------------------
+    @qtc.pyqtSlot()
+    def show_docs(self):
+        if os.path.exists('README.md'):
+            os.startfile('README.md')
+        else:
+            msg = qtw.QMessageBox()
+            msg.setIcon(qtw.QMessageBox.Critical)
+            msg.setStandardButtons(qtw.QMessageBox.Ok)
+            msg.setText('User Manual.pdf was not found within program directory')
+            msg.setWindowTitle('Error')
+            msg.exec_()
+    # --------------------------------------------------------------------------------
 
     # ----------------------------- Calibration Prompt Slot ---------------------------
     @qtc.pyqtSlot()
@@ -526,11 +667,47 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         filename = qtw.QFileDialog.getOpenFileName(self, 'Open Previous Measurement Data',
                                                    'C:/', "CSV File (*.csv)")[0]
         if len(filename) > 0:
-            self.data_processing.begin_measurement(filename)
-            self.data_processing_toolbar.show()
+            self.data_file = filename
+            self.update_plot()
             self.toggle_settings()
 
     # ------------------------------------------------------------------------------
+
+    # ---------------------------- Change displayed data and format of plot----------
+    def update_plot(self):
+        if self.data_file is not None:
+            if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
+                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
+                else:
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+                    self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
+            else:
+                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
+                else:
+                    self.data_processing_toolbar.clear()
+                    del self.data_processing
+                    self.data_processing = DataProcessing()
+                    self.data_processing_toolbar.addWidget(self.data_processing)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+            if self.is_help_on:
+                self.data_processing.sc.setToolTip(
+                    'Click on the check boxes in the legend\nto display/hide frequencies')
+            self.data_processing_toolbar.show()
+
 
     # ----------------------------- Window CLose Event -----------------------------
     # Deal with window being closed via the 'X' button

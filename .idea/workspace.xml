@@ -20,72 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f0e81cd-a0d7-4a7c-9f58-e08def3f7710" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/data_processing/data_processing.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/Help-icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/Media-Controls-Stop-icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/gear.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/main_window_ui.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/meas_display_app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/meas_display_ui.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/play.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/pngegg.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/pngfind.com-gears-png-1211827.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/pos_control_ui.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/positioner_toolbar_app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/progress_bar_app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/progress_ui.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/pyqt_template.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/settingsWindow_app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/settings_ui.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/transport_app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/transport_ui.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/window_background.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui/window_icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/constants.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/data_storage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/integer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/measurement_ctrl.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/packet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/packet_parser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/positioner.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/vna_comms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/measurement_ctrl/vna_syntaxes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/alpha.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/alpha.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataProcessingLatest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Help-icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Media-Controls-Stop-icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_storage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gear.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/integer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/pos_control_ui.ui" beforeDir="false" afterPath="$PROJECT_DIR$/gui/pos_control_ui.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainWindow_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainWindow_app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_window_ui.ui" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/meas_display_app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/meas_display_ui.ui" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/measurement_ctrl.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packet.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packet_parser.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pivot.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/play.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pngegg.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pngfind.com-gears-png-1211827.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pos_control_ui.ui" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/positioner.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/positioner_toolbar_app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/progress_bar_app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/progress_ui.ui" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyqt_template.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/resources.qrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settingsWindow_app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings_ui.ui" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport_app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport_ui.ui" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vna_comms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vna_syntaxes.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/window_background.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/window_icon.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,6 +39,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="pos_controls_tool_bar" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="JupyterTrust" id="67e15cf1-7558-47c0-a867-cfb8a5c2ddcc" />
@@ -116,6 +60,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -144,7 +89,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="mainWindow_app" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="data_processing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="alpha" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -154,6 +99,50 @@
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data_processing/data_processing.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="graph_mode_toolbar_app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="alpha" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gui/graph_mode_toolbar_app.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="mainWindow_app" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="alpha" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Eric\anaconda3\envs\ece485\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -191,9 +180,17 @@
     <list>
       <item itemvalue="Python.mainWindow_app" />
       <item itemvalue="Python.settingsWindow_app" />
+      <item itemvalue="Python.graph_mode_toolbar_app" />
+      <item itemvalue="Python.data_processing" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.data_processing" />
+        <item itemvalue="Python.graph_mode_toolbar_app" />
+      </list>
+    </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -206,6 +203,8 @@
       <updated>1601402376447</updated>
       <workItem from="1601421191359" duration="1828000" />
       <workItem from="1601423684101" duration="843000" />
+      <workItem from="1603218668534" duration="829000" />
+      <workItem from="1603220521983" duration="3522000" />
     </task>
     <task id="LOCAL-00001" summary="size adjustments">
       <created>1602288858218</created>
@@ -214,7 +213,49 @@
       <option name="project" value="LOCAL" />
       <updated>1602288858218</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Changed pos_ctrl_toolbar to be long">
+      <created>1603142623084</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1603142623084</updated>
+    </task>
+    <task id="LOCAL-00003" summary="updated recouces.qrc location and converted file to .py">
+      <created>1603145553838</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1603145553838</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Created groupbox with graph mode selection buttons. added to MW">
+      <created>1603147871447</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1603147871447</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Created groupbox with graph mode selection buttons. added to MW">
+      <created>1603148208062</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1603148208062</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Created groupbox with graph mode selection buttons. added to MW">
+      <created>1603223911175</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1603223911175</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Created groupbox with graph mode selection buttons. added to MW">
+      <created>1603224635339</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1603224635339</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,54 +276,57 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="size adjustments" />
-    <option name="LAST_COMMIT_MESSAGE" value="size adjustments" />
+    <MESSAGE value="Changed pos_ctrl_toolbar to be long" />
+    <MESSAGE value="updated recouces.qrc location and converted file to .py" />
+    <MESSAGE value="Created groupbox with graph mode selection buttons. added to MW" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created groupbox with graph mode selection buttons. added to MW" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="154" y="0" width="1092" height="835" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602983387417">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="192" y="0" width="1092" height="859" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603733295014">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="137" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1602708859242" />
+    <state x="137" y="0" width="1092" height="728" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1603303395922" />
     <state x="154" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1602983387417" />
-    <state x="192" y="0" width="1092" height="835" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602721139158" />
+    <state x="192" y="0" width="1092" height="859" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603733295014" />
     <state x="128" y="23" width="1024" height="777" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1280.777@0.23.1280.777" timestamp="1601420937187" />
-    <state x="217" y="23" key="CommitChangelistDialog2" timestamp="1602288857975">
+    <state x="217" y="23" key="CommitChangelistDialog2" timestamp="1603224634846">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="217" y="23" key="CommitChangelistDialog2/0.23.1280.777@0.23.1280.777" timestamp="1602288857975" />
+    <state x="217" y="23" key="CommitChangelistDialog2/0.23.1280.777@0.23.1280.777" timestamp="1603224634846" />
     <state x="521" y="143" key="FileChooserDialogImpl" timestamp="1602771517750">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="463" y="126" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1602102586682" />
     <state x="521" y="143" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1602771517750" />
     <state x="651" y="180" key="FileChooserDialogImpl/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602721135985" />
-    <state width="1515" height="261" key="GridCell.Tab.0.bottom" timestamp="1603135029237">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1899" height="279" key="GridCell.Tab.0.bottom" timestamp="1603737194470">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
+    <state width="1345" height="280" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1603337368217" />
     <state width="1515" height="261" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1603135029237" />
-    <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1602290692288" />
-    <state width="1515" height="261" key="GridCell.Tab.0.center" timestamp="1603135029235">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1899" height="279" key="GridCell.Tab.0.bottom/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603737194470" />
+    <state width="1238" height="170" key="GridCell.Tab.0.bottom/0.23.1280.777@0.23.1280.777" timestamp="1603224757395" />
+    <state width="1899" height="279" key="GridCell.Tab.0.center" timestamp="1603737194470">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
+    <state width="1345" height="280" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1603337368217" />
     <state width="1515" height="261" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
-    <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
-    <state width="1515" height="261" key="GridCell.Tab.0.left" timestamp="1603135029235">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1899" height="279" key="GridCell.Tab.0.center/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603737194470" />
+    <state width="1238" height="170" key="GridCell.Tab.0.center/0.23.1280.777@0.23.1280.777" timestamp="1603224757393" />
+    <state width="1899" height="279" key="GridCell.Tab.0.left" timestamp="1603737194470">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1602964686326" />
+    <state width="1345" height="280" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1603337368217" />
     <state width="1515" height="261" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1603135029235" />
-    <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
-    <state width="1515" height="261" key="GridCell.Tab.0.right" timestamp="1603135029236">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1899" height="279" key="GridCell.Tab.0.left/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603737194470" />
+    <state width="1238" height="170" key="GridCell.Tab.0.left/0.23.1280.777@0.23.1280.777" timestamp="1603224757392" />
+    <state width="1899" height="279" key="GridCell.Tab.0.right" timestamp="1603737194470">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1345" height="178" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1602964686327" />
+    <state width="1345" height="280" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1603337368217" />
     <state width="1515" height="261" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1603135029236" />
-    <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1602724048067" />
-    <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1602290692287" />
+    <state width="1899" height="279" key="GridCell.Tab.0.right/0.0.1920.1040/0.-768.1360.728@0.0.1920.1040" timestamp="1603737194470" />
+    <state width="1238" height="170" key="GridCell.Tab.0.right/0.23.1280.777@0.23.1280.777" timestamp="1603224757394" />
     <state width="1515" height="261" key="GridCell.Tab.1.bottom" timestamp="1603135029240">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -303,14 +347,14 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="277" y="57" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1602770594192" />
-    <state x="127" y="220" key="Vcs.Push.Dialog.v2" timestamp="1602288861279">
+    <state x="127" y="220" key="Vcs.Push.Dialog.v2" timestamp="1603224639687">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="127" y="220" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1602288861279" />
-    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1602288831236">
+    <state x="127" y="220" key="Vcs.Push.Dialog.v2/0.23.1280.777@0.23.1280.777" timestamp="1603224639687" />
+    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603224627007">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
-    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.777@0.23.1280.777" timestamp="1602288831236" />
+    <state x="438" y="332" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1280.777@0.23.1280.777" timestamp="1603224627007" />
     <state x="370" y="320" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1601421112385">
       <screen x="0" y="23" width="1280" height="777" />
     </state>
