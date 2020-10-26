@@ -166,7 +166,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>mc_state:</string>
+           <string>State:</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

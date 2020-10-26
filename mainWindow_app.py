@@ -243,34 +243,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
                 self.mc_thread.start()
                 self.pos_control.lineEdit.setText('SetupRunning')
-                if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
-                    if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
-                        self.data_processing_toolbar.clear()
-                        del self.data_processing
-                        self.data_processing = DataProcessing()
-                        self.data_processing_toolbar.addWidget(self.data_processing)
-                        self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
-                    else:
-                        self.data_processing_toolbar.clear()
-                        del self.data_processing
-                        self.data_processing = DataProcessing()
-                        self.data_processing_toolbar.addWidget(self.data_processing)
-                        self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
-                        self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
-                else:
-                    if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
-                        self.data_processing_toolbar.clear()
-                        del self.data_processing
-                        self.data_processing = DataProcessing()
-                        self.data_processing_toolbar.addWidget(self.data_processing)
-                        self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
-                    else:
-                        self.data_processing_toolbar.clear()
-                        del self.data_processing
-                        self.data_processing = DataProcessing()
-                        self.data_processing_toolbar.addWidget(self.data_processing)
-                        self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
-                self.data_processing_toolbar.show()
+                self.update_plot()
 
     @qtc.pyqtSlot()
     def stop_mc(self):
@@ -553,12 +526,99 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.actionHelp.setChecked(False)
             self.help.setText('Turn Help On')
             self.is_help_on = False
+
+            self.settings.start_label_4.setToolTip('')
+            self.settings.lineEdit_start_4.setToolTip('')
+            self.settings.stop_label_4.setToolTip('')
+            self.settings.lineEdit_stop_4.setToolTip('')
+            self.settings.points_label_4.setToolTip('')
+            self.settings.comboBox_4.setToolTip('')
+            self.settings.list_label_5.setToolTip('')
+            self.settings.lineEdit_list_5.setToolTip('')
+            self.settings.Impedance_label_7.setToolTip('')
+            self.settings.Impedance_radioButton_n_7.setToolTip('')
+            self.settings.Impedance_radioButton_y_7.setToolTip('')
+            self.settings.Calibration_label_7.setToolTip('')
+            self.settings.Calibration_radioButton_y_7.setToolTip('')
+            self.settings.Calibration_radioButton_n_7.setToolTip('')
+            self.settings.Averaging_label_7.setToolTip('')
+            self.settings.Averaging_comboBox_7.setToolTip('')
+            self.settings.posMov_label_7.setToolTip('')
+            self.settings.cont_radioButton_7.setToolTip('')
+            self.settings.discrete_radioButton_7.setToolTip('')
+            self.settings.res_label_7.setToolTip('')
+            self.settings.res_doubleSpinBox_7.setToolTip('')
+            self.settings.GPIB_addr_label_6.setToolTip('')
+            self.settings.GPIB_addr_comboBox_6.setToolTip('')
+            self.settings.sweep_elevation_label_6.setToolTip('')
+            self.settings.sweep_elevation_spinBox.setToolTip('')
+            self.settings.label.setToolTip('')
+            self.settings.dir_label.setToolTip('')
+            self.settings.dir_Button.setToolTip('')
+            self.transport.playButton.setToolTip('')
+            self.progress_bar.progressBar.setToolTip('')
+            self.meas_disp_window.az_lcdNumber.setToolTip('')
+            self.meas_disp_window.el_lcdNumber.setToolTip('')
+            self.pos_control.portLabel_2.setToolTip('')
+            self.pos_control.portCombo_2.setToolTip('')
+            self.pos_control.label_2.setToolTip('')
+            self.pos_control.lineEdit.setToolTip('')
+            self.pos_control.faultReset.setToolTip('')
+            self.data_processing.sc.setToolTip('')
+
         else:
             # Turning on help, so enable tooltips
             self.actionHelp.setText('Help On')
             self.actionHelp.setChecked(True)
             self.help.setText('Turn Help Off')
             self.is_help_on = True
+
+            # settings_ui popups
+            self.settings.start_label_4.setToolTip('Start frequency for sweep')
+            self.settings.lineEdit_start_4.setToolTip('Start frequency for sweep')
+            self.settings.stop_label_4.setToolTip('Stop frequency for sweep')
+            self.settings.lineEdit_stop_4.setToolTip('Stop frequency for sweep')
+            self.settings.points_label_4.setToolTip('Number of data points for frequency sweep')
+            self.settings.comboBox_4.setToolTip('Number of data points for frequency sweep')
+            self.settings.list_label_5.setToolTip('Frequency list of measurements')
+            self.settings.lineEdit_list_5.setToolTip('Frequency list of measurements')
+            self.settings.Impedance_label_7.setToolTip('Measure AUT impedance\n' + '(Requires calibration)')
+            self.settings.Impedance_radioButton_n_7.setToolTip('Measure AUT impedance\n' + '(Requires calibration)')
+            self.settings.Impedance_radioButton_y_7.setToolTip('Measure AUT impedance\n' + '(Requires calibration)')
+            self.settings.Calibration_label_7.setToolTip('Perform S11 single port calibration')
+            self.settings.Calibration_radioButton_y_7.setToolTip('Perform S11 single port calibration')
+            self.settings.Calibration_radioButton_n_7.setToolTip('Perform S11 single port calibration')
+            self.settings.Averaging_label_7.setToolTip('Number of measurements for VNA to average for each measurement')
+            self.settings.Averaging_comboBox_7.setToolTip('Number of measurements for VNA to average for each measurement')
+            self.settings.posMov_label_7.setToolTip('Hover over movement options for more details')
+            self.settings.cont_radioButton_7.setToolTip('Measurements collected with positioner in continuous movement\n' +
+                                               '(Requires slower rotation speed)')
+            self.settings.discrete_radioButton_7.setToolTip('Measurements made with positioner stopped at each azimuth angle')
+            self.settings.res_label_7.setToolTip('Azimuth spacing between measurement points')
+            self.settings.res_doubleSpinBox_7.setToolTip('Azimuth spacing between measurement points')
+            self.settings.GPIB_addr_label_6.setToolTip('GPIB address for VNA')
+            self.settings.GPIB_addr_comboBox_6.setToolTip('GPIB address for VNA')
+            self.settings.sweep_elevation_label_6.setToolTip('AUT elevation angle')
+            self.settings.sweep_elevation_spinBox.setToolTip('AUT elevation angle')
+            self.settings.label.setToolTip('Directory for project data files')
+            self.settings.dir_label.setToolTip('Directory for project data files')
+            self.settings.dir_Button.setToolTip('Directory for project data files')
+
+            # transport_ui popups
+            self.transport.playButton.setToolTip('Begin measurement')
+            # meas_display_ui popups
+            self.meas_disp_window.az_lcdNumber.setToolTip('Current positioner azimuth')
+            self.meas_disp_window.el_lcdNumber.setToolTip('Current positioner elevation')
+            # progress_ui popups
+            self.progress_bar.progressBar.setToolTip('Measurement progress')
+            # pos_control_ui popups
+            self.pos_control.portLabel_2.setToolTip('Serial port for positioner')
+            self.pos_control.portCombo_2.setToolTip('Serial port for positioner')
+            self.pos_control.label_2.setToolTip('Current state of the measurement')
+            self.pos_control.lineEdit.setToolTip('Current state of the measurement')
+            self.pos_control.faultReset.setToolTip('Explain what this does')
+            # data_processing popups
+            self.data_processing.sc.setToolTip('Click on the check boxes in the legend\nto display/hide frequencies')
     # ------------------------------------------------------------------------------
 
     # ----------------------------- Show Documentation Slot --------------------------
@@ -608,34 +668,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                                                    'C:/', "CSV File (*.csv)")[0]
         if len(filename) > 0:
             self.data_file = filename
-            if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
-                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
-                    self.data_processing_toolbar.clear()
-                    del self.data_processing
-                    self.data_processing = DataProcessing()
-                    self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
-                else:
-                    self.data_processing_toolbar.clear()
-                    del self.data_processing
-                    self.data_processing = DataProcessing()
-                    self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
-                    self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
-            else:
-                if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
-                    self.data_processing_toolbar.clear()
-                    del self.data_processing
-                    self.data_processing = DataProcessing()
-                    self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
-                else:
-                    self.data_processing_toolbar.clear()
-                    del self.data_processing
-                    self.data_processing = DataProcessing()
-                    self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
-            self.data_processing_toolbar.show()
+            self.update_plot()
             self.toggle_settings()
 
     # ------------------------------------------------------------------------------
@@ -670,6 +703,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     self.data_processing = DataProcessing()
                     self.data_processing_toolbar.addWidget(self.data_processing)
                     self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+            if self.is_help_on:
+                self.data_processing.sc.setToolTip(
+                    'Click on the check boxes in the legend\nto display/hide frequencies')
+            self.data_processing_toolbar.show()
 
 
     # ----------------------------- Window CLose Event -----------------------------
