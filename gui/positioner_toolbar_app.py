@@ -8,7 +8,7 @@ import sys
 from PyQt5 import QtWidgets as qtw, uic
 
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/pos_control_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/ui/pos_control_ui.ui')
 
 
 class PositionerToolBarWidget(baseUIWidget, baseUIClass):

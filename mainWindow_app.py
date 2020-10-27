@@ -26,8 +26,9 @@ from time import sleep
 from threading import Lock, Thread
 import pyvisa as visa
 from time import localtime, strftime
+from measurement_ctrl.qpt_controller import *
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/main_window_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/ui/main_window_ui.ui')
 
 
 class MyMainWindow(baseUIWidget, baseUIClass):
@@ -45,7 +46,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.setPalette(self.palette)
         self.resized.connect(self.resize_window)
 
-        # ------------------------- Initialize Gui Components ----------------------
+    # ------------------------- Initialize Gui Components ----------------------
         # Construct the necessary widgets for MainWindow
         self.transport = TransportWidget()
         self.meas_disp_window = MeasurmentDisplayWindow()
@@ -88,9 +89,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.data_processing_toolbar.addWidget(self.data_processing)
         self.graph_mode_toolbar.addWidget(self.graph_mode)
         self.data_processing_toolbar.hide()
-        # --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
-        # ------------------- Initialize Gui Signal Connections --------------------
+    # ------------------- Initialize Gui Signal Connections --------------------
         # Create connections between Settings button on toolbar
         # and the settings window
         self.actionSettings.triggered.connect(self.toggle_settings)
@@ -118,9 +119,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
         self.transport.pauseButton.setDisabled(True)
         self.transport.stopButton.setDisabled(True)
-        # --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
-        # ----------------------------- Data Members -------------------------------
+    # ----------------------------- Data Members -------------------------------
         self.is_settings_open = False  # Keeps track of settings window toggle
         self.is_help_on = False  # Keeps tracks of status of popups
 
@@ -132,10 +133,12 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.qpt = None  # Placeholder for Positioner object
         self.qpt_q = Queue()  # Message queue for communication btwn Gui and qpt_thread
 
-        self.data_file = None
-        # --------------------------------------------------------------------------
+        self.qpt_thread = None # Placeholder for qpt_controller thread
 
-        # --------------- Initialize Positioner Signal Connections------------------
+        self.data_file = None
+    # --------------------------------------------------------------------------
+
+    # --------------- Initialize Positioner Signal Connections------------------
         rm = visa.ResourceManager()
         ports = rm.list_resources()
         for i in ports:
@@ -150,19 +153,15 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
         self.pos_control.disconnectQPT.setDisabled(True)
         self.pos_control.faultReset.setDisabled(True)
-
-        self.pos_control.timer = qtc.QTimer()
-        self.pos_control.timer.setInterval(120)
-        self.pos_control.timer.timeout.connect(self.recurring_qpt_command)
-        self.pos_control.timer.start()
-        # --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
         self.show()
-
     """End __init__() of MyMainWindow"""
+
 
     def resizeEvent(self, event):
         self.resized.emit()
         return super(MyMainWindow, self).resizeEvent(event)
+
 
     @qtc.pyqtSlot()
     def resize_window(self):
@@ -170,7 +169,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
 
-    # ------------------- MeasurementCtrl Transport Model Slots --------------------
+
+# ------------------- MeasurementCtrl Transport Model Slots --------------------
     @qtc.pyqtSlot()
     def start_mc(self):
         msg = qtw.QMessageBox()
@@ -341,119 +341,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     def enable_play(self):
         """Re-enables the play transport button if the system gets paused"""
         self.transport.playButton.setEnabled(True)
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ------------------------- Positioner Control SLots ---------------------------
-    # Slots for controlling the QPT Positioner via the recurring timer started
-    # in the __init__() function of MyMainWindow.
-    #
-    # The control scheme is as follows:
-    #   1. The recurring timer overflows every 120 ms, and triggers the
-    #      recurring_qpt_command slot to run
-    #   2. recurring_qpt_command checks a message queue to synchronize command
-    #      issue requests to the QPT Positioner
-    #   3. Based on the message queue contents, issues the given command to the
-    #      QPT Positioner
-    #
-    # The message queue is a member of MyMainWindow, and is interacted with by
-    # slots of MyMainWindow that can be triggered by signals, both external
-    # and internal to MyMainWindow, that put a message into the message queue
-    # to be handled when the recurring timer triggers recurring_qpt_command
-    @qtc.pyqtSlot()
-    def recurring_qpt_command(self):
-        # If the positioner has not been connected, don't attempt to query
-        if not self.qpt:
-            return None
-
-        # Check if message queue has any items in it, if not, catch the
-        # Empty exception and send a query to get the current status of
-        # the positioner
-        try:
-            msg = self.qpt_q.get_nowait()
-        except Empty as e:
-            msg = ['GetStatus']
-
-        # Decode the message to send to the positioner
-        # then trigger the packet transmission
-        if msg[0] == 'Stop':
-            self.qpt.move_to(0, 0, 'stop')
-        elif msg[0] == 'GetStatus':
-            self.qpt.get_status()
-
-        # For jog messages, a value of 'sw' at index 1 of the list
-        # indicates that the message originated from the settings window
-        # so jog at full speed, otherwise msg[1] contains the speed at which to
-        # jog at, and msg[2] contains the intended end coordinate of the jog
-        elif msg[0] == 'JogCW':
-            if msg[1] == 'sw':
-                self.qpt.jog_cw(127, Coordinate(180, 0))
-            else:
-                self.qpt.jog_cw(msg[1], msg[2])
-        elif msg[0] == 'JogCCW':
-            if msg[1] == 'sw':
-                self.qpt.jog_ccw(127, Coordinate(-180, 0))
-            else:
-                self.qpt.jog_ccw(msg[1], msg[2])
-        elif msg[0] == 'JogUp':
-            if msg[1] == 'sw':
-                self.qpt.jog_up(127, Coordinate(0, 90))
-            else:
-                self.qpt.jog_up(msg[1], msg[2])
-        elif msg[0] == 'JogDown':
-            if msg[1] == 'sw':
-                self.qpt.jog_down(127, Coordinate(0, -90))
-            else:
-                self.qpt.jog_down(msg[1], msg[2])
-
-    # @qtc.pyqtSlot()
-    # def q_fault_reset(self, things):
-    #     if not self.qpt_q.full():
-    #         self.qpt_q.put_nowait(things)
-
-    @qtc.pyqtSlot(list)
-    def q_jog_cw_list(self, source):
-        if not self.qpt_q.full():
-            self.qpt_q.put_nowait(['JogCW', source[1], source[2]])
-
-    @qtc.pyqtSlot()
-    def q_jog_cw(self):
-        if not self.qpt_q.full():
-            self.qpt_q.put_nowait(['JogCW', 'sw'])
-
-    @qtc.pyqtSlot()
-    def q_jog_ccw(self, source=['sw']):
-        if not self.qpt_q.full():
-            if source[0] == 'sw':
-                self.qpt_q.put_nowait(['JogCCW', 'sw'])
-            else:
-                self.qpt_q.put_nowait(['JogCCW', source[1], source[2]])
-
-    @qtc.pyqtSlot(list)
-    def q_jog_up_list(self, source):
-        if not self.qpt_q.full():
-            self.qpt_q.put_nowait(['JogUp', source[1], source[2]])
-
-    @qtc.pyqtSlot()
-    def q_jog_up(self):
-        if not self.qpt_q.full():
-            self.qpt_q.put_nowait(['JogUp', 'sw'])
-
-    @qtc.pyqtSlot()
-    def q_jog_down(self, source=['sw']):
-        if not self.qpt_q.full():
-            if source[0] == 'sw':
-                self.qpt_q.put_nowait(['JogDown', 'sw'])
-            else:
-                self.qpt_q.put_nowait(['JogDown', source[1], source[2]])
-
-    @qtc.pyqtSlot()
-    def q_move_to(self, move_cmd):
-        if not self.qpt_q.full():
-            self.qpt_q.put_nowait(['MoveTo'])
-        # ------------------------------------------------------------------------------
-
-    # ----------------- Positioner Connection Management Slots ---------------------
+# ----------------- Positioner Connection Management Slots ---------------------
     @qtc.pyqtSlot()
     def connect_positioner(self):
         msg = qtw.QMessageBox()
@@ -465,26 +356,29 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         port = self.pos_control.portCombo_2.currentText()
         baud = self.pos_control.baudRateCombo.currentText()
 
-        self.qpt = Positioner(port, int(baud))
-        if self.qpt.comms.connected:
+        self.qpt_thread = QPTMaster(self)
+        self.qpt_thread.init_connection(port, baud)
+        sleep(1)
+
+        if self.qpt_thread.isRunning() and self.qpt_thread.m_connected:
             self.pos_control.connectStatus.setChecked(True)
 
-            self.qpt.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
-            self.qpt.signals.currentPan.connect(self.settings.pan_lcdNumber_4.display)
-            self.qpt.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
-            self.qpt.signals.currentTilt.connect(self.settings.tilt_lcdNumber_4.display)
+            self.qpt_thread.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
+            self.qpt_thread.signals.currentPan.connect(self.settings.pan_lcdNumber_4.display)
+            self.qpt_thread.signals.currentTilt.connect(self.meas_disp_window.el_lcdNumber.display)
+            self.qpt_thread.signals.currentTilt.connect(self.settings.tilt_lcdNumber_4.display)
 
-            self.settings.right_toolButton_4.clicked.connect(self.q_jog_cw)
-            self.settings.left_toolButton_4.clicked.connect(self.q_jog_ccw)
-            self.settings.up_toolButton_4.clicked.connect(self.q_jog_up)
-            self.settings.down_toolButton_4.clicked.connect(self.q_jog_down)
+            self.settings.right_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_cw)
+            self.settings.left_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_ccw)
+            self.settings.up_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_up)
+            self.settings.down_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_down)
 
             self.pos_control.connectQPT.setDisabled(True)
             self.pos_control.disconnectQPT.setEnabled(True)
             self.pos_control.faultReset.setEnabled(True)
         else:
-            del self.qpt
-            self.qpt = None
+            del self.qpt_thread
+            self.qpt_thread = None
             msg.setDetailedText(
                 'Positioner timed out while trying to connect, ' +
                 'verify power supply and USB are plugged in, ' +
@@ -494,21 +388,22 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
     @qtc.pyqtSlot()
     def disconnect_positioner(self):
+        self.qpt_thread.disconnect()
         self.pos_control.connectStatus.setChecked(False)
         self.pos_control.connectQPT.setEnabled(True)
         self.pos_control.disconnectQPT.setDisabled(True)
         self.pos_control.faultReset.setDisabled(True)
-        if self.qpt:
-            del self.qpt
-            self.qpt = None
+        if self.qpt_thread:
+            del self.qpt_thread
+            self.qpt_thread = None
 
     @qtc.pyqtSlot()
     def reset_positioner(self):
         pass
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------------------- Settings Button Slot ---------------------------
+# ----------------------------- Settings Button Slot ---------------------------
     @qtc.pyqtSlot()
     def toggle_settings(self):
         if self.is_settings_open:
@@ -519,10 +414,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.settings.show()
             self.is_settings_open = True
             self.actionSettings.setChecked(True)
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------------------- Help Button Toggle Slog ------------------------
+# ----------------------------- Help Button Toggle Slog ------------------------
     @qtc.pyqtSlot()
     def toggle_help(self):
         if self.is_help_on:
@@ -624,9 +519,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.pos_control.faultReset.setToolTip('Explain what this does')
             # data_processing popups
             self.data_processing.sc.setToolTip('Click on the check boxes in the legend\nto display/hide frequencies')
-    # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-    # ----------------------------- Show Documentation Slot --------------------------
+# ----------------------------- Show Documentation Slot ------------------------
     @qtc.pyqtSlot()
     def show_docs(self):
         if os.path.exists('README.md'):
@@ -639,9 +534,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             msg.setText('User Manual.pdf was not found within program directory')
             msg.setWindowTitle('Error')
             msg.exec_()
-    # --------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-    # ----------------------------- Calibration Prompt Slot ---------------------------
+
+# ----------------------------- Calibration Prompt Slot ------------------------
     @qtc.pyqtSlot()
     def cal_prompt(self):
         cal_msg = qtw.QMessageBox()
@@ -666,10 +562,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             cal_msg.setText("Calibration is now complete. Please reconnect the antenna to port 1 on the VNA.")
             cal_msg.exec_()
             self.mc.cal_finished = True
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------------------- Open Previous Measurement----------------------
+# ----------------------------- Open Previous Measurement-----------------------
     def open_prev_measurement(self):
         filename = qtw.QFileDialog.getOpenFileName(self, 'Open Previous Measurement Data',
                                                    'C:/', "CSV File (*.csv)")[0]
@@ -677,10 +573,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.data_file = filename
             self.update_plot()
             self.toggle_settings()
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ---------------------------- Change displayed data and format of plot----------
+# -------------------- Change displayed data and format of plot-----------------
     def update_plot(self):
         if self.data_file is not None:
             if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
@@ -714,9 +610,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.data_processing.sc.setToolTip(
                     'Click on the check boxes in the legend\nto display/hide frequencies')
             self.data_processing_toolbar.show()
-    # ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-    # ----------------- About window ---------------------------------------
+
+# -------------------------------- About window --------------------------------
     @qtc.pyqtSlot()
     def show_about(self):
         msg = qtw.QMessageBox()
@@ -726,8 +623,10 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     '\n    Maria Samia\n    Stephen Wood')
         msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         msg.exec_()
+#-------------------------------------------------------------------------------
 
-    # ----------------------------- Window CLose Event -----------------------------
+
+# ----------------------------- Window Close Event -----------------------------
     # Deal with window being closed via the 'X' button
     def closeEvent(self, event):
         event.accept()
@@ -738,8 +637,6 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         if self.mc:
             del self.mc
             self.mc = None
-
-
 # ------------------------------------------------------------------------------
 
 

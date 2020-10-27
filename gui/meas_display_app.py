@@ -9,7 +9,7 @@ from PyQt5 import QtWidgets as qtw, uic
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/meas_display_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/ui/meas_display_ui.ui')
 
 
 class MeasurmentDisplayWindow(baseUIWidget, baseUIClass):

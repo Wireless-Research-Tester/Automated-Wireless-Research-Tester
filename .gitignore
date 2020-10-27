@@ -1,8 +1,6 @@
-
-*.pyc
-data/data0.csv
-data/data0.csv
-*.pyc
+.idea/**
+bin/**
+venv/**
+*.cfg
 *.csv
-__pycache__/vna_syntaxes.cpython-38.pyc
 *.pyc

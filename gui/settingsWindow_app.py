@@ -13,7 +13,7 @@ from PyQt5 import uic
 from json import dump
 import re
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/settings_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/ui/settings_ui.ui')
 
 
 class StorageSignals(qtc.QObject):
