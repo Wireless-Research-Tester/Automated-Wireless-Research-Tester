@@ -560,6 +560,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.settings.label.setToolTip('')
             self.settings.dir_label.setToolTip('')
             self.settings.dir_Button.setToolTip('')
+            self.settings.toolButton.setToolTip('')
             self.transport.playButton.setToolTip('')
             self.progress_bar.progressBar.setToolTip('')
             self.meas_disp_window.az_lcdNumber.setToolTip('')
@@ -608,6 +609,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.settings.label.setToolTip('Directory for project data files')
             self.settings.dir_label.setToolTip('Directory for project data files')
             self.settings.dir_Button.setToolTip('Directory for project data files')
+            self.settings.toolButton.setToolTip('Import a .txt or .csv file containing all the frequencies\n'
+                                                '(Frequencies must be separated by a newline, a comma, or both)')
 
             # transport_ui popups
             self.transport.playButton.setToolTip('Begin measurement')
@@ -682,39 +685,61 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
     # ---------------------------- Change displayed data and format of plot----------
     def update_plot(self):
+        if self.mc_state == 'Running' or self.mc_state == 'SetupRunning':
+            is_live = True
+        else:
+            is_live = False
         if self.data_file is not None:
             if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False, is_live=is_live)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True, is_live=is_live)
                     self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
             else:
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False, is_live=is_live)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True, is_live=is_live)
             if self.is_help_on:
                 self.data_processing.sc.setToolTip(
                     'Click on the check boxes in the legend\nto display/hide frequencies')
+
             self.data_processing_toolbar.show()
     # ------------------------------------------------------------------------------------------
+
+    # ----------------- Show/hide impedance option in graph options-------------------------
+    def show_impedance(self):
+        if self.graph_mode.s21_imp_comboBox.count() == 1:
+            self.graph_mode.s21_imp_comboBox.addItem('Impedance')
+
+    def hide_impedance(self):
+        if self.graph_mode.s21_imp_comboBox.count() == 2:
+            self.graph_mode.s21_imp_comboBox.removeItem(1)
 
     # ----------------- About window ---------------------------------------
     @qtc.pyqtSlot()

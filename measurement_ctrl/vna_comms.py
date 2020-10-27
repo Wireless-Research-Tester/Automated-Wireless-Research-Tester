@@ -13,7 +13,6 @@
 #  Author(s): Eric Li
 #  Date: 2020/09/30
 #  Built with Python Version: 3.8.5
-#  For any questions, contact Eric at eric.li.1999@gmail.com
 ################################################################################
 import pyvisa as visa
 import math
