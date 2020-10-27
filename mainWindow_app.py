@@ -59,6 +59,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.help_menu_item = self.menu.addMenu("Help")
         self.help = self.help_menu_item.addAction("Turn Help On")
         self.docs = self.help_menu_item.addAction("Documentation")
+        self.about = self.menu.addAction("About")
 
 
         # self.toolBar.setStyleSheet(
@@ -103,6 +104,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.actionHelp.triggered.connect(self.toggle_help)
         self.help.triggered.connect(self.toggle_help)
         self.docs.triggered.connect(self.show_docs)
+        self.about.triggered.connect(self.show_about)
 
         # Create connections between transport buttons and the functions
         # creating the Gui's control flow for MeasurementCtrl
@@ -172,6 +174,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     @qtc.pyqtSlot()
     def start_mc(self):
         msg = qtw.QMessageBox()
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
+        msg.setIcon(qtw.QMessageBox.Warning)
         msg.setWindowTitle('Warning!')
         msg.setText('Unable to start measurement')
 
@@ -456,6 +460,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         msg.setWindowTitle('Warning!')
         msg.setText('Positioner failed to connect!')
         msg.setIcon(qtw.QMessageBox.Critical)
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
 
         port = self.pos_control.portCombo_2.currentText()
         baud = self.pos_control.baudRateCombo.currentText()
@@ -555,6 +560,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.settings.label.setToolTip('')
             self.settings.dir_label.setToolTip('')
             self.settings.dir_Button.setToolTip('')
+            self.settings.toolButton.setToolTip('')
             self.transport.playButton.setToolTip('')
             self.progress_bar.progressBar.setToolTip('')
             self.meas_disp_window.az_lcdNumber.setToolTip('')
@@ -603,6 +609,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.settings.label.setToolTip('Directory for project data files')
             self.settings.dir_label.setToolTip('Directory for project data files')
             self.settings.dir_Button.setToolTip('Directory for project data files')
+            self.settings.toolButton.setToolTip('Import a .txt or .csv file containing all the frequencies\n'
+                                                '(Frequencies must be separated by a newline, a comma, or both)')
 
             # transport_ui popups
             self.transport.playButton.setToolTip('Begin measurement')
@@ -629,6 +637,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         else:
             msg = qtw.QMessageBox()
             msg.setIcon(qtw.QMessageBox.Critical)
+            msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
             msg.setStandardButtons(qtw.QMessageBox.Ok)
             msg.setText('User Manual.pdf was not found within program directory')
             msg.setWindowTitle('Error')
@@ -640,6 +649,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     def cal_prompt(self):
         cal_msg = qtw.QMessageBox()
         cal_msg.setIcon(qtw.QMessageBox.Warning)
+        cal_msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         cal_msg.setStandardButtons(qtw.QMessageBox.Ok)
         cal_msg.setInformativeText("Press Ok when ready to proceed.")
         cal_msg.setWindowTitle("Calibration Instructions")
@@ -675,39 +685,72 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
     # ---------------------------- Change displayed data and format of plot----------
     def update_plot(self):
+        if self.mc_state == 'Running' or self.mc_state == 'SetupRunning':
+            is_live = True
+        else:
+            is_live = False
         if self.data_file is not None:
             if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False, is_live=is_live)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True, is_live=is_live)
                     self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
             else:
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False, is_live=is_live)
                 else:
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()
+                    self.data_processing.signals.s11_present.connect(self.show_impedance)
+                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
                     self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True)
+                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True, is_live=is_live)
             if self.is_help_on:
                 self.data_processing.sc.setToolTip(
                     'Click on the check boxes in the legend\nto display/hide frequencies')
-            self.data_processing_toolbar.show()
 
+            self.data_processing_toolbar.show()
+    # ------------------------------------------------------------------------------------------
+
+    # ----------------- Show/hide impedance option in graph options-------------------------
+    def show_impedance(self):
+        if self.graph_mode.s21_imp_comboBox.count() == 1:
+            self.graph_mode.s21_imp_comboBox.addItem('Impedance')
+
+    def hide_impedance(self):
+        if self.graph_mode.s21_imp_comboBox.count() == 2:
+            self.graph_mode.s21_imp_comboBox.removeItem(1)
+
+    # ----------------- About window ---------------------------------------
+    @qtc.pyqtSlot()
+    def show_about(self):
+        msg = qtw.QMessageBox()
+        msg.setWindowTitle('About')
+        msg.setText('This software was created by NC State University students as part of their senior design project.'
+                    '\n\nTeam members:\n    Thomas Hoover\n    Austin Langebeck-Fissinger\n    Eric Li'
+                    '\n    Maria Samia\n    Stephen Wood')
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
+        msg.exec_()
 
     # ----------------------------- Window CLose Event -----------------------------
     # Deal with window being closed via the 'X' button

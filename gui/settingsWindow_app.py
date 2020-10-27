@@ -84,6 +84,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         msg.setWindowTitle("Warning!")
         msg.setText("Input Error")
         msg.setIcon(QMessageBox.Critical)
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         # msg.exec_() # shows pop-up error
 
         if self.project_dir is None:
@@ -135,14 +136,14 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         }
 
         if len(self.lineEdit_stop_4.text()) > 0 and len(self.lineEdit_start_4.text()) > 0:
-            settings_dict["linear"]["start"] = int(self.lineEdit_start_4.text())
-            settings_dict["linear"]["stop"] = int(self.lineEdit_stop_4.text())
+            settings_dict["linear"]["start"] = float(self.lineEdit_start_4.text())
+            settings_dict["linear"]["stop"] = float(self.lineEdit_stop_4.text())
             settings_dict["linear"]["points"] = int(self.comboBox_4.currentText())
 
         if len(self.lineEdit_list_5.text()) > 0:
             settings_dict["list"] = str(self.lineEdit_list_5.text()).split(",")
             for i in range(0, len(settings_dict["list"])):
-                settings_dict["list"][i] = int(settings_dict["list"][i])
+                settings_dict["list"][i] = float(settings_dict["list"][i])
 
         if self.Impedance_radioButton_y_7.isChecked():
             settings_dict["impedance"] = True

@@ -44,11 +44,12 @@ class MeasurementCtrlSignals(qtc.QObject):
 
 class MeasurementCtrl():
     def __init__(self, args, qpt, data_file='data\\data0.csv'):
+        print(args)
         self.impedance = args['impedance']  # if true, S11 and S21 will be measured. Else, only S21
-        if len(args['list']) != 0:          # list or vna_comms.lin_freq obj
+        if args['list'] is not None:          # list or vna_comms.lin_freq obj
             self.freq = args['list']
         else:
-            self.freq = vna_comms.LinFreq(args['linear']['start'], args['linear']['end'], args['linear']['points'])
+            self.freq = vna_comms.LinFreq(args['linear']['start'], args['linear']['stop'], args['linear']['points'])
         self.cal = args['calibration'] # true or false
         self.avg = args['averaging'] # e.g. 8, 16, etc.
         self.sweep_mode = args['positioner_mv'] # either 'continuous' or 'step'

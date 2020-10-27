@@ -13,7 +13,7 @@
 def append_data(filename, data):
     file = open(filename, 'a')
     for i in range(0, len(data)):
-        file.write('%s,%d,%f,%f,%f,%f\n' % (
+        file.write('%s,%f,%f,%f,%f,%f\n' % (
             data[i].measurement_type, 
             data[i].freq, 
             data[i].theta, 
@@ -25,5 +25,5 @@ def append_data(filename, data):
 
 def create_file(filename):
     file = open(filename, 'w')
-    file.write('measurement_type,freq,theta,phi,magnitude,phase,\n')
+    file.write('measurement_type,freq,theta,phi,magnitude,phase\n')
     file.close()
