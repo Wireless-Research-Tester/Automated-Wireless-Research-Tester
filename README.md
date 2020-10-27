@@ -1,5 +1,8 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
+### Version 0.8.4
+- data processing fixes
+- Added about section
 ### Version 0.8.3
 - updated resource file to include all images used in program
 - Added graph mode selection button, and have it working with the plotting
