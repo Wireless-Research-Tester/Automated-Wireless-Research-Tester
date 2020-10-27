@@ -84,6 +84,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         msg.setWindowTitle("Warning!")
         msg.setText("Input Error")
         msg.setIcon(QMessageBox.Critical)
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         # msg.exec_() # shows pop-up error
 
         if self.project_dir is None:

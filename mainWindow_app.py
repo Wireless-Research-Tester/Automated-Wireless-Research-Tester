@@ -59,6 +59,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.help_menu_item = self.menu.addMenu("Help")
         self.help = self.help_menu_item.addAction("Turn Help On")
         self.docs = self.help_menu_item.addAction("Documentation")
+        self.about = self.menu.addAction("About")
 
 
         # self.toolBar.setStyleSheet(
@@ -103,6 +104,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.actionHelp.triggered.connect(self.toggle_help)
         self.help.triggered.connect(self.toggle_help)
         self.docs.triggered.connect(self.show_docs)
+        self.about.triggered.connect(self.show_about)
 
         # Create connections between transport buttons and the functions
         # creating the Gui's control flow for MeasurementCtrl
@@ -172,6 +174,8 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     @qtc.pyqtSlot()
     def start_mc(self):
         msg = qtw.QMessageBox()
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
+        msg.setIcon(qtw.QMessageBox.Warning)
         msg.setWindowTitle('Warning!')
         msg.setText('Unable to start measurement')
 
@@ -456,6 +460,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         msg.setWindowTitle('Warning!')
         msg.setText('Positioner failed to connect!')
         msg.setIcon(qtw.QMessageBox.Critical)
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
 
         port = self.pos_control.portCombo_2.currentText()
         baud = self.pos_control.baudRateCombo.currentText()
@@ -629,6 +634,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         else:
             msg = qtw.QMessageBox()
             msg.setIcon(qtw.QMessageBox.Critical)
+            msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
             msg.setStandardButtons(qtw.QMessageBox.Ok)
             msg.setText('User Manual.pdf was not found within program directory')
             msg.setWindowTitle('Error')
@@ -640,6 +646,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     def cal_prompt(self):
         cal_msg = qtw.QMessageBox()
         cal_msg.setIcon(qtw.QMessageBox.Warning)
+        cal_msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         cal_msg.setStandardButtons(qtw.QMessageBox.Ok)
         cal_msg.setInformativeText("Press Ok when ready to proceed.")
         cal_msg.setWindowTitle("Calibration Instructions")
@@ -707,7 +714,18 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.data_processing.sc.setToolTip(
                     'Click on the check boxes in the legend\nto display/hide frequencies')
             self.data_processing_toolbar.show()
+    # ------------------------------------------------------------------------------------------
 
+    # ----------------- About window ---------------------------------------
+    @qtc.pyqtSlot()
+    def show_about(self):
+        msg = qtw.QMessageBox()
+        msg.setWindowTitle('About')
+        msg.setText('This software was created by NC State University students as part of their senior design project.'
+                    '\n\nTeam members:\n    Thomas Hoover\n    Austin Langebeck-Fissinger\n    Eric Li'
+                    '\n    Maria Samia\n    Stephen Wood')
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
+        msg.exec_()
 
     # ----------------------------- Window CLose Event -----------------------------
     # Deal with window being closed via the 'X' button
