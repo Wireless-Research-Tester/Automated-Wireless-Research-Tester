@@ -1,5 +1,7 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
+### Version 0.8.5
+- VNA error checking
 ### Version 0.8.4
 - data processing fixes
 - Added about section
