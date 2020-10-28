@@ -44,7 +44,6 @@ class MeasurementCtrlSignals(qtc.QObject):
 
 class MeasurementCtrl():
     def __init__(self, args, qpt, data_file='data\\data0.csv'):
-        print(args)
         self.impedance = args['impedance']  # if true, S11 and S21 will be measured. Else, only S21
         if args['list'] is not None:          # list or vna_comms.lin_freq obj
             self.freq = args['list']

@@ -223,31 +223,38 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     dict = json.load(file)
                 self.data_file = '/' + strftime("%b%d_%H%M_%S", localtime()) + '.csv'
                 self.data_file = self.settings.project_dir + self.data_file
-                self.mc = MeasurementCtrl(dict, self.qpt, self.data_file)
-                create_file(self.data_file)
-                # Connect signals and slots between MeasurementCtrl object,
-                # transport model handlers, positioner queue, and gui
-                self.mc.signals.progress.connect(self.progress_bar.progressBar.setValue)
-                self.mc.signals.setupComplete.connect(self.run_mc)
-                self.mc.signals.runComplete.connect(self.run_completed)
-                self.mc.signals.runPaused.connect(self.enable_play)
-                self.mc.signals.runStopped.connect(self.run_completed)
-                self.mc.signals.requestMoveTo.connect(self.q_move_to)
-                self.mc.signals.requestJogCW.connect(self.q_jog_cw_list)
-                self.mc.signals.requestJogUp.connect(self.q_jog_up_list)
-                self.mc.signals.calReady.connect(self.cal_prompt)
-                # Toggle enabled for relevant transport buttons
-                self.transport.playButton.setDisabled(True)
-                self.transport.pauseButton.setEnabled(True)
-                self.transport.stopButton.setEnabled(True)
-                # Update the state of MeasurementCtrl, then create and start
-                # thread for MeasurementCtrl.run() to run in
-                # self.mc.progress = 0
-                self.mc_state = 'SetupRunning'
-                self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
-                self.mc_thread.start()
-                self.pos_control.lineEdit.setText('SetupRunning')
-                self.update_plot()
+                try:
+                    self.mc = MeasurementCtrl(dict, self.qpt, self.data_file)
+                except visa.errors.VisaIOError:
+                    msg.setDetailedText(
+                        'Need to connect the VNA before the measurement can begin'
+                    )
+                    msg.exec_()
+                else:
+                    create_file(self.data_file)
+                    # Connect signals and slots between MeasurementCtrl object,
+                    # transport model handlers, positioner queue, and gui
+                    self.mc.signals.progress.connect(self.progress_bar.progressBar.setValue)
+                    self.mc.signals.setupComplete.connect(self.run_mc)
+                    self.mc.signals.runComplete.connect(self.run_completed)
+                    self.mc.signals.runPaused.connect(self.enable_play)
+                    self.mc.signals.runStopped.connect(self.run_completed)
+                    self.mc.signals.requestMoveTo.connect(self.q_move_to)
+                    self.mc.signals.requestJogCW.connect(self.q_jog_cw_list)
+                    self.mc.signals.requestJogUp.connect(self.q_jog_up_list)
+                    self.mc.signals.calReady.connect(self.cal_prompt)
+                    # Toggle enabled for relevant transport buttons
+                    self.transport.playButton.setDisabled(True)
+                    self.transport.pauseButton.setEnabled(True)
+                    self.transport.stopButton.setEnabled(True)
+                    # Update the state of MeasurementCtrl, then create and start
+                    # thread for MeasurementCtrl.run() to run in
+                    # self.mc.progress = 0
+                    self.mc_state = 'SetupRunning'
+                    self.mc_thread = Thread(target=self.mc.run, args=(), daemon=True)
+                    self.mc_thread.start()
+                    self.pos_control.lineEdit.setText('SetupRunning')
+                    self.update_plot()
 
     @qtc.pyqtSlot()
     def stop_mc(self):

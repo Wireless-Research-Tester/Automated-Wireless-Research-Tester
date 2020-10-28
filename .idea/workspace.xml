@@ -178,10 +178,10 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.data_processing" />
+      <item itemvalue="Python.graph_mode_toolbar_app" />
       <item itemvalue="Python.mainWindow_app" />
       <item itemvalue="Python.settingsWindow_app" />
-      <item itemvalue="Python.graph_mode_toolbar_app" />
-      <item itemvalue="Python.data_processing" />
     </list>
     <recent_temporary>
       <list>
