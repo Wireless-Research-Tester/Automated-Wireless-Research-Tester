@@ -20,6 +20,7 @@ from measurement_ctrl.integer import Coordinate
 import measurement_ctrl.data_storage as data_storage
 from time import sleep
 from threading import Lock, Thread, local
+import pyvisa as visa
 import sys
 from PyQt5 import QtCore as qtc
 
@@ -39,6 +40,7 @@ class MeasurementCtrlSignals(qtc.QObject):
     requestMoveTo  = qtc.pyqtSignal(list )
     startLockClock = qtc.pyqtSignal()
     calReady       = qtc.pyqtSignal()
+    error       = qtc.pyqtSignal()
 """End MeasurementCtrlSignals Class"""
 
 
@@ -81,6 +83,7 @@ class MeasurementCtrl():
         self.cal_finished = False   # flag for completing calibration
 
         self.signals = MeasurementCtrlSignals()
+        self.error_message = None
         self.update_position()
 
 
@@ -97,333 +100,340 @@ class MeasurementCtrl():
                if necessary, and configure the positioner speed settings
             7. Move the positioner to the starting location and update position data 
         """
-
-        # Reset vna and create data storage file
-        if self.cal is True:
-            self.vna.reset_all()
-        else:
-            self.vna.reset()
-        # data_storage.create_file(self.file)
-        # Calibrate vna if needed
-        if self.cal is True:
-            self.signals.calReady.emit()
-            while True:
-                if self.open_proceed is True:
-                    self.vna.calibrate_open()
-                    break
-            self.signals.calReady.emit()
-            while True:
-                if self.short_proceed is True:
-                    self.vna.calibrate_short()
-                    break
-            self.signals.calReady.emit()
-            while True:
-                if self.load_proceed is True:
-                    self.vna.calibrate_load()
-                    break
-            self.signals.calReady.emit()
-            while True:
-                if self.cal_finished is True:
-                    break
-
-        # Configure the vna and calculate vna delays
-        self.vna.setup(self.freq, self.avg, 3700)
-        if self.impedance is True:
-            self.vna.using_correction = True
-        [self.vna_avg_delay, self.vna_S11_delay, self.vna_S21_delay] = self.compute_vna_delay()
-        # Calculate positioner speed needed based on vna delays, if needed
-        if self.sweep_mode == 'continuous': # check if a continuous sweep is possible
-            if self.exe_mode == 'pan':
-                total_time = (self.vna_avg_delay + self.vna_S21_delay) * 360 / self.resolution
-                if total_time > self.qpt.MAX_PAN_TIME:
-                    self.sweep_mode = 'step'
-                    self.pan_speed = 0
-                else:
-                    self.pan_speed = self.compute_pan_speed(total_time)
+        try:
+            # Reset vna and create data storage file
+            if self.cal is True:
+                self.vna.reset_all()
             else:
-                total_time = (self.vna_avg_delay + self.vna_S21_delay) * 180 / self.resolution
-                if total_time > self.qpt.MAX_TILT_TIME:
-                    self.sweep_mode = 'step'
-                    self.tilt_speed = 0
+                self.vna.reset()
+            # data_storage.create_file(self.file)
+            # Calibrate vna if needed
+            if self.cal is True:
+                self.signals.calReady.emit()
+                while True:
+                    if self.open_proceed is True:
+                        self.vna.calibrate_open()
+                        break
+                self.signals.calReady.emit()
+                while True:
+                    if self.short_proceed is True:
+                        self.vna.calibrate_short()
+                        break
+                self.signals.calReady.emit()
+                while True:
+                    if self.load_proceed is True:
+                        self.vna.calibrate_load()
+                        break
+                self.signals.calReady.emit()
+                while True:
+                    if self.cal_finished is True:
+                        break
+
+            # Configure the vna and calculate vna delays
+            self.vna.setup(self.freq, self.avg, 3700)
+            if self.impedance is True:
+                self.vna.using_correction = True
+            [self.vna_avg_delay, self.vna_S11_delay, self.vna_S21_delay] = self.compute_vna_delay()
+            # Calculate positioner speed needed based on vna delays, if needed
+            if self.sweep_mode == 'continuous': # check if a continuous sweep is possible
+                if self.exe_mode == 'pan':
+                    total_time = (self.vna_avg_delay + self.vna_S21_delay) * 360 / self.resolution
+                    if total_time > self.qpt.MAX_PAN_TIME:
+                        self.sweep_mode = 'step'
+                        self.pan_speed = 0
+                    else:
+                        self.pan_speed = self.compute_pan_speed(total_time)
                 else:
-                    self.tilt_speed = self.compute_tilt_speed(total_time)
-        # Move to starting location and update position data
-        if self.exe_mode == 'pan':
-            self.qpt.move_to(-180+self.offset, self.const_angle, 'abs')
-            self.wait_on_pan_setup(-180+self.offset)
-        else:
-            self.qpt.move_to(self.offset+self.const_angle, -90, 'abs')
-            self.wait_on_pan_down(-90)
-        self.update_position()
+                    total_time = (self.vna_avg_delay + self.vna_S21_delay) * 180 / self.resolution
+                    if total_time > self.qpt.MAX_TILT_TIME:
+                        self.sweep_mode = 'step'
+                        self.tilt_speed = 0
+                    else:
+                        self.tilt_speed = self.compute_tilt_speed(total_time)
+            # Move to starting location and update position data
+            if self.exe_mode == 'pan':
+                self.qpt.move_to(-180+self.offset, self.const_angle, 'abs')
+                self.wait_on_pan_setup(-180+self.offset)
+            else:
+                self.qpt.move_to(self.offset+self.const_angle, -90, 'abs')
+                self.wait_on_pan_down(-90)
+            self.update_position()
+        except Exception as e:
+            self.error_message = str(e)
+            self.signals.error.emit()
 
         
 
     def run(self):
-        if not self.resume:
-        # If run is not resuming from paused state of transport model setup  
-        # MeasurementCtrl and conditionally perform impedance measurement,
-        # otherwise, skip performing those steps            
-            self.setup()
-            if self.impedance is True:
-                self.vna.rst_avg('S11')
-                sleep(self.vna_avg_delay)
-                self.record_data('S11', self.file)    # need to create_file prior
+        try:
+            if not self.resume:
+            # If run is not resuming from paused state of transport model setup
+            # MeasurementCtrl and conditionally perform impedance measurement,
+            # otherwise, skip performing those steps
+                self.setup()
+                if self.impedance is True:
+                    self.vna.rst_avg('S11')
+                    sleep(self.vna_avg_delay)
+                    self.record_data('S11', self.file)    # need to create_file prior
 
-        if self.pause_move:
-        # Catch instance of pause button being pressed while self.setup() or
-        # impedance measurement being performed, that is the only system condition
-        # in which self.pause_move would be true at this point of execution 
-        # for the run() function. If the pause button was pressed, clear the
-        # pause_move flag, then return from the run to stop the thread of execution
-            self.signals.runPaused.emit()
-            self.pause_move = False
-            return None
+            if self.pause_move:
+            # Catch instance of pause button being pressed while self.setup() or
+            # impedance measurement being performed, that is the only system condition
+            # in which self.pause_move would be true at this point of execution
+            # for the run() function. If the pause button was pressed, clear the
+            # pause_move flag, then return from the run to stop the thread of execution
+                self.signals.runPaused.emit()
+                self.pause_move = False
+                return None
 
-        #------------------------------ Step Case -----------------------------
-        elif self.sweep_mode == 'step':
-            # Emit setupComplete to change mc_state in transport control model 
-            # to 'Running' signaling to the gui that measurement system setup 
-            # is complete and the measurement sweep is starting execution
-            self.signals.setupComplete.emit()
+            #------------------------------ Step Case -----------------------------
+            elif self.sweep_mode == 'step':
+                # Emit setupComplete to change mc_state in transport control model
+                # to 'Running' signaling to the gui that measurement system setup
+                # is complete and the measurement sweep is starting execution
+                self.signals.setupComplete.emit()
 
-            #------------------------ Pan Step Case ---------------------------
-            if self.exe_mode == 'pan':
-                # Load loop index from class member storage before entering the
-                # loop. If the execution isn't being resumed, this value will
-                # be zero, otherwise it will reperesent the state of a previously
-                # paused measurement sweep, allowing that sweep to be resumed
-                i = self.paused_loop_idx
-                while i <= int(360/self.resolution):
-                # Core execution loop of the measurement sweep. Continues until
-                # either the full sweep has been performed, or until a flag
-                # variable set by the transport control model causes it to
-                # break out of the loop.
-                    if self.resume is True:
-                    # If the sweep is being resumed, then the measurement at this
-                    # position has already been performed, so calculate the next
-                    # azimuth angle to be measured, and then move positioner there
-                        self.resume = False
+                #------------------------ Pan Step Case ---------------------------
+                if self.exe_mode == 'pan':
+                    # Load loop index from class member storage before entering the
+                    # loop. If the execution isn't being resumed, this value will
+                    # be zero, otherwise it will reperesent the state of a previously
+                    # paused measurement sweep, allowing that sweep to be resumed
+                    i = self.paused_loop_idx
+                    while i <= int(360/self.resolution):
+                    # Core execution loop of the measurement sweep. Continues until
+                    # either the full sweep has been performed, or until a flag
+                    # variable set by the transport control model causes it to
+                    # break out of the loop.
+                        if self.resume is True:
+                        # If the sweep is being resumed, then the measurement at this
+                        # position has already been performed, so calculate the next
+                        # azimuth angle to be measured, and then move positioner there
+                            self.resume = False
+                            target = (i * self.resolution) - 180
+                            self.qpt.move_to(target, self.const_angle, 'abs')
+                            self.wait_on_pan_cw(target)
+                        # Delay for vna reset, take measurement, then update progress
+                        self.step_delay()
+                        self.record_data('S21', self.file)
+                        self.progress = int(i * self.resolution / 360 * 100)
+                        if self.progress > 100:
+                            self.progress = 100
+                        self.signals.progress.emit(self.progress)
+                        # Check if the sweep should be paused, stopped, or if it is complete
+                        if self.is_step_pan_complete() is True:
+                        # The sweep is finished, so set the finished flag so that
+                        # nulls are written to the end of the data file and the
+                        # runComplete signal gets emitted, then break out of the loop
+                            self.finished = True
+                            break
+                        elif self.stop is True:
+                        # The transport control model is attempting to stop the sweep
+                        # so clear the progress, emit the runStopped signal, and
+                        # then break out of the loop
+                            self.progress = 0
+                            self.signals.runStopped.emit()
+                            break
+                        elif self.pause_move is True:
+                        # The transport control model is attempting to pause the sweep
+                        # so store the current value of the loop counter after adding
+                        # one to it to prevent overlapping measurements, clear the
+                        # pause_move flag that was set by the transport control model,
+                        # emit the runPaused signal, and the break out of the loop
+                            self.paused_loop_idx = i + 1
+                            self.pause_move = False
+                            self.signals.runPaused.emit()
+                            break
+                        else:
+                        # Continue sweep execution, increment loop counter, calculate
+                        # the next azimuth angle based on new loop counter, then
+                        # move the positioner to that location
+                            i = i + 1
+                            target = (i * self.resolution) - 180
+                            self.qpt.move_to(target, self.const_angle, 'abs')
+                            self.wait_on_pan_cw(target)
+                #------------------------------------------------------------------
+
+                #----------------------- Tilt Step Case ---------------------------
+                    # else:
+                    #     i = self.paused_loop_idx
+                    #     while i <= int(180/self.resolution):
+                    #         # Change i to index MeasurementCtrl was paused at if resuming
+                    #         if self.resume is True:
+                    #             i = self.paused_loop_idx
+                    #             self.resume = False
+                    #             self.pause = False
+                    #             self.paused_loop_idx = -1
+
+                    #         # Delay for vna reset, take measurement, then update progress
+                    #         self.step_delay()
+                    #         self.record_data('S21', self.file)
+                    #         self.progress = int(i * self.resolution / 180 * 100)
+                    #         if self.progress > 100:
+                    #             self.progress = 100
+                    #         self.signals.progress.emit(self.progress)
+
+                    #         # Check if measurement needs paused, or if it is completed
+                    #         # Otherwise, move to the next position
+                    #         if self.is_step_tilt_complete() is True:
+                    #             self.finished = True
+                    #             break
+                    #         elif self.pause_move is True:
+                    #             self.paused_loop_idx = i
+                    #             self.pause_move = False
+                    #             self.pause = True
+                    #             break
+                    #         else:
+                    #             target = ((i+1) * self.resolution) - 90
+                    #             self.qpt.move_to(self.const_angle, target, 'abs')
+                    #             while self.qpt.status_executing:
+                    #                 sleep(0.2)
+                #------------------------------------------------------------------
+            #----------------------------------------------------------------------
+
+            #--------------------------- Continuous Case --------------------------
+            else:
+                # Emit setupComplete to change mc_state in transport control model
+                # to 'Running' signaling to the gui that measurement system setup
+                # is complete and the measurement sweep is starting execution
+                self.signals.setupComplete.emit()
+                if self.resume is True:
+                # If sweep is resuming, clear resume flag since it is not needed
+                # inside of the main execution loop to get the positioner to the
+                # correct starting position
+                    self.resume = False
+
+                #--------------------- Pan Continuous Case ------------------------
+                if self.exe_mode == 'pan':
+                    # Since sweep is starting from a standstill, both for a new sweep
+                    # and resuming a paused sweep, use init_cont_sweep to reset the
+                    # vna, enforce the wait for the reset delay, then take the initial
+                    # sweep measurement. Once this is complete, start up thread of
+                    # execution for timing the transmission of jog requests to the
+                    # positioner, and the load the loop index from class member storage.
+                    # If sweep is being resumed it will represent the state of a
+                    # previously paused measurement sweep, allowing that sweep to be
+                    # resumed, otherwise its value will be zero representing a new sweep.
+                    self.init_cont_sweep()
+                    Thread_Jog = Thread(target=self.send_pan_jog, args=(), daemon=True)
+                    Thread_Jog.start()
+                    i = self.paused_loop_idx
+                    while i <= int(360/self.resolution):
+                    # Core execution loop of the measurement sweep. Continues until
+                    # either the full sweep has been performed, or until a flag variable
+                    # set by the transport control model causes it to break out of loop.
+                        # Change i to index MeasurementCtrl was paused at if resuming
+                        # if self.resume is True:
+                        #     self.resume = False
+                        #     self.pause = False
+
+                        # Delay for vna reset, take measurement, then update progress
+                        # lock is a Lock that is acquired by a thread started in the
+                        # init_cont_lock function that forces the thread to wait for
+                        # the vna_avg_reset time in a non blocking manner. Calculate
+                        # the target angle so that the inner while loop can ensure the
+                        # next measurement is not taken too early, while the outer
+                        # while loop forces the thread to wait on the lock to be released
+                        lock = self.init_cont_lock()
                         target = (i * self.resolution) - 180
-                        self.qpt.move_to(target, self.const_angle, 'abs')
-                        self.wait_on_pan_cw(target)
-                    # Delay for vna reset, take measurement, then update progress
-                    self.step_delay()
-                    self.record_data('S21', self.file)
-                    self.progress = int(i * self.resolution / 360 * 100)
-                    if self.progress > 100:
-                        self.progress = 100
-                    self.signals.progress.emit(self.progress)
-                    # Check if the sweep should be paused, stopped, or if it is complete
-                    if self.is_step_pan_complete() is True:
-                    # The sweep is finished, so set the finished flag so that
-                    # nulls are written to the end of the data file and the
-                    # runComplete signal gets emitted, then break out of the loop
-                        self.finished = True
-                        break
-                    elif self.stop is True:
-                    # The transport control model is attempting to stop the sweep
-                    # so clear the progress, emit the runStopped signal, and
-                    # then break out of the loop
-                        self.progress = 0
-                        self.signals.runStopped.emit()
-                        break                        
-                    elif self.pause_move is True:
-                    # The transport control model is attempting to pause the sweep
-                    # so store the current value of the loop counter after adding
-                    # one to it to prevent overlapping measurements, clear the
-                    # pause_move flag that was set by the transport control model,
-                    # emit the runPaused signal, and the break out of the loop
-                        self.paused_loop_idx = i + 1
-                        self.pause_move = False
-                        self.signals.runPaused.emit()
-                        break
-                    else:
-                    # Continue sweep execution, increment loop counter, calculate
-                    # the next azimuth angle based on new loop counter, then
-                    # move the positioner to that location
-                        i = i + 1
-                        target = (i * self.resolution) - 180
-                        self.qpt.move_to(target, self.const_angle, 'abs')
-                        self.wait_on_pan_cw(target)         
-            #------------------------------------------------------------------
-
-            #----------------------- Tilt Step Case ---------------------------
-                # else:
-                #     i = self.paused_loop_idx
-                #     while i <= int(180/self.resolution):
-                #         # Change i to index MeasurementCtrl was paused at if resuming
-                #         if self.resume is True:
-                #             i = self.paused_loop_idx
-                #             self.resume = False
-                #             self.pause = False
-                #             self.paused_loop_idx = -1                    
-
-                #         # Delay for vna reset, take measurement, then update progress
-                #         self.step_delay()
-                #         self.record_data('S21', self.file)
-                #         self.progress = int(i * self.resolution / 180 * 100)
-                #         if self.progress > 100:
-                #             self.progress = 100
-                #         self.signals.progress.emit(self.progress)
-
-                #         # Check if measurement needs paused, or if it is completed
-                #         # Otherwise, move to the next position
-                #         if self.is_step_tilt_complete() is True:
-                #             self.finished = True
-                #             break
-                #         elif self.pause_move is True:
-                #             self.paused_loop_idx = i
-                #             self.pause_move = False
-                #             self.pause = True
-                #             break                        
-                #         else:
-                #             target = ((i+1) * self.resolution) - 90
-                #             self.qpt.move_to(self.const_angle, target, 'abs')
-                #             while self.qpt.status_executing:
-                #                 sleep(0.2)
-            #------------------------------------------------------------------      
-        #----------------------------------------------------------------------
-
-        #--------------------------- Continuous Case --------------------------
-        else:
-            # Emit setupComplete to change mc_state in transport control model
-            # to 'Running' signaling to the gui that measurement system setup
-            # is complete and the measurement sweep is starting execution
-            self.signals.setupComplete.emit() 
-            if self.resume is True:
-            # If sweep is resuming, clear resume flag since it is not needed
-            # inside of the main execution loop to get the positioner to the 
-            # correct starting position
-                self.resume = False
-
-            #--------------------- Pan Continuous Case ------------------------
-            if self.exe_mode == 'pan':
-                # Since sweep is starting from a standstill, both for a new sweep
-                # and resuming a paused sweep, use init_cont_sweep to reset the
-                # vna, enforce the wait for the reset delay, then take the initial
-                # sweep measurement. Once this is complete, start up thread of
-                # execution for timing the transmission of jog requests to the
-                # positioner, and the load the loop index from class member storage.
-                # If sweep is being resumed it will represent the state of a
-                # previously paused measurement sweep, allowing that sweep to be
-                # resumed, otherwise its value will be zero representing a new sweep.
-                self.init_cont_sweep()
-                Thread_Jog = Thread(target=self.send_pan_jog, args=(), daemon=True)
-                Thread_Jog.start()
-                i = self.paused_loop_idx
-                while i <= int(360/self.resolution):
-                # Core execution loop of the measurement sweep. Continues until
-                # either the full sweep has been performed, or until a flag variable
-                # set by the transport control model causes it to break out of loop.
-                    # Change i to index MeasurementCtrl was paused at if resuming
-                    # if self.resume is True:
-                    #     self.resume = False
-                    #     self.pause = False
-
-                    # Delay for vna reset, take measurement, then update progress
-                    # lock is a Lock that is acquired by a thread started in the
-                    # init_cont_lock function that forces the thread to wait for
-                    # the vna_avg_reset time in a non blocking manner. Calculate
-                    # the target angle so that the inner while loop can ensure the
-                    # next measurement is not taken too early, while the outer
-                    # while loop forces the thread to wait on the lock to be released
-                    lock = self.init_cont_lock()
-                    target = (i * self.resolution) - 180
-                    self.update_position()
-                    while lock.acquire(blocking=False) is not True:
-                        sleep(.2)
                         self.update_position()
-                        while self.pan < target:
+                        while lock.acquire(blocking=False) is not True:
                             sleep(.2)
                             self.update_position()
-                    self.record_data('S21', self.file)
-                    self.progress = int((target + 180) / 360 * 100)
-                    if self.progress > 100:
-                        self.progress = 100
-                    self.signals.progress.emit(self.progress)
-                    # Check if sweep should be paused, stopped, or if it is completed
-                    if self.is_continuous_pan_complete() is True:
-                    # The sweep is finished
-                        # Set the finished flag so nulls are written to the end
-                        # end of the data file and the runComplete signal gets 
-                        # emitted, stop the positioner, break out of loop
-                        self.pause_jog = True
-                        if Thread_Jog.is_alive():
-                            Thread_Jog.join()
-                        self.finished = True
-                        break
-                    elif self.pause_move is True:
-                    # The transport control model is attempting to pause the sweep
-                        # Store current loop counter + 1 to prevent overlapping 
-                        # measurements, clear the pause_move flag for transport
-                        # control model
-                        self.pause_move = False
-                        self.paused_loop_idx = i + 1
-                        self.pause_jog = True
-                        if Thread_Jog.is_alive():
-                            Thread_Jog.join()
-                        self.signals.runPaused.emit()
-                        break
-                    elif self.stop is True:
-                        self.pause_jog = True
-                        if Thread_Jog.is_alive():
-                            Thread_Jog.join()
-                        self.signals.runStopped.emit()
-                        self.progress = 0
-                        break
-                    else:
-                    # Continue sweep execution
-                        # Increment the loop index
-                        i = i + 1
-            #------------------------------------------------------------------
+                            while self.pan < target:
+                                sleep(.2)
+                                self.update_position()
+                        self.record_data('S21', self.file)
+                        self.progress = int((target + 180) / 360 * 100)
+                        if self.progress > 100:
+                            self.progress = 100
+                        self.signals.progress.emit(self.progress)
+                        # Check if sweep should be paused, stopped, or if it is completed
+                        if self.is_continuous_pan_complete() is True:
+                        # The sweep is finished
+                            # Set the finished flag so nulls are written to the end
+                            # end of the data file and the runComplete signal gets
+                            # emitted, stop the positioner, break out of loop
+                            self.pause_jog = True
+                            if Thread_Jog.is_alive():
+                                Thread_Jog.join()
+                            self.finished = True
+                            break
+                        elif self.pause_move is True:
+                        # The transport control model is attempting to pause the sweep
+                            # Store current loop counter + 1 to prevent overlapping
+                            # measurements, clear the pause_move flag for transport
+                            # control model
+                            self.pause_move = False
+                            self.paused_loop_idx = i + 1
+                            self.pause_jog = True
+                            if Thread_Jog.is_alive():
+                                Thread_Jog.join()
+                            self.signals.runPaused.emit()
+                            break
+                        elif self.stop is True:
+                            self.pause_jog = True
+                            if Thread_Jog.is_alive():
+                                Thread_Jog.join()
+                            self.signals.runStopped.emit()
+                            self.progress = 0
+                            break
+                        else:
+                        # Continue sweep execution
+                            # Increment the loop index
+                            i = i + 1
+                #------------------------------------------------------------------
 
-            #--------------------- Tilt Continuous Case -----------------------
-                # else:
-                #     # if self.pause is False:
-                #     self.init_cont_sweep()
-                #     Thread_Jog = Thread(target=self.send_tilt_jog, args=())
-                #     Thread_Jog.start()
-                #     i = self.paused_loop_idx
-                #     while i <= int(180/self.resolution):
-                #         # Change i to index MeasurementCtrl was paused at if resuming
-                #         if self.resume is True:
-                #             i = self.paused_loop_idx
-                #             self.resume = False
-                #             self.pause = False
-                #             self.paused_loop_idx = -1
+                #--------------------- Tilt Continuous Case -----------------------
+                    # else:
+                    #     # if self.pause is False:
+                    #     self.init_cont_sweep()
+                    #     Thread_Jog = Thread(target=self.send_tilt_jog, args=())
+                    #     Thread_Jog.start()
+                    #     i = self.paused_loop_idx
+                    #     while i <= int(180/self.resolution):
+                    #         # Change i to index MeasurementCtrl was paused at if resuming
+                    #         if self.resume is True:
+                    #             i = self.paused_loop_idx
+                    #             self.resume = False
+                    #             self.pause = False
+                    #             self.paused_loop_idx = -1
 
-                #         # Delay for vna reset, take measurement, then update progress
-                #         lock = self.init_cont_lock()
-                #         target = (i * self.resolution) - 90
-                #         self.update_position()
-                #         while lock.acquire(blocking=False) is not True:
-                #             while self.tilt < target:
-                #                 sleep(.3)
-                #                 self.update_position()
-                #         self.record_data('S21', self.file)
-                #         self.progress = int((target + 90) / 180 * 100)
-                #         if self.progress > 100:
-                #             self.progress = 100
-                #         self.signals.progress.emit(self.progress)
-                        
-                #         # Check if measurement needs paused, or if it is completed
-                #         # Otherwise, move to the next position
-                #         if self.is_continuous_tilt_complete() is True:
-                #             self.halt()
-                #             self.finished = True
-                #             break
-                #         elif self.pause_move is True:
-                #             self.paused_loop_idx = i
-                #             self.pause_jog = True
-                #             self.pause_move = False
-                #             break                        
-            #------------------------------------------------------------------
-        #----------------------------------------------------------------------
+                    #         # Delay for vna reset, take measurement, then update progress
+                    #         lock = self.init_cont_lock()
+                    #         target = (i * self.resolution) - 90
+                    #         self.update_position()
+                    #         while lock.acquire(blocking=False) is not True:
+                    #             while self.tilt < target:
+                    #                 sleep(.3)
+                    #                 self.update_position()
+                    #         self.record_data('S21', self.file)
+                    #         self.progress = int((target + 90) / 180 * 100)
+                    #         if self.progress > 100:
+                    #             self.progress = 100
+                    #         self.signals.progress.emit(self.progress)
 
-        if self.finished is True:
-            with open(self.file, 'a') as file:
-                file.write("null,null,null,null,null,null\n")
-            self.signals.runComplete.emit()
+                    #         # Check if measurement needs paused, or if it is completed
+                    #         # Otherwise, move to the next position
+                    #         if self.is_continuous_tilt_complete() is True:
+                    #             self.halt()
+                    #             self.finished = True
+                    #             break
+                    #         elif self.pause_move is True:
+                    #             self.paused_loop_idx = i
+                    #             self.pause_jog = True
+                    #             self.pause_move = False
+                    #             break
+                #------------------------------------------------------------------
+            #----------------------------------------------------------------------
+
+            if self.finished is True:
+                with open(self.file, 'a') as file:
+                    file.write("null,null,null,null,null,null\n")
+                self.signals.runComplete.emit()
+        except Exception as e:
+            self.error_message = str(e)
+            self.signals.error.emit()
 
 
     def step_delay(self):

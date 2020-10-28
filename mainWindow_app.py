@@ -227,7 +227,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     self.mc = MeasurementCtrl(dict, self.qpt, self.data_file)
                 except visa.errors.VisaIOError:
                     msg.setDetailedText(
-                        'Need to connect the VNA before the measurement can begin'
+                        'Need to connect the VNA and configure the GPIB address before the measurement can begin'
                     )
                     msg.exec_()
                 else:
@@ -243,6 +243,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     self.mc.signals.requestJogCW.connect(self.q_jog_cw_list)
                     self.mc.signals.requestJogUp.connect(self.q_jog_up_list)
                     self.mc.signals.calReady.connect(self.cal_prompt)
+                    self.mc.signals.error.connect(self.mc_error)
                     # Toggle enabled for relevant transport buttons
                     self.transport.playButton.setDisabled(True)
                     self.transport.pauseButton.setEnabled(True)
@@ -678,6 +679,19 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.mc.cal_finished = True
 
     # ------------------------------------------------------------------------------
+
+    # ------------------------------Measurement control error messages--------------
+    @qtc.pyqtSlot()
+    def mc_error(self):
+        msg = qtw.QMessageBox()
+        msg.setIcon(qtw.QMessageBox.Critical)
+        msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
+        msg.setStandardButtons(qtw.QMessageBox.Ok)
+        msg.setInformativeText("An unexpected error has occurred during measurement.")
+        msg.setDetailedText(self.mc.error_message)
+        msg.setWindowTitle("Error!")
+        msg.exec_()
+    # ---------------------------------------------------------------------------
 
     # ----------------------------- Open Previous Measurement----------------------
     def open_prev_measurement(self):
