@@ -98,7 +98,8 @@ class SettingsWindow(baseUIWidget, baseUIClass):
             else:
                 msg.setDetailedText("Invalid start/stop frequency.")
                 msg.exec_()
-        elif re.search("^(( )*(([0-9]*\.([0-9]+))|[0-9]+))(,( )*(([0-9]*\.([0-9]+))|[0-9]+)){0,29}$",
+        # regular expression that reads the pattern "1,2,3" "1, 2, 3" "1 ,2 ,3"
+        elif re.search("^((\s)*(([0-9]*.([0-9]+))|[0-9]+)(\s)*)(,(\s)*(([0-9]*.([0-9]+))|[0-9]+)(\s)*){0,29}$",
                        self.lineEdit_list_5.text()):
             temp_ar = str(self.lineEdit_list_5.text()).split(",")
             if len(self.lineEdit_stop_4.text()) == 0 and len(self.lineEdit_start_4.text()) == 0:
