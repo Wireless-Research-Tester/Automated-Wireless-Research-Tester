@@ -85,8 +85,9 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         msg.setText("Input Error")
         msg.setIcon(QMessageBox.Critical)
         msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
-        # msg.exec_() # shows pop-up error
+        # msg.exec_() shows pop-up error
 
+        # error checking for the inputs
         if self.project_dir is None:
             msg.setDetailedText("Please select a project directory.")
             msg.exec_()
@@ -100,17 +101,22 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         elif re.search("^(( )*(([0-9]*\.([0-9]+))|[0-9]+))(,( )*(([0-9]*\.([0-9]+))|[0-9]+)){0,29}$",
                        self.lineEdit_list_5.text()):
             temp_ar = str(self.lineEdit_list_5.text()).split(",")
-
-            if self.traverse(temp_ar, 0.03, 6000):  # check if list array values are [0.03, 6000] MHz
-                self.settings_accepted()
+            if len(self.lineEdit_stop_4.text()) == 0 and len(self.lineEdit_start_4.text()) == 0:
+                # check if list array values are [0.03, 6000] MHz
+                if self.traverse(temp_ar, 0.03, 6000): 
+                    self.settings_accepted()
+                else:
+                    msg.setDetailedText("Some frequencies in the list are out of range.\n" + "Please enter values in the format 1, 2, 3")
+                    msg.exec_()
             else:
-                msg.setDetailedText("Some frequencies in the list are out of range.")
+                msg.setDetailedText("Both linear and list frequency have inputs")
                 msg.exec_()
         else:
             msg.setDetailedText("Please enter list frequencies as numerical values separated by commas.")
             msg.exec_()
 
     @qtc.pyqtSlot()
+    # fill the json from the settings ui
     def settings_accepted(self):
         settings_dict = {
             "linear": {
@@ -134,7 +140,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
             "alias": None,
             "baud_rate": None
         }
-
+        
         if len(self.lineEdit_stop_4.text()) > 0 and len(self.lineEdit_start_4.text()) > 0:
             settings_dict["linear"]["start"] = float(self.lineEdit_start_4.text())
             settings_dict["linear"]["stop"] = float(self.lineEdit_stop_4.text())
@@ -144,7 +150,8 @@ class SettingsWindow(baseUIWidget, baseUIClass):
             settings_dict["list"] = str(self.lineEdit_list_5.text()).split(",")
             for i in range(0, len(settings_dict["list"])):
                 settings_dict["list"][i] = float(settings_dict["list"][i])
-
+            settings_dict["list"].sort()
+            
         if self.Impedance_radioButton_y_7.isChecked():
             settings_dict["impedance"] = True
 
@@ -173,10 +180,12 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         self.storageSignals.settingsClosed.emit()
 
     def traverse(self, temp_list, low, high):
-        for i in range(0, len(temp_list)):  # change list to integer
+        # change list to float
+        for i in range(0, len(temp_list)):  
             temp_list[i] = float(temp_list[i])
-        for x in temp_list:  # traverse in the list
-            if x < low or x > high:  # condition check
+        # traverse in the list and check bounds
+        for x in temp_list:  
+            if x < low or x > high: 
                 return False
         return True
 
