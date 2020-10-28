@@ -3,13 +3,13 @@
 Transport
 =============
 Displays empty window
-"""""
+"""
 import sys
 from PyQt5 import QtWidgets as qtw, uic
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/ui/transport_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/transport_ui.ui')
 
 
 class TransportWidget(baseUIWidget, baseUIClass):
@@ -21,7 +21,7 @@ class TransportWidget(baseUIWidget, baseUIClass):
         # Main UI code goes here
 
         # End main UI code
-        self.show()
+        # self.show()
 
 
 if __name__ == '__main__':

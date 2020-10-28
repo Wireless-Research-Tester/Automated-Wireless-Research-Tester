@@ -1,25 +1,24 @@
 ################################################################################
+# packet_parser
+# Description:
+#   This file contains the implementation of a class for parsing packets
+#   returned by the QPT Positioner, and updating QPT status & error
+#   fields in response to the both the type of return packet, and
+#   the data returned by the QPT in said packet.
 #
-#  Description:
-#      This file contains the implementation of a class for parsing packets
-#      returned by the QPT Positioner, and updating QPT status & error
-#      fields in response to the both the type of return packet, and
-#      the data returned by the QPT in said packet.
+# Status:
+#   By and large this class is functional, meaning that the packets all get
+#   parsed correctly, however, there is work remaining to be done to
+#   add PyQt signals so that the parser can emit errors to the Gui framework
+#   and possibly throw exceptions, unsure if that will be necessary or if
+#   emitting signals to the Gui will be enough.
 #
-#  Status:
-#      By and large this class is functional, meaning that the packets all get
-#      parsed correctly, however, there is work remaining to be done to
-#      add PyQt signals so that the parser can emit errors to the Gui framework
-#      and possibly throw exceptions, unsure if that will be necessary or if
-#      emitting signals to the Gui will be enough.
+# Dependencies: PyVISA Version: 1.10.1
 #
-#  Dependencies:
-#      PyVISA Version: 1.10.1
-#
-#  Author: Thomas Hoover
-#  Date: 20200806
-#  Built with Python Version: 3.8.5
-#
+# Author: Thomas Hoover
+# Date: 20200806
+# Built with Python Version: 3.8.5
+# For any questions, contact Thomas at tomhoover1@gmail.com
 ################################################################################
 from time import time, sleep
 import measurement_ctrl.integer as qi

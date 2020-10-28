@@ -1,7 +1,17 @@
 ###############################################################################
+# qpt_controller
+# Description:
 #
 #
+# Status:
 #
+#
+# Dependencies: PyQt5
+#
+# Author: Thomas Hoover
+# Date: 20201017
+# Built with Python Version: 3.8.2
+# For any questions, contact Thomas at tomhoover1@gmail.com
 ###############################################################################
 from PyQt5 import QtCore as qtc
 

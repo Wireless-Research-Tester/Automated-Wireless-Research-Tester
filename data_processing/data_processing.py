@@ -59,7 +59,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         widget.setLayout(layout)
         self.setCentralWidget(widget)
 
-        self.show()
+        # self.show()
 
     def begin_measurement(self, data_file, polar=True, s11=False):
         self.Polar = polar

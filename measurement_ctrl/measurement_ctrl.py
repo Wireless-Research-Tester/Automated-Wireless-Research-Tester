@@ -1,18 +1,18 @@
 ################################################################################
-#  measurement_ctrl
-#  Description:
+# measurement_ctrl
+# Description:
 #  
 #
-#  Status:
+# Status:
 #
 #
-#  Dependencies:
-#      PyVISA Version: 1.10.1
+# Dependencies: PyVISA Version: 1.10.1
 #
-#  Authors: Eric Li, Thomas Hoover
-#  Date: 20200806
-#  Built with Python Version: 3.8.5
-#
+# Authors: Eric Li, Thomas Hoover
+# Date: 20200806
+# Built with Python Version: 3.8.5
+# For any questions, contact Eric at eric.li.1999@gmail.com
+#   or Thomas at tomhoover1@gmail.com
 ################################################################################
 import measurement_ctrl.vna_comms as vna_comms
 import measurement_ctrl.positioner as positioner

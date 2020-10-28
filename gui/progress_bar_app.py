@@ -2,14 +2,14 @@
 =============
 Progress Bar
 =============
-"""""
+"""
 import sys
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/ui/progress_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/progress_ui.ui')
 
 
 class ProgressBar(baseUIWidget, baseUIClass):
@@ -27,7 +27,7 @@ class ProgressBar(baseUIWidget, baseUIClass):
 
 
         # End main UI code
-        self.show()
+        # self.show()
 
 
 if __name__ == '__main__':

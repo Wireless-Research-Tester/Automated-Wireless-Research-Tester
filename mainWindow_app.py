@@ -28,7 +28,7 @@ import pyvisa as visa
 from time import localtime, strftime
 from measurement_ctrl.qpt_controller import *
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/ui/main_window_ui.ui')
+baseUIClass, baseUIWidget = uic.loadUiType('gui/main_window_ui.ui')
 
 
 class MyMainWindow(baseUIWidget, baseUIClass):
@@ -52,7 +52,6 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.meas_disp_window = MeasurmentDisplayWindow()
         self.settings = SettingsWindow()
         self.progress_bar = ProgressBar()
-        self.pos_control = PositionerToolBarWidget()
         self.data_processing = DataProcessing()
         self.graph_mode = GraphModeToolBar()
         self.menu = self.menuBar()
@@ -62,30 +61,26 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.docs = self.help_menu_item.addAction("Documentation")
         self.about = self.menu.addAction("About")
 
-
-        # self.toolBar.setStyleSheet(
-        #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
-        #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
-        # self.toolBar.setStyleSheet(
-        #     "QToolButton#actionHelp:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
-        #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
+        # style sheet
+            # self.toolBar.setStyleSheet(
+            #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
+            #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
+            # self.toolBar.setStyleSheet(
+            #     "QToolButton#actionHelp:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
+            #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
 
         # Add custom toolbars to MainWindow Widget
         self.transport_toolbar = self.addToolBar('Transport_ToolBar')
         self.meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
         self.progress_display_toolbar = self.addToolBar('Progress_Display_ToolBar')
-        self.addToolBarBreak()
         self.graph_mode_toolbar = self.addToolBar('Graph_Mode_ToolBar')
-        self.positioner_control_toolbar = self.addToolBar('Positioner_Control_ToolBar')
         self.addToolBarBreak()
         self.data_processing_toolbar = self.addToolBar('Data_Processing_ToolBar')
-
 
         # Add the custom widgets to the toolbars
         self.meas_display_toolbar.addWidget(self.meas_disp_window)
         self.transport_toolbar.addWidget(self.transport)
         self.progress_display_toolbar.addWidget(self.progress_bar)
-        self.positioner_control_toolbar.addWidget(self.pos_control)
         self.data_processing_toolbar.addWidget(self.data_processing)
         self.graph_mode_toolbar.addWidget(self.graph_mode)
         self.data_processing_toolbar.hide()
@@ -130,44 +125,53 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.mc_thread = None  # Placeholder for thread to run MeasurementCtrl in
         self.mc_state = 'NotRunning'  # Keeps track of current state for MeasurementCtrl
 
-        self.qpt = None  # Placeholder for Positioner object
-        self.qpt_q = Queue()  # Message queue for communication btwn Gui and qpt_thread
+        # self.qpt = None  # Placeholder for Positioner object
+        # self.qpt_q = Queue()  # Message queue for communication btwn Gui and qpt_thread
 
         self.qpt_thread = None # Placeholder for qpt_controller thread
 
         self.data_file = None
     # --------------------------------------------------------------------------
 
-    # --------------- Initialize Positioner Signal Connections------------------
+
+    #------------- Initialize Positioner Connection Gui Members ----------------
+        self.baud_rates = ['9600', '14400', '19200', '28800', '38400', '57600']
+
+        self.connectQPT = qtw.QPushButton('Connect')
+        self.disconnectQPT = qtw.QPushButton('Disconnect')
+        self.resetQPT = qtw.QPushButton('Reset')
+        self.portLabel = qtw.QLabel('Port ')
+        self.portCombo = qtw.QComboBox()
+        self.baudLabel = qtw.QLabel('Baud Rate ')
+        self.baudCombo = qtw.QComboBox()
+
         rm = visa.ResourceManager()
         ports = rm.list_resources()
         for i in ports:
             if i[0:4] == 'ASRL':
-                self.pos_control.portCombo_2.addItem(i)
+                self.portCombo.addItem(i)
+        for i in self.baud_rates:
+            self.baudCombo.addItem(i)
 
-        self.pos_control.connectStatus.setDisabled(True)
+        self.statusBar().showMessage('Positioner Status: Disconnected')
+        self.statusBar().addPermanentWidget(self.portLabel)
+        self.statusBar().addPermanentWidget(self.portCombo)
+        self.statusBar().addPermanentWidget(self.baudLabel)
+        self.statusBar().addPermanentWidget(self.baudCombo)
+        self.statusBar().addPermanentWidget(self.connectQPT)
+        self.statusBar().addPermanentWidget(self.disconnectQPT)
+        self.statusBar().addPermanentWidget(self.resetQPT)
 
-        self.pos_control.connectQPT.clicked.connect(self.connect_positioner)
-        self.pos_control.disconnectQPT.clicked.connect(self.disconnect_positioner)
-        self.pos_control.faultReset.clicked.connect(self.reset_positioner)
+        self.disconnectQPT.setDisabled(True)
+        self.resetQPT.setDisabled(True)
 
-        self.pos_control.disconnectQPT.setDisabled(True)
-        self.pos_control.faultReset.setDisabled(True)
+        self.connectQPT.clicked.connect(self.connect_positioner)
+        self.disconnectQPT.clicked.connect(self.disconnect_positioner)
+        self.resetQPT.clicked.connect(self.reset_positioner)
     # --------------------------------------------------------------------------
+        
         self.show()
     """End __init__() of MyMainWindow"""
-
-
-    def resizeEvent(self, event):
-        self.resized.emit()
-        return super(MyMainWindow, self).resizeEvent(event)
-
-
-    @qtc.pyqtSlot()
-    def resize_window(self):
-        self.background = self.background_orig.scaledToWidth(self.width())
-        self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
-        self.setPalette(self.palette)
 
 
 # ------------------- MeasurementCtrl Transport Model Slots --------------------
@@ -353,15 +357,15 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         msg.setIcon(qtw.QMessageBox.Critical)
         msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
 
-        port = self.pos_control.portCombo_2.currentText()
-        baud = self.pos_control.baudRateCombo.currentText()
+        port = self.portCombo.currentText()
+        baud = self.baudCombo.currentText()
 
         self.qpt_thread = QPTMaster(self)
         self.qpt_thread.init_connection(port, baud)
         sleep(1)
 
         if self.qpt_thread.isRunning() and self.qpt_thread.m_connected:
-            self.pos_control.connectStatus.setChecked(True)
+            self.statusBar().showMessage('Positioner Status: Connected')
 
             self.qpt_thread.signals.currentPan.connect(self.meas_disp_window.az_lcdNumber.display)
             self.qpt_thread.signals.currentPan.connect(self.settings.pan_lcdNumber_4.display)
@@ -373,9 +377,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.settings.up_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_up)
             self.settings.down_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_down)
 
-            self.pos_control.connectQPT.setDisabled(True)
-            self.pos_control.disconnectQPT.setEnabled(True)
-            self.pos_control.faultReset.setEnabled(True)
+            self.connectQPT.setDisabled(True)
+            self.disconnectQPT.setEnabled(True)
+            self.resetQPT.setEnabled(True)
         else:
             del self.qpt_thread
             self.qpt_thread = None
@@ -389,11 +393,12 @@ class MyMainWindow(baseUIWidget, baseUIClass):
     @qtc.pyqtSlot()
     def disconnect_positioner(self):
         self.qpt_thread.disconnect()
-        self.pos_control.connectStatus.setChecked(False)
-        self.pos_control.connectQPT.setEnabled(True)
-        self.pos_control.disconnectQPT.setDisabled(True)
-        self.pos_control.faultReset.setDisabled(True)
+        self.statusBar().showMessage('Positioner Status: Disconnected')
+        self.connectQPT.setEnabled(True)
+        self.disconnectQPT.setDisabled(True)
+        self.resetQPT.setDisabled(True)
         if self.qpt_thread:
+            self.qpt_thread.disconnect()
             del self.qpt_thread
             self.qpt_thread = None
 
@@ -417,7 +422,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 # ------------------------------------------------------------------------------
 
 
-# ----------------------------- Help Button Toggle Slog ------------------------
+# ----------------------------- Help Button Toggle Slot ------------------------
     @qtc.pyqtSlot()
     def toggle_help(self):
         if self.is_help_on:
@@ -613,7 +618,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 # ------------------------------------------------------------------------------
 
 
-# -------------------------------- About window --------------------------------
+# -------------------------------- About window Slot ---------------------------
     @qtc.pyqtSlot()
     def show_about(self):
         msg = qtw.QMessageBox()
@@ -626,17 +631,30 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 #-------------------------------------------------------------------------------
 
 
-# ----------------------------- Window Close Event -----------------------------
+#-------------------------------- Window Resize Slot----------------------------
+    @qtc.pyqtSlot()
+    def resize_window(self):
+        self.background = self.background_orig.scaledToWidth(self.width())
+        self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
+        self.setPalette(self.palette)   
+#-------------------------------------------------------------------------------
+
+
+# ---------------------------------- Events ------------------------------------
     # Deal with window being closed via the 'X' button
     def closeEvent(self, event):
         event.accept()
-        if self.qpt:
-            self.qpt.move_to(0, 0, 'stop')
-            del self.qpt
-            self.qpt = None
+        if self.qpt_thread:
+            self.qpt_thread.disconnect()
+            del self.qpt_thread
+            self.qpt_thread = None
         if self.mc:
             del self.mc
             self.mc = None
+
+    def resizeEvent(self, event):
+        self.resized.emit()
+        return super(MyMainWindow, self).resizeEvent(event)
 # ------------------------------------------------------------------------------
 
 

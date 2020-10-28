@@ -18,7 +18,7 @@ class MainWindow(qtw.QWidget):
         # Main UI code goes here
 
         # End main UI code
-        self.show()
+        # self.show()
 
 
 if __name__ == '__main__':

@@ -1,18 +1,20 @@
 ################################################################################
+# constants
+# Description:
+#   This file containts the various constants used by the positioner
+#   communications subsystem. The constants consist of dictionaries for the
+#   protocol's control characters, positioner commands, transmission packets
+#   for static positioner commands (ie. commands that have invarient
+#   packets); bit masks for parsing the recieved packts; and a class which
+#   enumerates the possible status, soft faults, and hard faults.
 #
-#  Description:
+# Status: Complete
+# Dependencies: None
 #
-#
-#  Status:
-#
-#
-#  Dependencies:
-#      PyVISA Version: 1.10.1
-#
-#  Author: Thomas Hoover
-#  Date: 20200417
-#  Built with Python Version: 3.8.2
-#
+# Author: Thomas Hoover
+# Date: 20200417
+# Built with Python Version: 3.8.2
+# For any questions, contact Thomas at tomhoover1@gmail.com
 ################################################################################
 import enum
 
@@ -68,7 +70,8 @@ ESC =  b'\x1b' # Used to escape a data or LRC byte that matches a control char
 ESC_MASK = int.from_bytes(b'\x80', byteorder='little') # Bitmask used to set and clear bit 7 in data or LRC bytes that match control chars
 
 
-# Bitmasks used to set and clear bits in data or control bytes
+# Bitmasks used to set and clear bits in data or control bytes, or for parsing
+# recieved packets.
 BIT0 = int.from_bytes(b'\x01', byteorder='little')
 BIT1 = int.from_bytes(b'\x02', byteorder='little')
 BIT2 = int.from_bytes(b'\x04', byteorder='little')
@@ -79,7 +82,8 @@ BIT6 = int.from_bytes(b'\x40', byteorder='little')
 BIT7 = int.from_bytes(b'\x80', byteorder='little')
 
 
-# Errors
+# Enumeration of the possible positioner status codes, soft faults, and
+# hard faults
 @enum.unique
 class StatusCodes(enum.IntEnum):
     """Specifies the status codes the positioner can have.

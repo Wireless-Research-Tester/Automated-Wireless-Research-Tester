@@ -1,18 +1,17 @@
 ################################################################################
-#
-#  Description:
-#
-#
-#  Status:
+# positioner
+# Description:
 #
 #
-#  Dependencies:
-#      PyVISA Version: 1.10.1
+# Status:
 #
-#  Author: Thomas Hoover
-#  Date: 20200417
-#  Built with Python Version: 3.8.2
 #
+# Dependencies: PyVISA Version: 1.10.1
+#
+# Author: Thomas Hoover
+# Date: 20200417
+# Built with Python Version: 3.8.2
+# For any questions, contact Thomas at tomhoover1@gmail.com
 ################################################################################
 import time
 from threading import Lock
