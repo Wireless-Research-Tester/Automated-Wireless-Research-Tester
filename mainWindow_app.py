@@ -465,11 +465,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.progress_bar.progressBar.setToolTip('')
             self.meas_disp_window.az_lcdNumber.setToolTip('')
             self.meas_disp_window.el_lcdNumber.setToolTip('')
-            self.pos_control.portLabel_2.setToolTip('')
-            self.pos_control.portCombo_2.setToolTip('')
-            self.pos_control.label_2.setToolTip('')
-            self.pos_control.lineEdit.setToolTip('')
-            self.pos_control.faultReset.setToolTip('')
+            # self.pos_control.portLabel_2.setToolTip('')
+            # self.pos_control.portCombo_2.setToolTip('')
+            # self.pos_control.label_2.setToolTip('')
+            # self.pos_control.lineEdit.setToolTip('')
+            # self.pos_control.faultReset.setToolTip('')
             self.data_processing.sc.setToolTip('')
 
         else:
@@ -520,11 +520,11 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             # progress_ui popups
             self.progress_bar.progressBar.setToolTip('Measurement progress')
             # pos_control_ui popups
-            self.pos_control.portLabel_2.setToolTip('Serial port for positioner')
-            self.pos_control.portCombo_2.setToolTip('Serial port for positioner')
-            self.pos_control.label_2.setToolTip('Current state of the measurement')
-            self.pos_control.lineEdit.setToolTip('Current state of the measurement')
-            self.pos_control.faultReset.setToolTip('Explain what this does')
+            # self.pos_control.portLabel_2.setToolTip('Serial port for positioner')
+            # self.pos_control.portCombo_2.setToolTip('Serial port for positioner')
+            # self.pos_control.label_2.setToolTip('Current state of the measurement')
+            # self.pos_control.lineEdit.setToolTip('Current state of the measurement')
+            # self.pos_control.faultReset.setToolTip('Explain what this does')
             # data_processing popups
             self.data_processing.sc.setToolTip('Click on the check boxes in the legend\nto display/hide frequencies')
 # ------------------------------------------------------------------------------
