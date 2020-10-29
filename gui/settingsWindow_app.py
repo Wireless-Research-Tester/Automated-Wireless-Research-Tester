@@ -99,7 +99,7 @@ class SettingsWindow(baseUIWidget, baseUIClass):
                 msg.setDetailedText("Invalid start/stop frequency.")
                 msg.exec_()
         # regular expression that reads the pattern "1,2,3" "1, 2, 3" "1 ,2 ,3"
-        elif re.search("^((\s)*(([0-9]*.([0-9]+))|[0-9]+)(\s)*)(,(\s)*(([0-9]*.([0-9]+))|[0-9]+)(\s)*){0,29}$",
+        elif re.search("^((\s)*(([0-9]*\.([0-9]+))|[0-9]+)(\s)*)(,(\s)*(([0-9]*\.([0-9]+))|[0-9]+)(\s)*){0,29}$",
                        self.lineEdit_list_5.text()):
             temp_ar = str(self.lineEdit_list_5.text()).split(",")
             if len(self.lineEdit_stop_4.text()) == 0 and len(self.lineEdit_start_4.text()) == 0:
@@ -107,13 +107,13 @@ class SettingsWindow(baseUIWidget, baseUIClass):
                 if self.traverse(temp_ar, 0.03, 6000): 
                     self.settings_accepted()
                 else:
-                    msg.setDetailedText("Some frequencies in the list are out of range.\n" + "Please enter values in the format 1, 2, 3")
+                    msg.setDetailedText("Some frequencies in the list are out of range.")
                     msg.exec_()
             else:
                 msg.setDetailedText("Both linear and list frequency have inputs")
                 msg.exec_()
         else:
-            msg.setDetailedText("Please enter list frequencies as numerical values separated by commas.")
+            msg.setDetailedText("Please enter list frequencies as numerical values separated by commas.\n" + "Use format 1, 2, 3")
             msg.exec_()
 
     @qtc.pyqtSlot()
