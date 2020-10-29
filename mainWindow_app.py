@@ -470,11 +470,13 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             self.progress_bar.progressBar.setToolTip('')
             self.meas_disp_window.az_lcdNumber.setToolTip('')
             self.meas_disp_window.el_lcdNumber.setToolTip('')
-            # self.pos_control.portLabel_2.setToolTip('')
-            # self.pos_control.portCombo_2.setToolTip('')
-            # self.pos_control.label_2.setToolTip('')
-            # self.pos_control.lineEdit.setToolTip('')
-            # self.pos_control.faultReset.setToolTip('')
+            self.portLabel.setToolTip('')
+            self.portCombo.setToolTip('')
+            self.baudLabel.setToolTip('')
+            self.baudCombo.setToolTip('')
+            self.connectQPT.setToolTip('')
+            self.disconnectQPT.setToolTip('')
+            self.resetQPT.setToolTip('')
             self.data_processing.sc.setToolTip('')
 
         else:
@@ -525,11 +527,13 @@ class MyMainWindow(baseUIWidget, baseUIClass):
             # progress_ui popups
             self.progress_bar.progressBar.setToolTip('Measurement progress')
             # pos_control_ui popups
-            # self.pos_control.portLabel_2.setToolTip('Serial port for positioner')
-            # self.pos_control.portCombo_2.setToolTip('Serial port for positioner')
-            # self.pos_control.label_2.setToolTip('Current state of the measurement')
-            # self.pos_control.lineEdit.setToolTip('Current state of the measurement')
-            # self.pos_control.faultReset.setToolTip('Explain what this does')
+            self.portLabel.setToolTip('Serial port for positioner')
+            self.portCombo.setToolTip('Serial port for positioner')
+            self.baudLabel.setToolTip('Baud rate for positioner serial port')
+            self.baudCombo.setToolTip('Baud rate for positioner serial port')
+            self.connectQPT.setToolTip('Initialize positioner communications connection')
+            self.disconnectQPT.setToolTip('Disconnect positioner communications connection')
+            self.resetQPT.setToolTip('Reset hardware and measurement systems')
             # data_processing popups
             self.data_processing.sc.setToolTip('Click on the check boxes in the legend\nto display/hide frequencies')
 # ------------------------------------------------------------------------------
