@@ -61,14 +61,6 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.docs = self.help_menu_item.addAction("Documentation")
         self.about = self.menu.addAction("About")
 
-        # style sheet
-            # self.toolBar.setStyleSheet(
-            #     "QToolButton#actionSettings:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
-            #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
-            # self.toolBar.setStyleSheet(
-            #     "QToolButton#actionHelp:hover {background: qradialgradient(cx: 0.3, cy: -0.4, fx: 0.3, "
-            #     "fy: -0.4,radius: 1.35, stop: 0 #fff, stop: 1 #bbb);}")
-
         # Add custom toolbars to MainWindow Widget
         self.transport_toolbar = self.addToolBar('Transport_ToolBar')
         self.meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')

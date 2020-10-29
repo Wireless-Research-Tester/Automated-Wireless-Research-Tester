@@ -633,7 +633,7 @@ class DataProcessing(QtWidgets.QMainWindow):
             return
         df = self.read_file()
         if df.empty:
-            print('File only contains column headers')
+            # print('File only contains column headers')
             return
         self.check_s11(df)
         self.tot_num_frequencies(df)  # Total number of frequencies

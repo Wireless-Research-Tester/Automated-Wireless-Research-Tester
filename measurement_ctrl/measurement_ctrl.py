@@ -77,7 +77,6 @@ class MeasurementCtrl(qtc.QObject):
         self.MAX_PAN_TIME = 1240
         self.MIN_PAN_SPEED = 8
         self.MAX_PAN_SPEED = 127
-
         self.MAX_TILT_TIME = 700
         self.MIN_TILT_SPEED = 17
         self.MAX_TILT_SPEED = 127
@@ -95,7 +94,6 @@ class MeasurementCtrl(qtc.QObject):
 
         self.signals = MeasurementCtrlSignals()
         self.error_message = None
-        # self.update_position()
 
 
     def setup(self):
@@ -117,7 +115,7 @@ class MeasurementCtrl(qtc.QObject):
                 self.vna.reset_all()
             else:
                 self.vna.reset()
-            # data_storage.create_file(self.file)
+
             # Calibrate vna if needed
             if self.cal is True:
                 self.signals.calReady.emit()
@@ -145,6 +143,7 @@ class MeasurementCtrl(qtc.QObject):
             if self.impedance is True:
                 self.vna.using_correction = True
             [self.vna_avg_delay, self.vna_S11_delay, self.vna_S21_delay] = self.compute_vna_delay()
+
             # Calculate positioner speed needed based on vna delays, if needed
             if self.sweep_mode == 'continuous': # check if a continuous sweep is possible
                 if self.exe_mode == 'pan':
@@ -161,13 +160,12 @@ class MeasurementCtrl(qtc.QObject):
                         self.tilt_speed = 0
                     else:
                         self.tilt_speed = self.compute_tilt_speed(total_time)
+
             # Move to starting location and update position data
             if self.exe_mode == 'pan':
                 self.signals.requestMoveTo.emit([-180+self.offset, self.const_angle, 'abs'])
                 self.wait_on_pan_setup(-180+self.offset)
-            # else:
-            #     self.signals.requestMoveTo.emit([self.offset+self.const_angle, -90, 'abs'])
-            #     self.wait_on_pan_down(-90)
+ 
         except Exception as e:
             self.error_message = str(e)
             self.signals.error.emit()
