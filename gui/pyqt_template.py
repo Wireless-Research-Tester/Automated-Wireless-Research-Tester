@@ -3,7 +3,7 @@
 Template File
 =============
 Displays empty window
-"""""
+"""
 import sys
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
@@ -18,7 +18,7 @@ class MainWindow(qtw.QWidget):
         # Main UI code goes here
 
         # End main UI code
-        self.show()
+        # self.show()
 
 
 if __name__ == '__main__':

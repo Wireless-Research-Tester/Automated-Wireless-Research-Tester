@@ -7,25 +7,25 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>136</height>
+    <height>76</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
-    <height>136</height>
+    <width>1024</width>
+    <height>76</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>1150</width>
-    <height>16777215</height>
+    <width>1024</width>
+    <height>76</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -33,35 +33,35 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>0</number>
+    <number>6</number>
    </property>
    <property name="sizeConstraint">
     <enum>QLayout::SetMinAndMaxSize</enum>
    </property>
    <property name="topMargin">
-    <number>12</number>
+    <number>9</number>
    </property>
    <property name="bottomMargin">
-    <number>30</number>
+    <number>9</number>
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>1000</width>
-       <height>115</height>
+       <width>1006</width>
+       <height>58</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>1280</width>
-       <height>75</height>
+       <width>1006</width>
+       <height>58</height>
       </size>
      </property>
      <property name="title">
@@ -75,13 +75,38 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
          <widget class="QLabel" name="portLabel_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>87</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="text">
            <string>Port</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QComboBox" name="portCombo_2"/>
+         <widget class="QComboBox" name="portCombo_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>86</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -89,6 +114,18 @@
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="1">
          <widget class="QLabel" name="baudRate">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>87</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="text">
            <string>Baud Rate:</string>
           </property>
@@ -96,6 +133,18 @@
         </item>
         <item row="0" column="2">
          <widget class="QComboBox" name="baudRateCombo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>86</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="editable">
            <bool>false</bool>
           </property>
@@ -138,7 +187,7 @@
         <item row="0" column="2">
          <widget class="QLineEdit" name="lineEdit">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -152,7 +201,7 @@
           <property name="maximumSize">
            <size>
             <width>100</width>
-            <height>16777215</height>
+            <height>23</height>
            </size>
           </property>
          </widget>
@@ -160,10 +209,16 @@
         <item row="0" column="1">
          <widget class="QLabel" name="label_2">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>38</width>
+            <height>23</height>
+           </size>
           </property>
           <property name="text">
            <string>State:</string>
@@ -186,10 +241,16 @@
         <item row="0" column="0">
          <widget class="QLabel" name="connectLabel">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>56</width>
+            <height>13</height>
+           </size>
           </property>
           <property name="text">
            <string>Connected:</string>
@@ -221,6 +282,18 @@
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="1">
          <widget class="QPushButton" name="disconnectQPT">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>23</height>
+           </size>
+          </property>
           <property name="text">
            <string>Disconnect</string>
           </property>
@@ -228,6 +301,18 @@
         </item>
         <item row="0" column="0">
          <widget class="QPushButton" name="connectQPT">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>23</height>
+           </size>
+          </property>
           <property name="text">
            <string>Connect</string>
           </property>
@@ -235,6 +320,18 @@
         </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="faultReset">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>23</height>
+           </size>
+          </property>
           <property name="text">
            <string>Fault Reset</string>
           </property>

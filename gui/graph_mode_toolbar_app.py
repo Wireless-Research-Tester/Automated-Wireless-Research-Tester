@@ -2,7 +2,7 @@
 =============
 Displays Groupbox toolbar with graph mode selection buttons
 =============
-"""""
+"""
 import sys
 from PyQt5 import QtWidgets as qtw, uic
 from PyQt5 import QtWidgets as qtw
@@ -22,7 +22,7 @@ class GraphModeToolBar(baseUIWidget, baseUIClass):
 
 
         # End main UI code
-        self.show()
+        # self.show()
 
 
 if __name__ == '__main__':
