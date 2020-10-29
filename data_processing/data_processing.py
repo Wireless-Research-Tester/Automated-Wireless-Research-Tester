@@ -1,8 +1,26 @@
-"""
-Data Processing Widget v10.2
-10/27/2020
-Author: Stephen Wood
-"""
+###################################################################################
+#  Data Processing
+#
+#  Description:     Data Processing focuses on reading and graphing data points
+#                   from a .csv file written in Measurement Control. This includes
+#                   S21 measurements plotted in rectangular or polar form that
+#                   represent azimuth vs. amplitude and S11 measurements plotted
+#                   in rectangular form representing impedance. Additionally, Data
+#                   Processing uses MatPlotLib and PyQt5 to display the data and
+#                   Pandas and Numpy to make necessary calculations on the data.
+#                   Lastly, while Measurement Control adds additional data points
+#                   to the .csv Data Processing has added functionality to update
+#                   plots in real-time.
+#
+#  Dependencies:    MatPlotLib Version: 3.3.0
+#                   Pandas Version:
+#                   Numpy Version:
+#                   PyQt5
+#
+#  Author(s): Stephen Wood
+#  Date: 2020/10/28
+#  Built with Python Version: 3.8.5
+###################################################################################
 
 import sys
 import matplotlib
@@ -36,7 +54,6 @@ class DataProcessing(QtWidgets.QMainWindow):
         super(DataProcessing, self).__init__(*args, **kwargs)
 
         # Create the maptlotlib FigureCanvas object,
-        # which defines a single set of axes as self.axes.
         self.sc = MplCanvas(self, width=9, height=6, dpi=80)
 
         self.polar = None  # Bool value will be true if we need polar graph else rectangular graph
@@ -49,8 +66,8 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.max_freq = None  # Value of the max frequency in the data_file
         self.num_of_frequencies = None  # Total number of frequencies present in the data_file
         self.radio = None  # Variable used for RadioButtons
-        self.ani = None  # Variable used for animation function
-        self.signals = Signals()
+        self.ani = None  # Variable used for animation method
+        self.signals = Signals()  # Variable used to send signals back to the GUI
 
         # Create toolbar, passing canvas as first parameter, parent (self, the MainWindow) as second.
         toolbar = NavigationToolbar(self.sc, self)
@@ -63,7 +80,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         widget.setLayout(layout)
         self.setCentralWidget(widget)
 
-        # self.show()
+        self.show()
 
     def begin_measurement(self, data_file, polar=True, s11=False, is_live=None):
         """
@@ -77,6 +94,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.polar = polar
         self.s11 = s11
         self.data_file = data_file
+
         if is_live is None:
             self.live = self.is_live()
         else:
@@ -547,7 +565,7 @@ class DataProcessing(QtWidgets.QMainWindow):
 
     def mhz_or_ghz(self):
         """
-        This function finds whether largest frequency is MHz or GHz
+        This function finds whether largest frequency should be represented in MHz or GHz
         :return: Bool True if MHz else False for GHz
         """
         freq = self.max_freq
@@ -595,9 +613,11 @@ class DataProcessing(QtWidgets.QMainWindow):
         df = df[df['measurement_type'].notnull()]
         df = df[df['measurement_type'].str.contains('S11')]
         if not df.empty:
+            # If S11 measurements are in file, send PRESENT signal back to MainWindow
             self.signals.s11_present.emit()
             return True
         else:
+            # If S11 measurements are NOT in file, send ABSENT signal back to MainWindow
             self.signals.s11_absent.emit()
             return False
 
@@ -633,8 +653,9 @@ class DataProcessing(QtWidgets.QMainWindow):
             return
         df = self.read_file()
         if df.empty:
-            # print('File only contains column headers')
+            print('File only contains column headers')
             return
+
         self.check_s11(df)
         self.tot_num_frequencies(df)  # Total number of frequencies
         self.max_frequency(df)  # Max frequency
