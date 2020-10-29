@@ -1,14 +1,15 @@
 ################################################################################
-#  vna_syntaxes
-
-#  Description: Contains functions that generate GPIB commands for the given
-#               VNA model type and given command type.
+# vna_syntaxes
+# Description: 
+#   Contains functions that generate GPIB commands for the given
+#   VNA model type and given command type.
 #
-#  Dependencies: n/a
+# Dependencies: n/a
 #
-#  Author(s): Eric Li
-#  Date: 2020/09/30
-#  Built with Python Version: 3.8.5
+# Author(s): Eric Li
+# Date: 2020/09/30
+# Built with Python Version: 3.8.5
+# For any questions, contact Eric at eric.li.1999@gmail.com
 ################################################################################
 from enum import Enum, auto
 

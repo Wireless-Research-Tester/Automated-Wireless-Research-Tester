@@ -3,7 +3,7 @@
 Measurement Display Widget
 =============
 Displays empty window
-"""""
+"""
 import sys
 from PyQt5 import QtWidgets as qtw, uic
 from PyQt5 import QtGui as qtg
@@ -21,7 +21,7 @@ class MeasurmentDisplayWindow(baseUIWidget, baseUIClass):
         # Main UI code goes here
 
         # End main UI code
-        self.show()
+        # self.show()
 
 
 if __name__ == '__main__':

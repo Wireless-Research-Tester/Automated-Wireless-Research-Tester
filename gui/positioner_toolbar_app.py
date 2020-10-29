@@ -3,7 +3,7 @@
 Positioner Toolbar widget
 =============
 Displays empty window
-"""""
+"""
 import sys
 from PyQt5 import QtWidgets as qtw, uic
 
@@ -20,7 +20,7 @@ class PositionerToolBarWidget(baseUIWidget, baseUIClass):
         # Main UI code goes here
 
         # End main UI code
-        self.show()
+        # self.show()
 
  
 if __name__ == '__main__':

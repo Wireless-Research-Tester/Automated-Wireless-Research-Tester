@@ -1,26 +1,26 @@
 ################################################################################
+# packet
+# Description: 
+#   This file contains a collection of functions to facilitate the creation
+#   of Tx packets. The functions fall into two categories:
+#       1. Packet utils for LRC Checksum calculation and handling packet ESC
+#          chars.
+#       2. Packet creation functions for producing transmittable packets.
 #
-#  Description: 
-#      This file contains a collection of functions to facilitate the creation
-#      of Tx packets. The functions fall into two categories:
-#          1. Packet utils for LRC Checksum calculation and handling packet ESC
-#             chars.
-#          2. Packet creation functions for producing transmittable packets.
+# Status:
+#   Good enough for the short term. No changes will probably be needed for
+#   the LRC/ESC functions and alot of the packet generation functions are
+#   sufficient, however, as the positioner comms system begins to be 
+#   integrated with the rest of the software, particularly the VNA, more
+#   functionality will need to be added to facilitate a robust, stable
+#   communication system with the QPT. Also, eventually the configuration
+#   api for the QPT Positioner will need improvement, which will necessitate
+#   adding functionality here.
 #
-#  Status:
-#      Good enough for the short term. No changes will probably be needed for
-#      the LRC/ESC functions and alot of the packet generation functions are
-#      sufficient, however, as the positioner comms system begins to be 
-#      integrated with the rest of the software, particularly the VNA, more
-#      functionality will need to be added to facilitate a robust, stable
-#      communication system with the QPT. Also, eventually the configuration
-#      api for the QPT Positioner will need improvement, which will necessitate
-#      adding functionality here.
-#
-#  Author: Thomas Hoover
-#  Date: 20200417
-#  Built with Python Version: 3.8.2
-#
+# Author: Thomas Hoover
+# Date: 20200417
+# Built with Python Version: 3.8.2
+# For any questions, contact Thomas at tomhoover1@gmail.com
 ################################################################################
 import measurement_ctrl.integer as qi
 from measurement_ctrl.constants import CTRL, ESC, ESC_MASK, STATIC_TX
