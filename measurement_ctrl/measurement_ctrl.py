@@ -1,18 +1,20 @@
 ################################################################################
-#  measurement_ctrl
-#  Description:
+# measurement_ctrl
+# Description:
 #  
 #
-#  Status:
+# Status:
 #
 #
-#  Dependencies:
-#      PyVISA Version: 1.10.1
+# Dependencies: 
+#   PyVISA Version: 1.10.1
+#   PyQt5  Version: ?
 #
-#  Authors: Eric Li, Thomas Hoover
-#  Date: 20200806
-#  Built with Python Version: 3.8.5
-#
+# Authors: Eric Li, Thomas Hoover
+# Date: 20200806
+# Built with Python Version: 3.8.5
+# For any questions, contact Eric at eric.li.1999@gmail.com
+#   or Thomas at tomhoover1@gmail.com
 ################################################################################
 import measurement_ctrl.vna_comms as vna_comms
 import measurement_ctrl.positioner as positioner
@@ -40,12 +42,13 @@ class MeasurementCtrlSignals(qtc.QObject):
     requestMoveTo  = qtc.pyqtSignal(list )
     startLockClock = qtc.pyqtSignal()
     calReady       = qtc.pyqtSignal()
-    error       = qtc.pyqtSignal()
+    error          = qtc.pyqtSignal()
 """End MeasurementCtrlSignals Class"""
 
 
-class MeasurementCtrl():
-    def __init__(self, args, qpt, data_file='data\\data0.csv'):
+class MeasurementCtrl(qtc.QObject):
+    def __init__(self, args, data_file='data\\data0.csv'):
+        super().__init__()
         self.impedance = args['impedance']  # if true, S11 and S21 will be measured. Else, only S21
         if args['list'] is not None:          # list or vna_comms.lin_freq obj
             self.freq = args['list']
@@ -59,7 +62,6 @@ class MeasurementCtrl():
         self.const_angle = args['fixed_angle'] # angle at which non-changing coordinate is set to
         self.resolution = args['resolution']
         self.vna = vna_comms.Session('GPIB0::' + str(args['gpib_addr']) + '::INSTR')
-        self.qpt = qpt
         self.progress = 0 # percentage, e.g. 11 for 11%
         self.vna_avg_delay = 0
         self.vna_S11_delay = 0
@@ -71,20 +73,29 @@ class MeasurementCtrl():
         self.pan = -1
         self.tilt = -1
 
+        # Jog speed limits
+        self.MAX_PAN_TIME = 1240
+        self.MIN_PAN_SPEED = 8
+        self.MAX_PAN_SPEED = 127
+
+        self.MAX_TILT_TIME = 700
+        self.MIN_TILT_SPEED = 17
+        self.MAX_TILT_SPEED = 127
+
         self.resume          = False # measurement is resuming from paused state flag
         self.pause_move      = False # movement needs paused flag (discrete case)
         self.pause_jog       = False # jog thread needs paused (continuous case)
         self.stop            = False # stop measurement flag
         self.finished        = False # measurement finished flag
-        self.paused_loop_idx = 0 # saved loop index to enable measurement to be resumed
-        self.open_proceed = False   # flags for proceeding in calibration
-        self.short_proceed = False  # flags for proceeding in calibration
-        self.load_proceed = False   # flags for proceeding in calibration
-        self.cal_finished = False   # flag for completing calibration
+        self.paused_loop_idx = 0     # saved loop index to enable measurement to be resumed
+        self.open_proceed    = False # flags for proceeding in calibration
+        self.short_proceed   = False # flags for proceeding in calibration
+        self.load_proceed    = False # flags for proceeding in calibration
+        self.cal_finished    = False # flag for completing calibration
 
         self.signals = MeasurementCtrlSignals()
         self.error_message = None
-        self.update_position()
+        # self.update_position()
 
 
     def setup(self):
@@ -138,26 +149,25 @@ class MeasurementCtrl():
             if self.sweep_mode == 'continuous': # check if a continuous sweep is possible
                 if self.exe_mode == 'pan':
                     total_time = (self.vna_avg_delay + self.vna_S21_delay) * 360 / self.resolution
-                    if total_time > self.qpt.MAX_PAN_TIME:
+                    if total_time > self.MAX_PAN_TIME:
                         self.sweep_mode = 'step'
                         self.pan_speed = 0
                     else:
                         self.pan_speed = self.compute_pan_speed(total_time)
                 else:
                     total_time = (self.vna_avg_delay + self.vna_S21_delay) * 180 / self.resolution
-                    if total_time > self.qpt.MAX_TILT_TIME:
+                    if total_time > self.MAX_TILT_TIME:
                         self.sweep_mode = 'step'
                         self.tilt_speed = 0
                     else:
                         self.tilt_speed = self.compute_tilt_speed(total_time)
             # Move to starting location and update position data
             if self.exe_mode == 'pan':
-                self.qpt.move_to(-180+self.offset, self.const_angle, 'abs')
+                self.signals.requestMoveTo.emit([-180+self.offset, self.const_angle, 'abs'])
                 self.wait_on_pan_setup(-180+self.offset)
-            else:
-                self.qpt.move_to(self.offset+self.const_angle, -90, 'abs')
-                self.wait_on_pan_down(-90)
-            self.update_position()
+            # else:
+            #     self.signals.requestMoveTo.emit([self.offset+self.const_angle, -90, 'abs'])
+            #     self.wait_on_pan_down(-90)
         except Exception as e:
             self.error_message = str(e)
             self.signals.error.emit()
@@ -211,7 +221,9 @@ class MeasurementCtrl():
                         # azimuth angle to be measured, and then move positioner there
                             self.resume = False
                             target = (i * self.resolution) - 180
-                            self.qpt.move_to(target, self.const_angle, 'abs')
+                            self.signals.requestMoveTo.emit(
+                                [target, self.const_angle, 'abs']
+                            )
                             self.wait_on_pan_cw(target)
                         # Delay for vna reset, take measurement, then update progress
                         self.step_delay()
@@ -250,44 +262,10 @@ class MeasurementCtrl():
                         # move the positioner to that location
                             i = i + 1
                             target = (i * self.resolution) - 180
-                            self.qpt.move_to(target, self.const_angle, 'abs')
+                            self.signals.requestMoveTo.emit(
+                                [target, self.const_angle, 'abs'] 
+                            )
                             self.wait_on_pan_cw(target)
-                #------------------------------------------------------------------
-
-                #----------------------- Tilt Step Case ---------------------------
-                    # else:
-                    #     i = self.paused_loop_idx
-                    #     while i <= int(180/self.resolution):
-                    #         # Change i to index MeasurementCtrl was paused at if resuming
-                    #         if self.resume is True:
-                    #             i = self.paused_loop_idx
-                    #             self.resume = False
-                    #             self.pause = False
-                    #             self.paused_loop_idx = -1
-
-                    #         # Delay for vna reset, take measurement, then update progress
-                    #         self.step_delay()
-                    #         self.record_data('S21', self.file)
-                    #         self.progress = int(i * self.resolution / 180 * 100)
-                    #         if self.progress > 100:
-                    #             self.progress = 100
-                    #         self.signals.progress.emit(self.progress)
-
-                    #         # Check if measurement needs paused, or if it is completed
-                    #         # Otherwise, move to the next position
-                    #         if self.is_step_tilt_complete() is True:
-                    #             self.finished = True
-                    #             break
-                    #         elif self.pause_move is True:
-                    #             self.paused_loop_idx = i
-                    #             self.pause_move = False
-                    #             self.pause = True
-                    #             break
-                    #         else:
-                    #             target = ((i+1) * self.resolution) - 90
-                    #             self.qpt.move_to(self.const_angle, target, 'abs')
-                    #             while self.qpt.status_executing:
-                    #                 sleep(0.2)
                 #------------------------------------------------------------------
             #----------------------------------------------------------------------
 
@@ -336,13 +314,13 @@ class MeasurementCtrl():
                         # while loop forces the thread to wait on the lock to be released
                         lock = self.init_cont_lock()
                         target = (i * self.resolution) - 180
-                        self.update_position()
+                        # self.update_position()
                         while lock.acquire(blocking=False) is not True:
                             sleep(.2)
-                            self.update_position()
+                            # self.update_position()
                             while self.pan < target:
                                 sleep(.2)
-                                self.update_position()
+                                # self.update_position()
                         self.record_data('S21', self.file)
                         self.progress = int((target + 180) / 360 * 100)
                         if self.progress > 100:
@@ -382,48 +360,6 @@ class MeasurementCtrl():
                         # Continue sweep execution
                             # Increment the loop index
                             i = i + 1
-                #------------------------------------------------------------------
-
-                #--------------------- Tilt Continuous Case -----------------------
-                    # else:
-                    #     # if self.pause is False:
-                    #     self.init_cont_sweep()
-                    #     Thread_Jog = Thread(target=self.send_tilt_jog, args=())
-                    #     Thread_Jog.start()
-                    #     i = self.paused_loop_idx
-                    #     while i <= int(180/self.resolution):
-                    #         # Change i to index MeasurementCtrl was paused at if resuming
-                    #         if self.resume is True:
-                    #             i = self.paused_loop_idx
-                    #             self.resume = False
-                    #             self.pause = False
-                    #             self.paused_loop_idx = -1
-
-                    #         # Delay for vna reset, take measurement, then update progress
-                    #         lock = self.init_cont_lock()
-                    #         target = (i * self.resolution) - 90
-                    #         self.update_position()
-                    #         while lock.acquire(blocking=False) is not True:
-                    #             while self.tilt < target:
-                    #                 sleep(.3)
-                    #                 self.update_position()
-                    #         self.record_data('S21', self.file)
-                    #         self.progress = int((target + 90) / 180 * 100)
-                    #         if self.progress > 100:
-                    #             self.progress = 100
-                    #         self.signals.progress.emit(self.progress)
-
-                    #         # Check if measurement needs paused, or if it is completed
-                    #         # Otherwise, move to the next position
-                    #         if self.is_continuous_tilt_complete() is True:
-                    #             self.halt()
-                    #             self.finished = True
-                    #             break
-                    #         elif self.pause_move is True:
-                    #             self.paused_loop_idx = i
-                    #             self.pause_jog = True
-                    #             self.pause_move = False
-                    #             break
                 #------------------------------------------------------------------
             #----------------------------------------------------------------------
 
@@ -507,15 +443,17 @@ class MeasurementCtrl():
         self.qpt.move_to(0, 0, 'stop')
 
 
-    def update_position(self):
-        curr = self.qpt.get_position()
-        self.pan = curr.pan_angle()
-        self.tilt = curr.tilt_angle()
+    @qtc.pyqtSlot(float)
+    def update_pan(self, pan):
+        self.pan = pan
+
+    @qtc.pyqtSlot(float)
+    def update_tilt(self, tilt):
+        self.tilt = tilt
 
 
     def record_data(self, s, file):
         if s == 'S21':
-            self.update_position()
             data_storage.append_data(file, self.vna.get_data(self.tilt, self.pan, s))
         else:
             data_storage.append_data(file, self.vna.get_data(0, 0, s))
@@ -535,53 +473,52 @@ class MeasurementCtrl():
 
     def wait_on_pan_cw(self, target):
         count = 0
-        self.update_position()
         while self.pan <= target:
             sleep(0.2)
             count = count + 1
-            self.update_position()
             if count >= 25:
                 break
 
 
     def wait_on_pan_ccw(self, target):
         count = 0
-        self.update_position()
         while self.pan >= target:
             sleep(0.2)
             count = count + 1
-            self.update_position()
             if count >= 25:
                 break
 
 
     def wait_on_pan_setup(self, target):
         count = 0
-        self.update_position()
-        while self.pan > (target+1):
+        while self.pan > (target+1) and self.stop is not True:
             sleep(0.2)
             count = count + 1
-            self.update_position()
+            if count > 300:
+                break
+
+
+    def wait_on_tilt_setup(self, target):
+        count = 0
+        while self.tilt < (target+1):
+            sleep(0.2)
+            count = count + 1
             if count > 300:
                 break
 
 
     def wait_on_tilt_up(self, target):
         count = 0
-        self.update_position()
         while self.tilt <= target or count <= 25:
             sleep(0.2)
             count = count + 1
-            self.update_position()
 
 
     def wait_on_tilt_down(self, target):
         count = 0
-        self.update_position()
         while self.tilt >= target or count <= 25:
             sleep(0.2)
             count = count + 1
-            self.update_position()
 
 
     # returns list w/ 3 numbers in seconds, [averaging delay, get_data delay (S11), get_data delay (S21)]
@@ -632,19 +569,19 @@ class MeasurementCtrl():
 
     def compute_pan_speed(self, total_time):
         pan_speed = int((12.8866*(360.0 / total_time) + 3.1546))
-        if pan_speed <= self.qpt.MIN_PAN_SPEED:
-            return self.qpt.MIN_PAN_SPEED
-        elif pan_speed >= self.qpt.MAX_PAN_SPEED:
-            return self.qpt.MAX_PAN_SPEED
+        if pan_speed <= self.MIN_PAN_SPEED:
+            return self.MIN_PAN_SPEED
+        elif pan_speed >= self.MAX_PAN_SPEED:
+            return self.MAX_PAN_SPEED
         return int(pan_speed)
 
 
     def compute_tilt_speed(self, total_time):
         tilt_speed = int((39.3701*(180.0 / total_time) + 6.8228))
-        if tilt_speed <= self.qpt.MIN_TILT_SPEED:
-            return self.qpt.MIN_TILT_SPEED
-        elif tilt_speed >= self.qpt.MAX_TILT_SPEED:
-            return self.qpt.MAX_TILT_SPEED
+        if tilt_speed <= self.MIN_TILT_SPEED:
+            return self.MIN_TILT_SPEED
+        elif tilt_speed >= self.MAX_TILT_SPEED:
+            return self.MAX_TILT_SPEED
         return int(tilt_speed)
 """End meas_ctrl Class"""
 

@@ -1,18 +1,20 @@
 ################################################################################
-#  vna_comms
+# vna_comms
+# Description: 
+#   Powered by PyVISA, vna_comms contains methods to perform the
+#   actions needed to take measurements from a vector network
+#   analyzer. These methods include: setting up the VNA, collecting
+#   data from the VNA, and calibrating the VNA.
 #
-#  Description: Powered by PyVISA, vna_comms contains methods to perform the
-#               actions needed to take measurements from a vector network
-#               analyzer. These methods include: setting up the VNA, collecting
-#               data from the VNA, and calibrating the VNA.
-#
-#  Dependencies:    PyVISA Version: 10.0.1
-#                   NI-488.2 Version: 19.5
-#                   NI-VISA Version: 19.5
+#  Dependencies:    
+#   PyVISA   Version: 10.0.1
+#   NI-488.2 Version: 19.5
+#   NI-VISA  Version: 19.5
 #
 #  Author(s): Eric Li
 #  Date: 2020/09/30
 #  Built with Python Version: 3.8.5
+#  For any questions, contact Eric at eric.li.1999@gmail.com
 ################################################################################
 import pyvisa as visa
 import math

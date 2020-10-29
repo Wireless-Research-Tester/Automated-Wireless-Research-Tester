@@ -1,24 +1,24 @@
 ################################################################################
+# integer
+# Description: 
+#   This file contains the implementation of two classes that
+#   support data types useful for interacting with the QPT Positioner.
+#   First, the Integer class, for representing Ints in the format required
+#   by the QPT. Second, the Coordinate class, which is essentially an
+#   ordered pair for representing a specific combination of azimuth and 
+#   elevation angles of the positioner in degrees.
 #
-#  Description: 
-#      This file contains the implementation of two classes that
-#      support data types useful for interacting with the QPT Positioner.
-#      First, the Integer class, for representing Ints in the format required
-#      by the QPT. Second, the Coordinate class, which is essentially an
-#      ordered pair for representing a specific combination of azimuth and 
-#      elevation angles of the positioner in degrees.
+# Status:
+#   Mostly finished, I do not foresee any major changes being necessary,
+#   except for possibly having to adjust the min and max values in the 
+#   Coordinate class. I think, however, that if this is going to cause an
+#   issue, it won't be until down the road when examining how to improve
+#   the configuration api for the QPT Postioner.
 #
-#  Status:
-#      Mostly finished, I do not foresee any major changes being necessary,
-#      except for possibly having to adjust the min and max values in the 
-#      Coordinate class. I think, however, that if this is going to cause an
-#      issue, it won't be until down the road when examining how to improve
-#      the configuration api for the QPT Postioner.
-#
-#  Author: Thomas Hoover
-#  Date: 20200417
-#  Built with Python Version: 3.8.2
-#
+# Author: Thomas Hoover
+# Date: 20200417
+# Built with Python Version: 3.8.2
+# For any questions, contact Thomas at tomhoover1@gmail.com
 ################################################################################
 class Integer:
     """Integer: a class to represent a integer value that adheres to the
