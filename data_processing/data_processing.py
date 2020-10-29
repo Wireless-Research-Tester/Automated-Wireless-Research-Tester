@@ -79,7 +79,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         widget = QtWidgets.QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
-
+        self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.show()
 
     def begin_measurement(self, data_file, polar=True, s11=False, is_live=None):

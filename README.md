@@ -1,6 +1,12 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
 ### Version 0.8.5
+- Made resizing the window much less laggy
+- Minor GUI tweaks 
+- Data processing commenting
+- Moved positioner control out of mainWindow_app.py to qpt_controller.py
+- Additional settings window error checking
+- Measurement control error checking
 - VNA error checking
 ### Version 0.8.4
 - data processing fixes

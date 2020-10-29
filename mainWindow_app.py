@@ -6,6 +6,7 @@ Main Window
 import os
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
+from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 from gui.transport_app import TransportWidget
 from gui.meas_display_app import MeasurmentDisplayWindow
@@ -26,8 +27,6 @@ baseUIClass, baseUIWidget = uic.loadUiType('gui/main_window_ui.ui')
 
 
 class MyMainWindow(baseUIWidget, baseUIClass):
-    resized = qtc.pyqtSignal()
-
     def __init__(self):
         """MainWindow constructor"""
         super().__init__()
@@ -38,7 +37,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.background = self.background_orig.scaledToHeight(self.height())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
-        self.resized.connect(self.resize_window)
+        self.timer = None
 
         # ------------------------- Initialize Gui Components ----------------------
         # Construct the necessary widgets for MainWindow
@@ -645,6 +644,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                 self.data_processing.sc.setToolTip(
                     'Click on the check boxes in the legend\nto display/hide frequencies')
             self.data_processing.setFixedHeight(self.height() - 160)
+            self.data_processing.setFixedWidth(self.width())
             self.data_processing_toolbar.show()
 
     # ------------------------------------------------------------------------------
@@ -675,7 +675,9 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
     # -------------------------------- Window Resize Slot----------------------------
     def resizeEvent(self, event):
-        self.resized.emit()
+        self.timer = qtc.QTimer()
+        self.timer.start(250)
+        self.timer.timeout.connect(self.resize_window)
         return super(MyMainWindow, self).resizeEvent(event)
 
     @qtc.pyqtSlot()
@@ -684,6 +686,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
         self.data_processing.setFixedHeight(self.height()-160)
+        self.data_processing.setFixedWidth(self.width())
 
     # -------------------------------------------------------------------------------
 

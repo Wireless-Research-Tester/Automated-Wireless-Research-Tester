@@ -58,11 +58,10 @@ class SettingsWindow(baseUIWidget, baseUIClass):
         """Saves the project directory path and settings file path.
         Also displays the selected directory."""
         temp = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        if temp is not None:
+        if temp != '':
             self.project_dir = temp
             self.dir_label.setText(self.project_dir)
             self.pivot_file = self.project_dir + '/pivot.json'
-            print("Project directory: " + self.project_dir)
 
     @qtc.pyqtSlot()
     def import_list(self):
