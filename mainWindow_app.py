@@ -41,7 +41,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         self.palette = qtg.QPalette()
         self.background_orig = qtg.QImage(':/images/gui/window_background.png')
-        self.background = self.background_orig.scaledToWidth(self.width())
+        self.background = self.background_orig.scaledToHeight(self.height())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
         self.resized.connect(self.resize_window)
@@ -63,11 +63,16 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
         # Add custom toolbars to MainWindow Widget
         self.transport_toolbar = self.addToolBar('Transport_ToolBar')
+        self.transport_toolbar.setMovable(False)
         self.meas_display_toolbar = self.addToolBar('Measurement_Display_ToolBar')
+        self.meas_display_toolbar.setMovable(False)
         self.progress_display_toolbar = self.addToolBar('Progress_Display_ToolBar')
+        self.progress_display_toolbar.setMovable(False)
         self.graph_mode_toolbar = self.addToolBar('Graph_Mode_ToolBar')
+        self.graph_mode_toolbar.setMovable(False)
         self.addToolBarBreak()
         self.data_processing_toolbar = self.addToolBar('Data_Processing_ToolBar')
+        self.data_processing_toolbar.setMovable(False)
 
         # Add the custom widgets to the toolbars
         self.meas_display_toolbar.addWidget(self.meas_disp_window)
@@ -680,7 +685,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
 
     @qtc.pyqtSlot()
     def resize_window(self):
-        self.background = self.background_orig.scaledToWidth(self.width())
+        self.background = self.background_orig.scaledToHeight(self.height())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
 #-------------------------------------------------------------------------------
