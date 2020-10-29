@@ -39,8 +39,8 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>16777215</width>
-       <height>16777215</height>
+       <width>122</width>
+       <height>77</height>
       </size>
      </property>
      <property name="title">
@@ -75,8 +75,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>21</height>
+          <width>102</width>
+          <height>19</height>
          </size>
         </property>
         <property name="editable">
@@ -116,8 +116,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
-          <height>21</height>
+          <width>102</width>
+          <height>19</height>
          </size>
         </property>
         <property name="sizeAdjustPolicy">
