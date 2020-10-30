@@ -57,7 +57,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QComboBox" name="polar_rect_comboBox">
+       <widget class="QComboBox" name="s21_imp_comboBox">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -90,18 +90,18 @@
         </property>
         <item>
          <property name="text">
-          <string>Polar</string>
+          <string>S21</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Rectangular</string>
+          <string>Impedance</string>
          </property>
         </item>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="s21_imp_comboBox">
+       <widget class="QComboBox" name="polar_rect_comboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
           <horstretch>0</horstretch>
@@ -128,12 +128,12 @@
         </property>
         <item>
          <property name="text">
-          <string>S21</string>
+          <string>Polar</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Impedance</string>
+          <string>Rectangular</string>
          </property>
         </item>
        </widget>

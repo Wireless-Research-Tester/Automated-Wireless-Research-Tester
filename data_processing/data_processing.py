@@ -393,6 +393,10 @@ class DataProcessing(QtWidgets.QMainWindow):
         # Number of rows
         number_of_rows = len(df.index)
 
+        # Isolate frequencies
+        freq_val_set = df.iloc[index:number_of_rows, [1]]
+        all_freqs = np.array(freq_val_set.values.tolist())
+
         # Calculations to find impedance values
         mag_set = df[['magnitude', 'phase']]
         r_set = mag_set['magnitude'] / 20
@@ -425,7 +429,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.sc.ax = self.sc.figure.add_subplot(64, 1, (1, 50))
 
         # Add first frequency dot to subplot
-        self.sc.ax.plot(impedance_real_val, impedance_imag_val,  # Plots first line
+        self.sc.ax.plot([current_freq, current_freq], [impedance_real_val, impedance_imag_val],  # Plots first line
                         marker=".",
                         markersize=10,
                         label=current_freq_string,
@@ -443,7 +447,7 @@ class DataProcessing(QtWidgets.QMainWindow):
                     current_freq_string = str(round(current_freq / 1000, 5))
                 else:
                     current_freq_string = str(float(current_freq / 1000))
-            self.sc.ax.plot(impedance_real_val, impedance_imag_val,
+            self.sc.ax.plot([current_freq, current_freq], [impedance_real_val, impedance_imag_val],
                             marker=".",
                             markersize=10,
                             label=current_freq_string,
@@ -452,21 +456,21 @@ class DataProcessing(QtWidgets.QMainWindow):
 
         # Customize Plot
         self.sc.ax.grid(True)
-        self.sc.ax.set_xlabel('Real')
-        self.sc.ax.set_ylabel('Imaginary')
+        if mhz:
+            self.sc.ax.set_xlabel('Frequency (MHz)')
+        else:
+            self.sc.ax.set_xlabel('Frequency (GHz)')
+        self.sc.ax.set_ylabel('Impedance (Ohms)')
+        self.sc.ax.set_xticks(all_freqs)
 
         self.sc.figure.subplots_adjust(left=0.05,
                                        right=0.95)
-        self.sc.figure.suptitle('Impedance (Ohms)',
+        self.sc.figure.suptitle('S11 Measurements',
                                 fontweight="bold",
                                 fontsize=15)
 
         # Create subplot to house the legend
         self.sc.bx = self.sc.figure.add_subplot(64, 1, (57, 64))
-        if mhz:
-            self.sc.bx.set_xlabel('Frequency (MHz)')
-        else:
-            self.sc.bx.set_xlabel('Frequency (GHz)')
         self.sc.bx.spines["top"].set_visible(False)
         self.sc.bx.spines["bottom"].set_visible(False)
         self.sc.bx.spines["right"].set_visible(False)
@@ -483,8 +487,6 @@ class DataProcessing(QtWidgets.QMainWindow):
         # If not updating in real time lines can be turned on and off
         if not self.live:
             self.sc.figure.canvas.mpl_connect('pick_event', self.set_visible)
-
-        return
 
     def is_file_empty(self):
         """
@@ -666,8 +668,6 @@ class DataProcessing(QtWidgets.QMainWindow):
                 if self.check_s11(df):  # Checks to see if S11 measurements exist in file
                     df_s11 = self.dataframe_for_s11(df)  # Create the S11 data frame
                     self.s11_rectangular_graph(df_s11)  # Graph the S11 measurements in rectangular form
-                    return
-                else:
                     return
             if self.check_s21(df):  # Checks to see if S21 values are in dataframe
                 df_s21 = self.dataframe_for_s21(df)  # Create the S21 data frame
