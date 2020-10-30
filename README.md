@@ -1,5 +1,8 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
+### Version 0.8.6
+- Updated background image with better symmetry
+- Fixed some graph mode toolbar logic to be more intuitive for the user
 ### Version 0.8.5
 - Made resizing the window much less laggy
 - Minor GUI tweaks 
