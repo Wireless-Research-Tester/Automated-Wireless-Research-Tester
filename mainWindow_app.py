@@ -615,7 +615,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     self.data_processing_toolbar.addWidget(self.data_processing)
                     self.data_processing.begin_measurement(self.data_file, polar=True, s11=False, is_live=is_live)
                 else:
-                    self.graph_mode.polar_rect_comboBox.setCurrentIndex(1)
+                    self.hide_polar()
             else:
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
                     self.show_polar()
@@ -627,7 +627,6 @@ class MyMainWindow(baseUIWidget, baseUIClass):
                     self.data_processing_toolbar.addWidget(self.data_processing)
                     self.data_processing.begin_measurement(self.data_file, polar=False, s11=False, is_live=is_live)
                 else:
-                    self.hide_polar()
                     self.data_processing_toolbar.clear()
                     del self.data_processing
                     self.data_processing = DataProcessing()

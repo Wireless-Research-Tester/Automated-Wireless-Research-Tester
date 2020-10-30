@@ -395,64 +395,41 @@ class DataProcessing(QtWidgets.QMainWindow):
 
         # Isolate frequencies
         freq_val_set = df.iloc[index:number_of_rows, [1]]
-        all_freqs = np.array(freq_val_set.values.tolist())
+        if not mhz:
+            freq_val_set = freq_val_set / 1000
 
         # Calculations to find impedance values
         mag_set = df[['magnitude', 'phase']]
         r_set = mag_set['magnitude'] / 20
         r_set = 10 ** r_set
         mag_set = mag_set.assign(r_set=r_set)
-        cos_phase = np.cos(mag_set['phase'])
-        sin_phase = np.sin(mag_set['phase'])
+        phase_radians = np.radians(mag_set['phase'])
+        mag_set = mag_set.assign(phase_radians=phase_radians)
+        cos_phase = np.cos(mag_set['phase_radians'])
+        sin_phase = np.sin(mag_set['phase_radians'])
         mag_set = mag_set.assign(cos_phase=cos_phase)
         mag_set = mag_set.assign(sin_phase=sin_phase)
         x_set = mag_set['r_set'] * mag_set['cos_phase']
         y_set = mag_set['r_set'] * mag_set['sin_phase']
-        impedance_x_set = x_set * 50
-        impedance_y_set = y_set * 50
-
-        # First real and imaginary impedance values in data frame
-        impedance_real_val = impedance_x_set.values[index]
-        impedance_imag_val = impedance_y_set.values[index]
-
-        # Create a string of current frequency for legend
-        current_freq = df['freq'].values[index]
-        if mhz:
-            current_freq_string = str(float(current_freq))
-        else:
-            if current_freq < 1:
-                current_freq_string = str(round(current_freq / 1000, 5))
-            else:
-                current_freq_string = str(float(current_freq / 1000))
+        impedance_real_set = x_set * 50
+        impedance_imag_set = y_set * 50
 
         # Create subplot for graph window
         self.sc.ax = self.sc.figure.add_subplot(64, 1, (1, 50))
 
-        # Add first frequency dot to subplot
-        self.sc.ax.plot([current_freq, current_freq], [impedance_real_val, impedance_imag_val],  # Plots first line
+        # Add real and imaginary lines to subplot
+        self.sc.ax.plot(freq_val_set, impedance_real_set,
                         marker=".",
                         markersize=10,
-                        label=current_freq_string,
+                        label="Real Z",
                         color='C0')
-        self.alt_labels.append(current_freq_string)  # Used in MyRadioButtons to create legend
-        for x in range(1, number_of_rows):
-            index += 1
-            impedance_real_val = impedance_x_set.values[index]
-            impedance_imag_val = impedance_y_set.values[index]
-            current_freq = df['freq'].values[index]
-            if mhz:
-                current_freq_string = str(float(current_freq))
-            else:
-                if current_freq < 1:
-                    current_freq_string = str(round(current_freq / 1000, 5))
-                else:
-                    current_freq_string = str(float(current_freq / 1000))
-            self.sc.ax.plot([current_freq, current_freq], [impedance_real_val, impedance_imag_val],
-                            marker=".",
-                            markersize=10,
-                            label=current_freq_string,
-                            color='C' + str(x % 10))
-            self.alt_labels.append(current_freq_string)
+        self.alt_labels.append("Real Z")
+        self.sc.ax.plot(freq_val_set, impedance_imag_set,
+                        marker=".",
+                        markersize=10,
+                        label="Imag Z",
+                        color='C' + str(1 % 10))
+        self.alt_labels.append("Imag Z")
 
         # Customize Plot
         self.sc.ax.grid(True)
@@ -461,11 +438,10 @@ class DataProcessing(QtWidgets.QMainWindow):
         else:
             self.sc.ax.set_xlabel('Frequency (GHz)')
         self.sc.ax.set_ylabel('Impedance (Ohms)')
-        self.sc.ax.set_xticks(all_freqs)
 
         self.sc.figure.subplots_adjust(left=0.05,
                                        right=0.95)
-        self.sc.figure.suptitle('S11 Measurements',
+        self.sc.figure.suptitle('Impedance',
                                 fontweight="bold",
                                 fontsize=15)
 
