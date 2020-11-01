@@ -5,14 +5,10 @@ Progress Bar
 """
 import sys
 from PyQt5 import QtWidgets as qtw
-from PyQt5 import QtGui as qtg
-from PyQt5 import QtCore as qtc
-from PyQt5 import uic
-
-baseUIClass, baseUIWidget = uic.loadUiType('gui/progress_ui.ui')
+from gui.progress_form import Ui_Form
 
 
-class ProgressBar(baseUIWidget, baseUIClass):
+class ProgressBar(qtw.QWidget, Ui_Form):
 
     def __init__(self):
         """MainWindow constructor"""

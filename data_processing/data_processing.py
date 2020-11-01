@@ -70,7 +70,19 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.signals = Signals()  # Variable used to send signals back to the GUI
 
         # Create toolbar, passing canvas as first parameter, parent (self, the MainWindow) as second.
-        toolbar = NavigationToolbar(self.sc, self)
+        toolbar = NavigationToolbar2QT(self.sc, self)
+
+        # Removing unused buttons from the toolbar
+        toolbar.actions()[0].setVisible(False)
+        toolbar.actions()[1].setVisible(False)
+        toolbar.actions()[2].setVisible(False)
+        toolbar.actions()[3].setVisible(False)
+        toolbar.actions()[4].setVisible(False)
+        toolbar.actions()[5].setVisible(False)
+        toolbar.actions()[6].setVisible(False)
+        toolbar.actions()[7].setVisible(False)
+        toolbar.actions()[8].setVisible(False)
+
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(toolbar)
         layout.addWidget(self.sc)
@@ -261,7 +273,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         """
         self.alt_labels = []
         mhz = self.mhz_or_ghz()  # Determines if lines should be represented in MHz or GHz
-        type_of_marker = 'o'  # Kwarg for MyRadioButtons class to change the shape of button
+        type_of_marker = 'D'  # Kwarg for MyRadioButtons class to change the shape of button
 
         # Starting point in data frame
         index = 0
@@ -313,7 +325,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.sc.ax.plot(phi_val_set, magnitude_val_set,  # Plots first line
                         label=current_freq_string,
                         color='C0')
-        self.alt_labels.append(current_freq_string)  # Used in MyRadioButtons to create legend
+        self.alt_labels.append('\n'+current_freq_string+'\n')  # Used in MyRadioButtons to create legend
         for x in range(1, freq_limit):
             index += points_per_freq
             phi_val_set = np.radians(df.iloc[index:index + points_per_freq, [3]])
@@ -337,7 +349,7 @@ class DataProcessing(QtWidgets.QMainWindow):
             self.sc.ax.plot(phi_val_set, magnitude_val_set,
                             label=current_freq_string,
                             color='C' + str(x % 10))
-            self.alt_labels.append(current_freq_string)
+            self.alt_labels.append('\n'+current_freq_string+'\n')
 
         # Customize Plot
         if mhz:
@@ -369,7 +381,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.radio = MyRadioButtons(self.sc.bx, self.alt_labels,
                                     marker=type_of_marker,  # String chosen from matplotlib markers
                                     keep_color=self.live,  # Bool whether button pushes have changing color effect
-                                    size=90,  # If diamond type_of_marker size=100
+                                    size=100,  # If diamond type_of_marker size=100
                                     ncol=1)  # Number of columns
 
         # If not updating in real time lines can be turned on and off
@@ -424,7 +436,7 @@ class DataProcessing(QtWidgets.QMainWindow):
                         label="Real Z",
                         color='C0')
         self.alt_labels.append("Real Z")
-        self.sc.ax.plot(freq_val_set, impedance_imag_set,
+        self.sc.ax.plot(freq_val_set, impedance_imag_set, '--',
                         marker=".",
                         markersize=10,
                         label="Imag Z",
@@ -653,28 +665,6 @@ class DataProcessing(QtWidgets.QMainWindow):
                 else:
                     self.graph_all_rect(df_s21)  # Graph the S21 measurements in rectangular form
         return
-
-
-class NavigationToolbar(NavigationToolbar2QT):
-    """
-    !!!Class overrides matplotlib NavigationToolbar2QT!!!
-    We only need to use the Save button so everything else is commented out
-    """
-    def _init_toolbar(self):
-        pass
-
-    # only display the buttons we need
-    NavigationToolbar2QT.toolitems = (
-        # ('Home', 'Reset original view', 'home', 'home'),
-        # ('Back', 'Back to previous view', 'back', 'back'),
-        # ('Forward', 'Forward to next view', 'forward', 'forward'),
-        # (None, None, None, None),
-        # ('Pan', 'Pan axes with left mouse, zoom with right', 'move', 'pan'),
-        # ('Zoom', 'Zoom to rectangle', 'zoom_to_rect', 'zoom'),
-        # ('Subplots', 'Configure subplots', 'subplots', 'configure_subplots'),
-        # (None, None, None, None),
-        ('Save', 'Save the figure', 'filesave', 'save_figure'),
-    )
 
 
 class MyRadioButtons(RadioButtons):

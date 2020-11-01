@@ -4,15 +4,11 @@ Displays Groupbox toolbar with graph mode selection buttons
 =============
 """
 import sys
-from PyQt5 import QtWidgets as qtw, uic
 from PyQt5 import QtWidgets as qtw
-from PyQt5 import QtGui as qtg
-from PyQt5 import QtCore as qtc
-
-baseUIClass, baseUIWidget = uic.loadUiType('gui/graph_mode_ui.ui')
+from gui.graph_mode_form import Ui_Form
 
 
-class GraphModeToolBar(baseUIWidget, baseUIClass):
+class GraphModeToolBar(qtw.QWidget, Ui_Form):
 
     def __init__(self):
         """MainWindow constructor"""

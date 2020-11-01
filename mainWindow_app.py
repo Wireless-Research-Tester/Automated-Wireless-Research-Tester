@@ -9,7 +9,7 @@ from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 from gui.transport_app import TransportWidget
-from gui.meas_display_app import MeasurmentDisplayWindow
+from gui.meas_display_app import MeasurementDisplayWindow
 from gui.settingsWindow_app import SettingsWindow
 from gui.progress_bar_app import ProgressBar
 from gui.graph_mode_toolbar_app import GraphModeToolBar
@@ -22,11 +22,10 @@ from threading import Lock, Thread
 import pyvisa as visa
 from time import localtime, strftime
 from measurement_ctrl.qpt_controller import *
+from gui.main_window_form import Ui_MainWindow
 
-baseUIClass, baseUIWidget = uic.loadUiType('gui/main_window_ui.ui')
 
-
-class MyMainWindow(baseUIWidget, baseUIClass):
+class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
     def __init__(self):
         """MainWindow constructor"""
         super().__init__()
@@ -42,7 +41,7 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         # ------------------------- Initialize Gui Components ----------------------
         # Construct the necessary widgets for MainWindow
         self.transport = TransportWidget()
-        self.meas_disp_window = MeasurmentDisplayWindow()
+        self.meas_disp_window = MeasurementDisplayWindow()
         self.settings = SettingsWindow()
         self.progress_bar = ProgressBar()
         self.data_processing = DataProcessing()

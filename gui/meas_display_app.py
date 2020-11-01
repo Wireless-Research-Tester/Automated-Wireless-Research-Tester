@@ -5,14 +5,11 @@ Measurement Display Widget
 Displays empty window
 """
 import sys
-from PyQt5 import QtWidgets as qtw, uic
-from PyQt5 import QtGui as qtg
-from PyQt5 import QtCore as qtc
-
-baseUIClass, baseUIWidget = uic.loadUiType('gui/meas_display_ui.ui')
+from PyQt5 import QtWidgets as qtw
+from gui.meas_display_form import Ui_Form
 
 
-class MeasurmentDisplayWindow(baseUIWidget, baseUIClass):
+class MeasurementDisplayWindow(qtw.QWidget, Ui_Form):
 
     def __init__(self):
         """MainWindow constructor"""
@@ -26,5 +23,5 @@ class MeasurmentDisplayWindow(baseUIWidget, baseUIClass):
 
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
-    mdw = MeasurmentDisplayWindow()
+    mdw = MeasurementDisplayWindow()
     sys.exit(app.exec())

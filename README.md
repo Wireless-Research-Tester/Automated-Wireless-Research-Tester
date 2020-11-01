@@ -1,6 +1,11 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
 ### Version 0.8.6
+- .ui files converted to .py files
+- added license file
+- added .exe files
+- added batch to automate ui conversion, pyinstaller building, and running through python
+- matplotlib changed to 3.2.2
 - Updated background image with better symmetry
 - Fixed some graph mode toolbar logic to be more intuitive for the user
 ### Version 0.8.5
