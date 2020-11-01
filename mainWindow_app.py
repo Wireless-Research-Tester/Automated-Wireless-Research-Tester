@@ -3,7 +3,7 @@
 Main Window
 =============
 """
-import os
+import os, sys
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
@@ -132,32 +132,42 @@ class MyMainWindow(baseUIWidget, baseUIClass):
         self.baudLabel = qtw.QLabel('Baud Rate ')
         self.baudCombo = qtw.QComboBox()
 
-        rm = visa.ResourceManager()
-        ports = rm.list_resources()
-        for i in ports:
-            if i[0:4] == 'ASRL':
-                self.portCombo.addItem(i)
-        for i in self.baud_rates:
-            self.baudCombo.addItem(i)
+        try:
+            rm = visa.ResourceManager()
+        except ValueError:
+            msg = qtw.QMessageBox()
+            msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
+            msg.setIcon(qtw.QMessageBox.Critical)
+            msg.setWindowTitle('Error!')
+            msg.setText('NI Drivers are required for the software.\nPlease install the NI-VISA and NI-488.2 drivers.')
+            msg.exec_()
+            sys.exit()
+        else:
+            ports = rm.list_resources()
+            for i in ports:
+                if i[0:4] == 'ASRL':
+                    self.portCombo.addItem(i)
+            for i in self.baud_rates:
+                self.baudCombo.addItem(i)
 
-        self.statusBar().showMessage('Positioner Status: Disconnected')
-        self.statusBar().addPermanentWidget(self.portLabel)
-        self.statusBar().addPermanentWidget(self.portCombo)
-        self.statusBar().addPermanentWidget(self.baudLabel)
-        self.statusBar().addPermanentWidget(self.baudCombo)
-        self.statusBar().addPermanentWidget(self.connectQPT)
-        self.statusBar().addPermanentWidget(self.disconnectQPT)
-        self.statusBar().addPermanentWidget(self.resetQPT)
+            self.statusBar().showMessage('Positioner Status: Disconnected')
+            self.statusBar().addPermanentWidget(self.portLabel)
+            self.statusBar().addPermanentWidget(self.portCombo)
+            self.statusBar().addPermanentWidget(self.baudLabel)
+            self.statusBar().addPermanentWidget(self.baudCombo)
+            self.statusBar().addPermanentWidget(self.connectQPT)
+            self.statusBar().addPermanentWidget(self.disconnectQPT)
+            self.statusBar().addPermanentWidget(self.resetQPT)
 
-        self.disconnectQPT.setDisabled(True)
-        self.resetQPT.setDisabled(True)
+            self.disconnectQPT.setDisabled(True)
+            self.resetQPT.setDisabled(True)
 
-        self.connectQPT.clicked.connect(self.connect_positioner)
-        self.disconnectQPT.clicked.connect(self.disconnect_positioner)
-        self.resetQPT.clicked.connect(self.reset_positioner)
+            self.connectQPT.clicked.connect(self.connect_positioner)
+            self.disconnectQPT.clicked.connect(self.disconnect_positioner)
+            self.resetQPT.clicked.connect(self.reset_positioner)
         # --------------------------------------------------------------------------
 
-        self.show()
+            self.show()
 
     """End __init__() of MyMainWindow"""
 
