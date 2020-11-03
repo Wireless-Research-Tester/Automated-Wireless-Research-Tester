@@ -116,6 +116,9 @@ class MeasurementCtrl(qtc.QObject):
             else:
                 self.vna.reset()
 
+            # Configure the vna and calculate vna delays
+            self.vna.setup(self.freq, self.avg, 3700)
+
             # Calibrate vna if needed
             if self.cal is True:
                 self.signals.calReady.emit()
@@ -138,8 +141,7 @@ class MeasurementCtrl(qtc.QObject):
                     if self.cal_finished is True:
                         break
 
-            # Configure the vna and calculate vna delays
-            self.vna.setup(self.freq, self.avg, 3700)
+            
             if self.impedance is True:
                 self.vna.using_correction = True
             [self.vna_avg_delay, self.vna_S11_delay, self.vna_S21_delay] = self.compute_vna_delay()

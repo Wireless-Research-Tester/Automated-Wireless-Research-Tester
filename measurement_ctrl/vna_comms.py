@@ -99,9 +99,10 @@ class Session:
         self.vna.write(avg_on(self.model))
         self.vna.write(avg_reset(self.model))
         self.vna.write(if_bw(self.model, bw))
-        if self.using_correction:
-            self.vna.write(correction_on(self.model))
+        # if self.using_correction:
+        #     self.vna.write(correction_on(self.model))
         return 0
+
 
     def get_data(self, theta, phi, data_type):
         """Returns one data point for every frequency specified in setup.
@@ -185,6 +186,7 @@ class Session:
     def calibrate_load(self):
         self.vna.write(cal_s11_1_port_load(self.model))
         self.vna.write(save_1_port_cal(self.model))
+        self.vna.write(correction_on(self.model))
 
     def rst_avg(self, data_type):  # the S11 and S21 commands automatically trigger an averaging reset in the VNA
         if data_type == 'S11':
