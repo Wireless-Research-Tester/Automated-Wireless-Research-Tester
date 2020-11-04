@@ -1,5 +1,11 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
+### Version 0.9.0
+- Updated .spec file to have custom application icon
+- Updated packaging script
+- Added a script vna_identify. Makes it easier for future programmers to add a vna to the code
+- Portable .exe working
+- Calibration fixes
 ### Version 0.8.6
 - .ui files converted to .py files
 - added license file
