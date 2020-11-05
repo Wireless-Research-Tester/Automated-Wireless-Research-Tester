@@ -421,10 +421,10 @@ class DataProcessing(QtWidgets.QMainWindow):
         sin_phase = np.sin(mag_set['phase_radians'])
         mag_set = mag_set.assign(cos_phase=cos_phase)
         mag_set = mag_set.assign(sin_phase=sin_phase)
-        x_set = mag_set['r_set'] * mag_set['cos_phase']
-        y_set = mag_set['r_set'] * mag_set['sin_phase']
-        impedance_real_set = x_set * 50
-        impedance_imag_set = y_set * 50
+        # x_set = mag_set['r_set'] * mag_set['cos_phase']
+        # y_set = mag_set['r_set'] * mag_set['sin_phase']
+        impedance_real_set = (50*(1-r_set*r_set))/(1+r_set*r_set-2*r_set*np.cos(mag_set['phase_radians']))
+        impedance_imag_set = (2*r_set*np.sin(mag_set['phase_radians'])*50)/(1+r_set*r_set-2*r_set*np.cos(mag_set['phase_radians']))
 
         # Create subplot for graph window
         self.sc.ax = self.sc.figure.add_subplot(64, 1, (1, 50))
