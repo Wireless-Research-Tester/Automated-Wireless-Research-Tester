@@ -540,8 +540,8 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
     # ----------------------------- Show Documentation Slot --------------------------
     @qtc.pyqtSlot()
     def show_docs(self):
-        if os.path.exists('README.md'):
-            os.startfile('README.md')
+        if os.path.exists('User Manual.pdf'):
+            os.startfile('User Manual.pdf')
         else:
             msg = qtw.QMessageBox()
             msg.setIcon(qtw.QMessageBox.Critical)
