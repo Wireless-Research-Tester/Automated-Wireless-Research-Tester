@@ -1,5 +1,10 @@
 ## Automated Wireless Research Tester - Beta Demo Files
 # Changelog
+### Version 0.9.2
+- Updated user manual
+### Version 0.9.1
+- Updated batch files
+- Added user manual
 ### Version 0.9.0
 - Updated .spec file to have custom application icon
 - Updated packaging script
