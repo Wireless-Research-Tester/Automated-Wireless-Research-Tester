@@ -92,7 +92,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         widget.setLayout(layout)
         self.setCentralWidget(widget)
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        self.show()
+        # self.show()
 
     def begin_measurement(self, data_file, polar=True, s11=False, is_live=None):
         """
@@ -643,7 +643,7 @@ class DataProcessing(QtWidgets.QMainWindow):
             return
         df = self.read_file()
         if df.empty:
-            print('File only contains column headers')
+            # print('File only contains column headers')
             return
 
         self.check_s11(df)

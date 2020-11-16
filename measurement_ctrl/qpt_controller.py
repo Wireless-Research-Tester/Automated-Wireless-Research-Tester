@@ -40,63 +40,79 @@ class QPTMessageQueue(qtc.QObject):
         self.q = PriorityQueue()
         self.qpt_connected = False
 
+    def ready4msg(self):
+        if self.qpt_connected and not self.q.full():
+            return True
+        return False
+
     def clear_Q(self):
         del self.q
         self.q = PriorityQueue()
 
     @qtc.pyqtSlot(list)
     def q_jog_cw_list(self, args):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogCW', args[0], args[1], args[2]]))
 
     @qtc.pyqtSlot(bool)
     def q_jog_cw(self, bool_val):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogCW', 'sw']))
 
     @qtc.pyqtSlot(list)
     def q_jog_ccw_list(self, args):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogCCW', args[0], args[1], args[2]]))
 
     @qtc.pyqtSlot(bool)
     def q_jog_ccw(self, bool_val):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogCCW', 'sw']))
 
     @qtc.pyqtSlot(list)
     def q_jog_up_list(self, args):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogUp', args[0], args[1], args[2]]))
 
     @qtc.pyqtSlot(bool)
     def q_jog_up(self, bool_val):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogUp', 'sw']))
 
     @qtc.pyqtSlot(list)
     def q_jog_down_list(self, args):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogDown', args[0], args[1], args[2]]))
 
     @qtc.pyqtSlot(bool)
     def q_jog_down(self, bool_val):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['JogDown', 'sw']))
 
     @qtc.pyqtSlot()
     def q_stop(self):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(0, ['Stop']))
 
     @qtc.pyqtSlot(list)
     def q_move_to(self, args):
-        if self.qpt_connected and not self.q.full():
+        if self.ready4msg():
             self.q.put_nowait(QPTMessage(1, ['MoveTo', args[0], args[1], args[2]]))
+
+    @qtc.pyqtSlot()
+    def q_zero_offsets(self):
+        if self.ready4msg():
+            self.q.put_nowait(QPTMessage(2, ['ZeroOffsets']))
+
+    @qtc.pyqtSlot()
+    def q_align_to_center(self):
+        if self.ready4msg():
+            self.q.put_nowait(QPTMessage(2, ['AlignToCenter']))
 
     # @qtc.pyqtSlot()
     # def q_fault_reset(self, things):
     #     pass
+
 """End QPTMessageQueue"""
 
 
@@ -142,19 +158,19 @@ class QPTMaster(qtc.QThread):
             if qpt.comms.connected is not True:
                 self.Q.qpt_connected = False
                 self.m_connected = False
-                print('Positioner failed to connect')
+                # print('Positioner failed to connect')
                 return None
         except:
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
-            print('Positioner failed to connect')
+            # print('Positioner failed to connect')
             self.signals.error.emit((exctype, value, traceback.format_exc()))
             return None
         else:
             self.signals.connected.emit()
             self.m_connected = True
             self.Q.qpt_connected = True
-            print('Positioner connected')
+            # print('Positioner connected')
 
         # main communications loop with the positioner
         # sends a msg with the positioner ever 120ms, some slight variation
@@ -182,7 +198,7 @@ class QPTMaster(qtc.QThread):
             
             elif msg[0] == 'JogCW':
                 if msg[1] == 'sw':
-                    qpt.jog_cw(127, Coordinate(180,0))
+                    qpt.jog_cw(30, Coordinate(180,0))
                     if self.parent.settings.right_toolButton_4.isDown() is not True:
                         self.Q.clear_Q()
                 else:
@@ -191,7 +207,7 @@ class QPTMaster(qtc.QThread):
 
             elif msg[0] == 'JogCCW':
                 if msg[1] == 'sw':
-                    qpt.jog_ccw(127, Coordinate(-180,0))
+                    qpt.jog_ccw(30, Coordinate(-180,0))
                     if self.parent.settings.left_toolButton_4.isDown() is not True:
                         self.Q.clear_Q()
                 else:
@@ -199,7 +215,7 @@ class QPTMaster(qtc.QThread):
 
             elif msg[0] == 'JogUp':
                 if msg[1] == 'sw':
-                    qpt.jog_up(127, Coordinate(0, 90))
+                    qpt.jog_up(30, Coordinate(0, 90))
                     if self.parent.settings.up_toolButton_4.isDown() is not True:
                         self.Q.clear_Q()                    
                 else:
@@ -207,7 +223,7 @@ class QPTMaster(qtc.QThread):
 
             elif msg[0] == 'JogDown':
                 if msg[1] == 'sw':
-                    qpt.jog_down(127, Coordinate(0, -90))
+                    qpt.jog_down(30, Coordinate(0, -90))
                     if self.parent.settings.down_toolButton_4.isDown() is not True:
                         self.Q.clear_Q()                    
                 else:
@@ -215,6 +231,12 @@ class QPTMaster(qtc.QThread):
 
             elif msg[0] == 'MoveTo':
                 qpt.move_to(msg[1], msg[2], msg[3])
+
+            elif msg[0] == 'ZeroOffsets':
+                qpt.clear_offsets()
+
+            elif msg[0] == 'AlignToCenter':
+                qpt.align_to_center()
 
             self.signals.currentPan.emit('{:0.2f}'.format(qpt.curr_position.pan_angle()))
             self.signals.fPan.emit(qpt.curr_position.pan_angle())

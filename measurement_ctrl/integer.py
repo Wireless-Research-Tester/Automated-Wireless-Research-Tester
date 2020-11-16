@@ -101,41 +101,76 @@ class Coordinate:
     QPT position (pan, tilt), where pan is the QPT's azimuth angle and tilt 
     is the QPT's elevation angle, both in degrees. 
     """
-    _MAX_PHI = 180.00
-    _MIN_PHI = -180.00
-    _MAX_THETA = 90.00
-    _MIN_THETA = -90.00
-    _MAX_INTEGER = 18000
-    _MIN_INTEGER = -18000
+    offsets = {
+        'pan'  : 0.0,
+        'tilt' : 0.0,
+    }
+
+    limits = {
+        'MIN_AZ'  : -180.00,
+        'MAX_AZ'  :  180.00,
+        'MIN_EL'  :  -90.00,
+        'MAX_EL'  :   90.00,
+        'MIN_INT' :  -18000,
+        'MAX_INT' :   18000,
+    }
+
 
     def __init__(self, pan, tilt, fromqpt=False):
         if fromqpt is True: 
-            self._phi = pan
+            self._phi   = pan
             self._theta = tilt
             self._valid = True
-        elif (isinstance(pan, int) or isinstance(pan, float)) \
+        elif    (isinstance(pan,  int) or isinstance(pan , float)) \
             and (isinstance(tilt, int) or isinstance(tilt, float)) \
-            and pan <= self._MAX_PHI and pan >= self._MIN_PHI \
-            and tilt <= self._MAX_THETA and tilt >= self._MIN_THETA:
-                self._phi = int(pan*100).to_bytes(2, byteorder='little', signed='True')
+            and pan  <= self.limits['MAX_AZ'] and pan  >= self.limits['MIN_AZ'] \
+            and tilt <= self.limits['MAX_EL'] and tilt >= self.limits['MIN_EL']:
+                self._phi   = int(pan*100 ).to_bytes(2, byteorder='little', signed='True')
                 self._theta = int(tilt*100).to_bytes(2, byteorder='little', signed='True')
                 self._valid = True
         else:
-            self._phi = None
+            self._phi   = None
             self._theta = None
             self._valid = False     
 
     def is_valid(self):
         return self._valid
 
+    def update_limits(self, pan_offset, tilt_offset):
+        if pan_offset == 0.0:
+            self.limits['MAX_AZ']  =  180.00
+            self.limits['MIN_AZ']  = -180.00
+            self.limits['MAX_INT'] =  18000
+            self.limits['MIN_INT'] = -18000
+        else:
+            self.limits['MAX_AZ']  = self.limits['MAX_AZ'] + pan_offset
+            self.limits['MIN_AZ']  = self.limits['MIN_AZ'] + pan_offset
+            self.limits['MAX_INT'] = self.limits['MAX_INT'] + pan_offset*100
+            self.limits['MIN_INT'] = self.limits['MIN_INT'] + pan_offset*100
+        if tilt_offset == 0.0:
+            self.limits['MAX_EL'] =  90.00
+            self.limits['MIN_EL'] = -90.00
+        else:
+            self.limits['MAX_EL'] = self.limits['MAX_EL'] + tilt_offset
+            self.limits['MIN_EL'] = self.limits['MIN_EL'] + tilt_offset
+
+        self.offsets['pan']  = pan_offset
+        self.offsets['tilt'] = tilt_offset
+
+    def print_limits(self):
+        print('Azimuth limits:  ',  self.limits['MIN_AZ'], ' to ',  self.limits['MAX_AZ'])
+        print('Elevation limits: ', self.limits['MIN_EL'], ' to  ', self.limits['MAX_EL'])
+        print('Integer limits:  ',  self.limits['MIN_INT'], ' to ', self.limits['MAX_INT'])
+        print('Offsets: Pan =',     self.offsets['pan'], ' Tilt =', self.offsets['tilt'])
+
     def pan_angle(self):
         if self._valid:
-            return int.from_bytes(self._phi, byteorder='little', signed=True) / 100
+            return (int.from_bytes(self._phi, byteorder='little', signed=True) / 100) + self.offsets['pan']
         return None
 
     def tilt_angle(self):
         if self._valid:
-            return int.from_bytes(self._theta, byteorder='little', signed=True) / 100
+            return (int.from_bytes(self._theta, byteorder='little', signed=True) / 100) + self.offsets['tilt']
         return None
 
     def pan_bytes(self):

@@ -47,7 +47,7 @@
       <bool>true</bool>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="main_tab_4">
       <attribute name="title">
@@ -667,7 +667,7 @@
           <item row="1" column="0">
            <widget class="QToolButton" name="left_toolButton_4">
             <property name="text">
-             <string>CW</string>
+             <string>CCW</string>
             </property>
             <property name="shortcut">
              <string>A</string>
@@ -729,7 +729,7 @@
           <item row="1" column="2">
            <widget class="QToolButton" name="right_toolButton_4">
             <property name="text">
-             <string>CCW</string>
+             <string>CW</string>
             </property>
             <property name="shortcut">
              <string>D</string>
@@ -803,7 +803,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="3" column="0">
           <widget class="QLabel" name="pan_label_4">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
@@ -819,7 +819,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="3" column="1">
           <widget class="QLabel" name="tilt_label_4">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
@@ -842,13 +842,6 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <item>
-          <widget class="QPushButton" name="getCurrentOffsets_Button_4">
-           <property name="text">
-            <string>Get Current Offsets</string>
-           </property>
-          </widget>
-         </item>
          <item>
           <widget class="QPushButton" name="zeroOffsets_Button_4">
            <property name="text">

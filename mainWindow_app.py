@@ -38,7 +38,7 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.setPalette(self.palette)
         self.timer = None
 
-        # ------------------------- Initialize Gui Components ----------------------
+    # ------------------------- Initialize Gui Components ----------------------
         # Construct the necessary widgets for MainWindow
         self.transport = TransportWidget()
         self.meas_disp_window = MeasurementDisplayWindow()
@@ -73,9 +73,9 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.data_processing_toolbar.addWidget(self.data_processing)
         self.graph_mode_toolbar.addWidget(self.graph_mode)
         self.data_processing_toolbar.hide()
-        # --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
-        # ------------------- Initialize Gui Signal Connections --------------------
+    # ------------------- Initialize Gui Signal Connections --------------------
         # Create connections between Settings button on toolbar
         # and the settings window
         self.actionSettings.triggered.connect(self.toggle_settings)
@@ -103,9 +103,9 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         self.transport.pauseButton.setDisabled(True)
         self.transport.stopButton.setDisabled(True)
-        # --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
-        # ----------------------------- Data Members -------------------------------
+    # ----------------------------- Data Members -------------------------------
         self.is_settings_open = False  # Keeps track of settings window toggle
         self.is_help_on = False  # Keeps tracks of status of popups
 
@@ -118,14 +118,14 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.qpt_thread = None  # Placeholder for qpt_controller thread
 
         self.data_file = None
-        # --------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
-        # ------------- Initialize Positioner Connection Gui Members ----------------
+    # ------------- Initialize Positioner Connection Gui Members ----------------
         self.baud_rates = ['9600', '14400', '19200', '28800', '38400', '57600']
 
         self.connectQPT = qtw.QPushButton('Connect')
         self.disconnectQPT = qtw.QPushButton('Disconnect')
-        self.resetQPT = qtw.QPushButton('Reset')
+        self.resetSystem = qtw.QPushButton('Reset')
         self.portLabel = qtw.QLabel('Port ')
         self.portCombo = qtw.QComboBox()
         self.baudLabel = qtw.QLabel('Baud Rate ')
@@ -156,21 +156,22 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.statusBar().addPermanentWidget(self.baudCombo)
             self.statusBar().addPermanentWidget(self.connectQPT)
             self.statusBar().addPermanentWidget(self.disconnectQPT)
-            self.statusBar().addPermanentWidget(self.resetQPT)
+            self.statusBar().addPermanentWidget(self.resetSystem)
 
             self.disconnectQPT.setDisabled(True)
-            self.resetQPT.setDisabled(True)
+            self.resetSystem.setDisabled(True)
 
             self.connectQPT.clicked.connect(self.connect_positioner)
             self.disconnectQPT.clicked.connect(self.disconnect_positioner)
-            self.resetQPT.clicked.connect(self.reset_positioner)
+            self.resetSystem.clicked.connect(self.reset_system)
         # --------------------------------------------------------------------------
 
             self.show()
 
     """End __init__() of MyMainWindow"""
 
-    # ------------------- MeasurementCtrl Transport Model Slots --------------------
+
+# ------------------- MeasurementCtrl Transport Model Slots --------------------
     @qtc.pyqtSlot()
     def start_mc(self):
         msg = qtw.QMessageBox()
@@ -345,10 +346,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
     def enable_play(self):
         """Re-enables the play transport button if the system gets paused"""
         self.transport.playButton.setEnabled(True)
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------- Positioner Connection Management Slots ---------------------
+# ----------------- Positioner Connection Management Slots ---------------------
     @qtc.pyqtSlot()
     def connect_positioner(self):
         msg = qtw.QMessageBox()
@@ -377,10 +378,13 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.settings.up_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_up)
             self.settings.down_toolButton_4.clicked.connect(self.qpt_thread.Q.q_jog_down)
 
+            self.settings.aligntoCenterButton_4.clicked.connect(self.qpt_thread.Q.q_align_to_center)
+            self.settings.zeroOffsets_Button_4.clicked.connect(self.qpt_thread.Q.q_zero_offsets)
+
             self.connectQPT.setDisabled(True)
             self.disconnectQPT.setEnabled(True)
-            self.resetQPT.setEnabled(True)
         else:
+            self.statusBar().showMessage('Positioner Status: Disconnected')
             del self.qpt_thread
             self.qpt_thread = None
             msg.setDetailedText(
@@ -396,19 +400,19 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.statusBar().showMessage('Positioner Status: Disconnected')
         self.connectQPT.setEnabled(True)
         self.disconnectQPT.setDisabled(True)
-        self.resetQPT.setDisabled(True)
+
         if self.qpt_thread:
             self.qpt_thread.disconnect()
             del self.qpt_thread
             self.qpt_thread = None
 
     @qtc.pyqtSlot()
-    def reset_positioner(self):
+    def reset_system(self):
         pass
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------------------- Settings Button Slot ---------------------------
+# ----------------------------- Settings Button Slot ---------------------------
     @qtc.pyqtSlot()
     def toggle_settings(self):
         if self.is_settings_open:
@@ -419,10 +423,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.settings.show()
             self.is_settings_open = True
             self.actionSettings.setChecked(True)
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------------------- Help Button Toggle Slot ------------------------
+# ----------------------------- Help Button Toggle Slot ------------------------
     @qtc.pyqtSlot()
     def toggle_help(self):
         if self.is_help_on:
@@ -461,6 +465,18 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.settings.dir_label.setToolTip('')
             self.settings.dir_Button.setToolTip('')
             self.settings.toolButton.setToolTip('')
+
+            self.settings.down_toolButton_4.setToolTip('')
+            self.settings.up_toolButton_4.setToolTip('')
+            self.settings.right_toolButton_4.setToolTip('')
+            self.settings.left_toolButton_4.setToolTip('')
+            self.settings.pan_label_4.setToolTip('')
+            self.settings.pan_lcdNumber_4.setToolTip('')
+            self.settings.tilt_label_4.setToolTip('')
+            self.settings.tilt_lcdNumber_4.setToolTip('')
+            self.settings.aligntoCenterButton_4.setToolTip('')
+            self.settings.zeroOffsets_Button_4.setToolTip('')
+
             self.transport.playButton.setToolTip('')
             self.progress_bar.progressBar.setToolTip('')
             self.meas_disp_window.az_lcdNumber.setToolTip('')
@@ -471,7 +487,7 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.baudCombo.setToolTip('')
             self.connectQPT.setToolTip('')
             self.disconnectQPT.setToolTip('')
-            self.resetQPT.setToolTip('')
+            self.resetSystem.setToolTip('')
             self.data_processing.sc.setToolTip('')
 
         else:
@@ -517,6 +533,27 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.settings.toolButton.setToolTip('Import a .txt or .csv file containing all the frequencies\n'
                                                 '(Frequencies must be separated by a newline, a comma, or both)')
 
+            self.settings.down_toolButton_4.setToolTip(
+                'Jog positioner in the negative elevation direction')
+            self.settings.up_toolButton_4.setToolTip(
+                'Jog positioner in the positive elevation direction')
+            self.settings.right_toolButton_4.setToolTip(
+                'Jog positioner in the clockwise direction')
+            self.settings.left_toolButton_4.setToolTip(
+                'Jog positioner in the counter-clockwise direction')
+            self.settings.pan_label_4.setToolTip('Current azimuth angle')
+            self.settings.pan_lcdNumber_4.setToolTip('Current azimuth angle')
+            self.settings.tilt_label_4.setToolTip('Current elevation angle')
+            self.settings.tilt_lcdNumber_4.setToolTip('Current elevation angle')
+            self.settings.aligntoCenterButton_4.setToolTip(
+                'Calculates the azimuth and elevation angle offset corrections\n' 
+                + 'required to realign the angular position display for the platform\n'
+                + 'so that the current position is considered a center position\n'
+                + 'displaying an azimuth and elevation angle of 0')
+            self.settings.zeroOffsets_Button_4.setToolTip(
+                'Resets any angular offset corrections to zero,\n'
+                + 'realigning the platform angular display to the true 0/0 position')
+
             # transport_ui popups
             self.transport.playButton.setToolTip('Begin measurement')
             # meas_display_ui popups
@@ -527,17 +564,18 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             # pos_control_ui popups
             self.portLabel.setToolTip('Serial port for positioner')
             self.portCombo.setToolTip('Serial port for positioner')
-            self.baudLabel.setToolTip('Baud rate for positioner serial port')
-            self.baudCombo.setToolTip('Baud rate for positioner serial port')
-            self.connectQPT.setToolTip('Initialize positioner communications connection')
-            self.disconnectQPT.setToolTip('Disconnect positioner communications connection')
-            self.resetQPT.setToolTip('Reset hardware and measurement systems')
+            self.baudLabel.setToolTip('Serial port baud rate')
+            self.baudCombo.setToolTip('Serial port baud rate')
+            self.connectQPT.setToolTip('Initialize communications link with the positioner unit\nMake sure correct Port and Baud Rate are selected')
+            self.disconnectQPT.setToolTip('Terminate commincations link with the positioner unit')
+            self.resetSystem.setToolTip('Reset latching faults in hardware and measurement systems')
             # data_processing popups
             self.data_processing.sc.setToolTip('Click on the check boxes in the legend\nto display/hide frequencies')
+            #Initialize positioner communications connection
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------------------- Show Documentation Slot --------------------------
+# ----------------------------- Show Documentation Slot --------------------------
     @qtc.pyqtSlot()
     def show_docs(self):
         if os.path.exists('User Manual.pdf'):
@@ -550,10 +588,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             msg.setText('User Manual.pdf was not found within program directory')
             msg.setWindowTitle('Error')
             msg.exec_()
+# --------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------
 
-    # ----------------------------- Calibration Prompt Slot ---------------------------
+# ----------------------------- Calibration Prompt Slot ---------------------------
     @qtc.pyqtSlot()
     def cal_prompt(self):
         cal_msg = qtw.QMessageBox()
@@ -578,10 +616,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             cal_msg.setText("Calibration is now complete. Please reconnect the antenna to port 1 on the VNA.")
             cal_msg.exec_()
             self.mc.cal_finished = True
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ------------------------------Measurement control error messages--------------
+# ------------------------------Measurement control error messages--------------
     @qtc.pyqtSlot()
     def mc_error(self):
         msg = qtw.QMessageBox()
@@ -592,10 +630,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         msg.setDetailedText(self.mc.error_message)
         msg.setWindowTitle("Error!")
         msg.exec_()
+# ---------------------------------------------------------------------------
 
-    # ---------------------------------------------------------------------------
 
-    # ----------------------------- Open Previous Measurement----------------------
+# ----------------------------- Open Previous Measurement----------------------
     def open_prev_measurement(self):
         # noinspection PyCallByClass
         filename = qtw.QFileDialog.getOpenFileName(self, 'Open Previous Measurement Data',
@@ -604,10 +642,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.data_file = filename
             self.update_plot()
             self.toggle_settings()
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # -------------------- Change displayed data and format of plot-----------------
+# -------------------- Change displayed data and format of plot-----------------
     def update_plot(self):
         if self.mc_state == 'Running' or self.mc_state == 'SetupRunning':
             is_live = True
@@ -649,10 +687,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.data_processing.setFixedHeight(self.height() - 160)
             self.data_processing.setFixedWidth(self.width())
             self.data_processing_toolbar.show()
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # ----------------- Show/hide impedance option in graph options-----------------
+# ----------------- Show/hide impedance option in graph options-----------------
     def show_impedance(self):
         if self.graph_mode.s21_imp_comboBox.count() == 1:
             self.graph_mode.s21_imp_comboBox.addItem('Impedance')
@@ -668,10 +706,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
     def hide_polar(self):
         if self.graph_mode.polar_rect_comboBox.count() == 2:
             self.graph_mode.polar_rect_comboBox.removeItem(0)
+# ------------------------------------------------------------------------------
 
-    # ------------------------------------------------------------------------------
 
-    # -------------------------------- About window Slot ---------------------------
+# -------------------------------- About window Slot ---------------------------
     @qtc.pyqtSlot()
     def show_about(self):
         msg = qtw.QMessageBox()
@@ -681,10 +719,10 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
                     '\n    Maria Samia\n    Stephen Wood')
         msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
         msg.exec_()
+# -------------------------------------------------------------------------------
 
-    # -------------------------------------------------------------------------------
 
-    # -------------------------------- Window Resize Slot----------------------------
+# -------------------------------- Window Resize Slot----------------------------
     def resizeEvent(self, event):
         self.timer = qtc.QTimer()
         self.timer.start(250)
@@ -698,10 +736,15 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.setPalette(self.palette)
         self.data_processing.setFixedHeight(self.height()-160)
         self.data_processing.setFixedWidth(self.width())
+        if self.qpt_thread:
+            if self.qpt_thread.isRunning() and self.qpt_thread.m_connected:
+                self.statusBar().showMessage('Positioner Status: Connected')
+                return None
+        self.statusBar().showMessage('Positioner Status: Disconnected')
+# -------------------------------------------------------------------------------
 
-    # -------------------------------------------------------------------------------
 
-    # ---------------------------------- Events ------------------------------------
+# ---------------------------------- Events ------------------------------------
     # Deal with window being closed via the 'X' button
     def closeEvent(self, event):
         event.accept()
@@ -712,8 +755,7 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         if self.mc:
             del self.mc
             self.mc = None
-
-    # ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 if __name__ == '__main__':

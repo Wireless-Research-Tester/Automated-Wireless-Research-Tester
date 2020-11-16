@@ -40,6 +40,7 @@ class MeasurementCtrlSignals(qtc.QObject):
     requestJogUp   = qtc.pyqtSignal(list )
     requestJogDown = qtc.pyqtSignal(list )
     requestMoveTo  = qtc.pyqtSignal(list )
+    requestClearQ  = qtc.pyqtSignal()
     startLockClock = qtc.pyqtSignal()
     calReady       = qtc.pyqtSignal()
     error          = qtc.pyqtSignal()
@@ -177,9 +178,9 @@ class MeasurementCtrl(qtc.QObject):
     def run(self):
         try:
             if not self.resume:
-            # If run is not resuming from paused state of transport model setup
-            # MeasurementCtrl and conditionally perform impedance measurement,
-            # otherwise, skip performing those steps
+                # If run is not resuming from paused state of transport model setup
+                # MeasurementCtrl and conditionally perform impedance measurement,
+                # otherwise, skip performing those steps
                 self.setup()
                 if self.impedance is True:
                     self.vna.rst_avg('S11')
@@ -187,11 +188,11 @@ class MeasurementCtrl(qtc.QObject):
                     self.record_data('S11', self.file)    # need to create_file prior
 
             if self.pause_move:
-            # Catch instance of pause button being pressed while self.setup() or
-            # impedance measurement being performed, that is the only system condition
-            # in which self.pause_move would be true at this point of execution
-            # for the run() function. If the pause button was pressed, clear the
-            # pause_move flag, then return from the run to stop the thread of execution
+                # Catch instance of pause button being pressed while self.setup() or
+                # impedance measurement being performed, that is the only system condition
+                # in which self.pause_move would be true at this point of execution
+                # for the run() function. If the pause button was pressed, clear the
+                # pause_move flag, then return from the run to stop the thread of execution
                 self.signals.runPaused.emit()
                 self.pause_move = False
                 return None
@@ -210,15 +211,16 @@ class MeasurementCtrl(qtc.QObject):
                     # be zero, otherwise it will reperesent the state of a previously
                     # paused measurement sweep, allowing that sweep to be resumed
                     i = self.paused_loop_idx
-                    while i <= int(360/self.resolution):
+
                     # Core execution loop of the measurement sweep. Continues until
                     # either the full sweep has been performed, or until a flag
                     # variable set by the transport control model causes it to
                     # break out of the loop.
+                    while i <= int(360/self.resolution):
                         if self.resume is True:
-                        # If the sweep is being resumed, then the measurement at this
-                        # position has already been performed, so calculate the next
-                        # azimuth angle to be measured, and then move positioner there
+                            # If the sweep is being resumed, then the measurement at this
+                            # position has already been performed, so calculate the next
+                            # azimuth angle to be measured, and then move positioner there
                             self.resume = False
                             target = (i * self.resolution) - 180
                             self.signals.requestMoveTo.emit(
@@ -232,34 +234,35 @@ class MeasurementCtrl(qtc.QObject):
                         if self.progress > 100:
                             self.progress = 100
                         self.signals.progress.emit(self.progress)
+
                         # Check if the sweep should be paused, stopped, or if it is complete
                         if self.is_step_pan_complete() is True:
-                        # The sweep is finished, so set the finished flag so that
-                        # nulls are written to the end of the data file and the
-                        # runComplete signal gets emitted, then break out of the loop
+                            # The sweep is finished, so set the finished flag so that
+                            # nulls are written to the end of the data file and the
+                            # runComplete signal gets emitted, then break out of the loop
                             self.finished = True
                             break
                         elif self.stop is True:
-                        # The transport control model is attempting to stop the sweep
-                        # so clear the progress, emit the runStopped signal, and
-                        # then break out of the loop
+                            # The transport control model is attempting to stop the sweep
+                            # so clear the progress, emit the runStopped signal, and
+                            # then break out of the loop
                             self.progress = 0
                             self.signals.runStopped.emit()
                             break
                         elif self.pause_move is True:
-                        # The transport control model is attempting to pause the sweep
-                        # so store the current value of the loop counter after adding
-                        # one to it to prevent overlapping measurements, clear the
-                        # pause_move flag that was set by the transport control model,
-                        # emit the runPaused signal, and the break out of the loop
+                            # The transport control model is attempting to pause the sweep
+                            # so store the current value of the loop counter after adding
+                            # one to it to prevent overlapping measurements, clear the
+                            # pause_move flag that was set by the transport control model,
+                            # emit the runPaused signal, and the break out of the loop
                             self.paused_loop_idx = i + 1
                             self.pause_move = False
                             self.signals.runPaused.emit()
                             break
                         else:
-                        # Continue sweep execution, increment loop counter, calculate
-                        # the next azimuth angle based on new loop counter, then
-                        # move the positioner to that location
+                            # Continue sweep execution, increment loop counter, calculate
+                            # the next azimuth angle based on new loop counter, then
+                            # move the positioner to that location
                             i = i + 1
                             target = (i * self.resolution) - 180
                             self.signals.requestMoveTo.emit(
@@ -276,9 +279,9 @@ class MeasurementCtrl(qtc.QObject):
                 # is complete and the measurement sweep is starting execution
                 self.signals.setupComplete.emit()
                 if self.resume is True:
-                # If sweep is resuming, clear resume flag since it is not needed
-                # inside of the main execution loop to get the positioner to the
-                # correct starting position
+                    # If sweep is resuming, clear resume flag since it is not needed
+                    # inside of the main execution loop to get the positioner to the
+                    # correct starting position
                     self.resume = False
 
                 #--------------------- Pan Continuous Case ------------------------
@@ -296,15 +299,17 @@ class MeasurementCtrl(qtc.QObject):
                     Thread_Jog = Thread(target=self.send_pan_jog, args=(), daemon=True)
                     Thread_Jog.start()
                     i = self.paused_loop_idx
-                    while i <= int(360/self.resolution):
+                    if i == 0:
+                        # if i is 0, measurement is not being resumed, and need to 
+                        # increment i to account for measurement taken at -180 degrees
+                        # before the positioner jog was initiated; otherwise i is a
+                        # resumed index, and does not need incremented
+                        i = i + 1
+
                     # Core execution loop of the measurement sweep. Continues until
                     # either the full sweep has been performed, or until a flag variable
-                    # set by the transport control model causes it to break out of loop.
-                        # Change i to index MeasurementCtrl was paused at if resuming
-                        # if self.resume is True:
-                        #     self.resume = False
-                        #     self.pause = False
-
+                    # set by the transport control model causes it to break out of loop.                    
+                    while i <= int(360/self.resolution):
                         # Delay for vna reset, take measurement, then update progress
                         # lock is a Lock that is acquired by a thread started in the
                         # init_cont_lock function that forces the thread to wait for
@@ -314,21 +319,20 @@ class MeasurementCtrl(qtc.QObject):
                         # while loop forces the thread to wait on the lock to be released
                         lock = self.init_cont_lock()
                         target = (i * self.resolution) - 180
-                        # self.update_position()
                         while lock.acquire(blocking=False) is not True:
                             sleep(.2)
-                            # self.update_position()
                             while self.pan < target:
                                 sleep(.2)
-                                # self.update_position()
+                        # print(i, ' ', target)
                         self.record_data('S21', self.file)
                         self.progress = int((target + 180) / 360 * 100)
                         if self.progress > 100:
                             self.progress = 100
                         self.signals.progress.emit(self.progress)
+
                         # Check if sweep should be paused, stopped, or if it is completed
                         if self.is_continuous_pan_complete() is True:
-                        # The sweep is finished
+                            # The sweep is finished
                             # Set the finished flag so nulls are written to the end
                             # end of the data file and the runComplete signal gets
                             # emitted, stop the positioner, break out of loop
@@ -338,7 +342,7 @@ class MeasurementCtrl(qtc.QObject):
                             self.finished = True
                             break
                         elif self.pause_move is True:
-                        # The transport control model is attempting to pause the sweep
+                            # The transport control model is attempting to pause the sweep
                             # Store current loop counter + 1 to prevent overlapping
                             # measurements, clear the pause_move flag for transport
                             # control model
@@ -357,7 +361,7 @@ class MeasurementCtrl(qtc.QObject):
                             self.progress = 0
                             break
                         else:
-                        # Continue sweep execution
+                            # Continue sweep execution
                             # Increment the loop index
                             i = i + 1
                 #------------------------------------------------------------------
@@ -437,10 +441,6 @@ class MeasurementCtrl(qtc.QObject):
     @qtc.pyqtSlot()
     def resume_measurement(self):
         self.resume = True
-
-
-    def halt(self):
-        self.qpt.move_to(0, 0, 'stop')
 
 
     @qtc.pyqtSlot(float)

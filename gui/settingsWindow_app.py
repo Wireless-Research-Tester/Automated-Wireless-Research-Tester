@@ -16,8 +16,6 @@ import re
 class StorageSignals(qtc.QObject):
     settingsStored = qtc.pyqtSignal()
     settingsClosed = qtc.pyqtSignal()
-
-
 """End StorageSignals Class"""
 
 

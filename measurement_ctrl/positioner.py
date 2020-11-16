@@ -80,6 +80,59 @@ class Comms:
 """End Comms Class"""
 
 
+class QPTState:
+    def __init__(self):
+        self.model = {
+            # General Properties
+            'status_executing'           : False,
+            'comms_timeout'              : False,
+            'curr_position'              : qi.Coordinate(0,0),
+            'dest_position'              : qi.Coordinate(0,0),
+            'pan_center_RU'              : 0,
+            'tilt_center_RU'             : 0,
+            'status_high_res'            : True,
+            'status_dest_coords'         : False,
+            'status_soft_limit_override' : False,
+            'angle_corrections'          : qi.Coordinate(0,0),
+
+            # Pan Properties
+            'pan_min_speed'         : 0,
+            'pan_max_speed'         : 0,
+            'pan_cw_soft_limit'     : 0,
+            'pan_ccw_soft_limit'    : 0,
+            'pan_status_cw_moving'  : False,
+            'pan_status_ccw_moving' : False,
+
+            # Pan Status
+            'sfault_cw_soft_limit'        : False,
+            'sfault_ccw_soft_limit'       : False,
+            'hfault_cw_hard_limit'        : False,
+            'hfault_ccw_hard_limit'       : False,
+            'hfault_pan_timeout'          : False,
+            'hfault_pan_direction_error'  : False,
+            'hfault_pan_current_overload' : False,
+            'sfault_pan_resolver_fault'   : False,
+
+            # Tilt Properties
+            'tilt_min_speed'          : 0,
+            'tilt_max_speed'          : 0,
+            'tilt_up_soft_limit'      : 0,
+            'tilt_down_soft_limit'    : 0,
+            'tilt_status_up_moving'   : False,
+            'tilt_status_down_moving' : False,
+
+            # Tilt Status
+            'sfault_up_soft_limit'         : False,
+            'sfault_down_soft_limit'       : False,
+            'hfault_up_hard_limit'         : False,
+            'hfault_down_hard_limit'       : False,
+            'hfault_tilt_timeout'          : False,
+            'hfault_tilt_direction_error'  : False,
+            'hfault_tilt_current_overload' : False,
+            'sfault_tilt_resolver_fault'   : False,        
+        }
+
+
 class PositionerSignals(qtc.QObject):
     """Defines the signals available from the QPT-130 Positioner"""
     executing   = qtc.pyqtSignal(bool )
@@ -173,12 +226,12 @@ class Positioner:
         else:
             self.p.parse(self.comms.positioner_query(pkt.stop()),self)
 
-        # Force the positioner to update status before letting it do anything
-        # else. This is to ensure that the status_executing flag gets updated
-        # after issuing the move command
-        time.sleep(.12)
-        self.p.parse(self.comms.positioner_query(pkt.get_status()),self)
-        time.sleep(.12)
+        # # Force the positioner to update status before letting it do anything
+        # # else. This is to ensure that the status_executing flag gets updated
+        # # after issuing the move command
+        # time.sleep(.12)
+        # self.p.parse(self.comms.positioner_query(pkt.get_status()),self)
+        # time.sleep(.12)
 
 
     def get_position(self):
@@ -189,6 +242,14 @@ class Positioner:
 
     def get_status(self):
         self.p.parse(self.comms.positioner_query(pkt.get_status()), self)
+
+
+    def clear_offsets(self):
+        self.p.parse(self.comms.positioner_query(pkt.clear_angle_correction()), self)
+
+
+    def align_to_center(self):
+        self.p.parse(self.comms.positioner_query(pkt.align_angles_to_center()), self)
 
 
     def jog_cw(self, pan_speed, target):
