@@ -226,13 +226,6 @@ class Positioner:
         else:
             self.p.parse(self.comms.positioner_query(pkt.stop()),self)
 
-        # # Force the positioner to update status before letting it do anything
-        # # else. This is to ensure that the status_executing flag gets updated
-        # # after issuing the move command
-        # time.sleep(.12)
-        # self.p.parse(self.comms.positioner_query(pkt.get_status()),self)
-        # time.sleep(.12)
-
 
     def get_position(self):
         with self.curr_lock:
@@ -294,6 +287,10 @@ class Positioner:
                 self.curr_position.pan_angle(),
                 self.curr_position.tilt_angle(),
                 time.time()))
+
+
+    def clear_faults(self):
+        self.p.parse(self.comms.positioner_query(pkt.fault_reset()), self)
 
 
     def update_positioner_stats(self):

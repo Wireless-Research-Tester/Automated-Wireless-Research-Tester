@@ -4,13 +4,15 @@ Settings Window
 =============
 """
 import sys
-from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtWidgets as qtw, uic
 from PyQt5.QtWidgets import QMessageBox, QFileDialog
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtCore as qtc
 from gui.settings_form import Ui_Form
 from json import dump
 import re
+
+baseUIClass, baseUIWidget = uic.loadUiType('gui/settings_ui.ui')
 
 
 class StorageSignals(qtc.QObject):
@@ -19,7 +21,8 @@ class StorageSignals(qtc.QObject):
 """End StorageSignals Class"""
 
 
-class SettingsWindow(qtw.QWidget, Ui_Form):
+# class SettingsWindow(qtw.QWidget, Ui_Form):
+class SettingsWindow(baseUIWidget, baseUIClass):
     def __init__(self):
         """MainWindow constructor"""
         super().__init__()

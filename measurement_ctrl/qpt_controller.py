@@ -94,6 +94,7 @@ class QPTMessageQueue(qtc.QObject):
         if self.ready4msg():
             self.q.put_nowait(QPTMessage(0, ['Stop']))
 
+
     @qtc.pyqtSlot(list)
     def q_move_to(self, args):
         if self.ready4msg():
@@ -109,9 +110,10 @@ class QPTMessageQueue(qtc.QObject):
         if self.ready4msg():
             self.q.put_nowait(QPTMessage(2, ['AlignToCenter']))
 
-    # @qtc.pyqtSlot()
-    # def q_fault_reset(self, things):
-    #     pass
+    @qtc.pyqtSlot()
+    def q_fault_reset(self, things):
+        if self.ready4msg():
+            self.q.put_nowait(QPTMessage(0, ['FaultReset']))
 
 """End QPTMessageQueue"""
 
@@ -158,19 +160,16 @@ class QPTMaster(qtc.QThread):
             if qpt.comms.connected is not True:
                 self.Q.qpt_connected = False
                 self.m_connected = False
-                # print('Positioner failed to connect')
                 return None
         except:
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
-            # print('Positioner failed to connect')
             self.signals.error.emit((exctype, value, traceback.format_exc()))
             return None
         else:
             self.signals.connected.emit()
             self.m_connected = True
             self.Q.qpt_connected = True
-            # print('Positioner connected')
 
         # main communications loop with the positioner
         # sends a msg with the positioner ever 120ms, some slight variation
@@ -192,7 +191,10 @@ class QPTMaster(qtc.QThread):
             if msg[0] == 'Stop':
                 qpt.move_to(0,0,'stop')
                 self.Q.clear_Q()
-            
+
+            elif msg[0] == 'FaultReset':
+                qpt.clear_faults()
+
             elif msg[0] == 'GetStatus':
                 qpt.get_status()
             
@@ -202,7 +204,6 @@ class QPTMaster(qtc.QThread):
                     if self.parent.settings.right_toolButton_4.isDown() is not True:
                         self.Q.clear_Q()
                 else:
-                    # print(msg[1],msg[2])
                     qpt.jog_cw(msg[2], msg[3])
 
             elif msg[0] == 'JogCCW':

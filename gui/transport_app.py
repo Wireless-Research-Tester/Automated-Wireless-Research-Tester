@@ -5,11 +5,14 @@ Transport
 Displays empty window
 """
 import sys
-from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtWidgets as qtw, uic
 from gui.transport_form import Ui_Form
 
+baseUIClass, baseUIWidget = uic.loadUiType('gui/transport_ui.ui')
 
-class TransportWidget(qtw.QWidget, Ui_Form):
+
+# class TransportWidget(qtw.QWidget, Ui_Form):
+class TransportWidget(baseUIWidget, baseUIClass):
 
     def __init__(self):
         """MainWindow constructor"""

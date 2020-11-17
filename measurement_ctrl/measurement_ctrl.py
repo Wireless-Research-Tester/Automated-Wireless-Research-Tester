@@ -320,8 +320,12 @@ class MeasurementCtrl(qtc.QObject):
                         lock = self.init_cont_lock()
                         target = (i * self.resolution) - 180
                         while lock.acquire(blocking=False) is not True:
+                            if self.stop:
+                                break
                             sleep(.2)
                             while self.pan < target:
+                                if self.stop:
+                                    break
                                 sleep(.2)
                         # print(i, ' ', target)
                         self.record_data('S21', self.file)
@@ -391,6 +395,9 @@ class MeasurementCtrl(qtc.QObject):
             if self.pause_jog is True:
                 self.pause_jog = False
                 break
+            elif self.stop is True:
+                self.signals.requestClearQ.emit()
+                break
             self.signals.requestJogCW.emit(['mc', self.pan_speed, Coordinate(180,0)])
             sleep(0.12)
 
@@ -400,6 +407,9 @@ class MeasurementCtrl(qtc.QObject):
             if self.pause_jog is True:
                 self.pause_jog = False
                 break
+            elif self.stop is True:
+                self.signals.requestClearQ.emit()
+                break                
             self.signals.requestJogUp.emit(['mc', self.tilt_speed, Coordinate(0,90)])
             sleep(0.12)
 

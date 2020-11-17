@@ -5,9 +5,10 @@ Positioner Toolbar widget
 Displays empty window
 """
 import sys
-from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtWidgets as qtw, uic
 from gui.progress_bar_app import Ui_Form
 
+# baseUIClass, baseUIWidget = uic.loadUiType('gui/positioner_toolbar_')
 
 class PositionerToolBarWidget(qtw.QWidget, Ui_Form):
 

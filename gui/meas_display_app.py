@@ -8,8 +8,11 @@ import sys
 from PyQt5 import QtWidgets as qtw
 from gui.meas_display_form import Ui_Form
 
+# baseUIClass, baseUIWidget = uic.loadUiType('gui/meas_display_ui.ui')
+
 
 class MeasurementDisplayWindow(qtw.QWidget, Ui_Form):
+# class MeasurementDisplayWindow(baseUIWidget, baseUIClass):
 
     def __init__(self):
         """MainWindow constructor"""
