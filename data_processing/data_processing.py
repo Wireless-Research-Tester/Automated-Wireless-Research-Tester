@@ -36,6 +36,25 @@ from matplotlib.figure import Figure
 matplotlib.use('Qt5Agg')
 
 
+class Worker(QtCore.QRunnable):
+    def __init__(self, fn, **kwargs):
+        super(Worker, self).__init__()
+
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.kwargs = kwargs
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        '''
+        Initialise the runner function with passed args, kwargs.
+        '''
+
+        # Retrieve args/kwargs here; and fire processing using them
+        result = self.fn(**self.kwargs)
+        print("done")
+
+
 class Signals(QtCore.QObject):
     s11_present = QtCore.pyqtSignal()
     s11_absent = QtCore.pyqtSignal()
@@ -94,7 +113,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         # self.show()
 
-    def begin_measurement(self, data_file, polar=True, s11=False, is_live=None):
+    def begin_measurement(self, data_file=None, polar=True, s11=False, is_live=None):
         """
         This method will is called from the GUI when graphing needs to begin
         :param data_file: File location where data from measurement control is held
@@ -664,6 +683,7 @@ class DataProcessing(QtWidgets.QMainWindow):
                     self.graph_all_polar(df_s21)  # Graph the S21 measurements in polar form
                 else:
                     self.graph_all_rect(df_s21)  # Graph the S21 measurements in rectangular form
+            self.sc.ax.figure.canvas.draw()
         return
 
 

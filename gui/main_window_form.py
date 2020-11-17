@@ -77,7 +77,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Automated Wireless Research Tester"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionSettings.setText(_translate("MainWindow", "Settings"))
         self.actionSettings.setShortcut(_translate("MainWindow", "Ctrl+."))
