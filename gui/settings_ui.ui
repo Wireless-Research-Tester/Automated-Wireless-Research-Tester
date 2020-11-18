@@ -47,7 +47,7 @@
       <bool>true</bool>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="main_tab_4">
       <attribute name="title">
@@ -294,7 +294,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>45.000000000000000</double>
+               <double>5.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -948,7 +948,7 @@
  </connections>
  <buttongroups>
   <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

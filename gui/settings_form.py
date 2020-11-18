@@ -146,7 +146,7 @@ class Ui_Form(object):
         self.res_doubleSpinBox_7.setMinimum(0.5)
         self.res_doubleSpinBox_7.setMaximum(45.0)
         self.res_doubleSpinBox_7.setSingleStep(0.01)
-        self.res_doubleSpinBox_7.setProperty("value", 45.0)
+        self.res_doubleSpinBox_7.setProperty("value", 5.0)
         self.res_doubleSpinBox_7.setObjectName("res_doubleSpinBox_7")
         self.gridLayout_global_settings_7.addWidget(self.res_doubleSpinBox_7, 4, 1, 1, 1)
         self.res_label_degrees_7 = QtWidgets.QLabel(self.global_settings_frame_4)
@@ -377,7 +377,7 @@ class Ui_Form(object):
         self.verticalLayout_2.addWidget(self.settings_bttns_frame_4)
 
         self.retranslateUi(Form)
-        self.settingsTabs.setCurrentIndex(1)
+        self.settingsTabs.setCurrentIndex(0)
         self.sweepTypeTabs_4.setCurrentIndex(0)
         self.GPIB_addr_comboBox_6.setCurrentIndex(16)
         self.buttonBox.rejected.connect(Form.close)
