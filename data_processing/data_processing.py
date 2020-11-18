@@ -12,9 +12,9 @@
 #                   to the .csv Data Processing has added functionality to update
 #                   plots in real-time.
 #
-#  Dependencies:    MatPlotLib Version: 3.3.0
-#                   Pandas Version:
-#                   Numpy Version:
+#  Dependencies:    MatPlotLib Version: 3.2.2
+#                   Pandas Version: 1.1.4
+#                   Numpy Version: 1.19.3
 #                   PyQt5
 #
 #  Author(s): Stephen Wood
@@ -125,6 +125,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.polar = polar
         self.s11 = s11
         self.data_file = data_file
+        # self.sc.figure.clf()
 
         if is_live is None:
             self.live = self.is_live()
@@ -132,7 +133,7 @@ class DataProcessing(QtWidgets.QMainWindow):
             self.live = is_live
 
         if self.live:
-            self.ani = animation.FuncAnimation(self.sc.figure, self.animate, interval=1000)
+            self.ani = animation.FuncAnimation(self.sc.figure, self.animate, interval=20000)
         else:
             self.start_graphing(is_live)
 
@@ -158,7 +159,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.plot_lines[index].set_visible(not self.plot_lines[index].get_visible())
         self.sc.ax.figure.canvas.draw()
 
-    def graph_all_rect(self, df):
+    def s21_rectangular_plot(self, df):
         """
         This method graphs all frequencies from a list or linear sweep
         Rectangular plot - Azimuth vs. Amplitude
@@ -283,7 +284,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         if not self.live:
             self.sc.figure.canvas.mpl_connect('pick_event', self.set_visible)
 
-    def graph_all_polar(self, df):
+    def s21_polar_plot(self, df):
         """
         This method graphs all frequencies from a list or linear sweep
         Polar plot - Azimuth vs. Amplitude
@@ -407,7 +408,7 @@ class DataProcessing(QtWidgets.QMainWindow):
         if not self.live:
             self.sc.figure.canvas.mpl_connect('pick_event', self.set_visible)
 
-    def s11_rectangular_graph(self, df):
+    def s11_rectangular_plot(self, df):
         """
         This method graphs all frequencies from a list or linear sweep
         Rectangular plot - Frequency vs. Impedance
@@ -440,8 +441,6 @@ class DataProcessing(QtWidgets.QMainWindow):
         sin_phase = np.sin(mag_set['phase_radians'])
         mag_set = mag_set.assign(cos_phase=cos_phase)
         mag_set = mag_set.assign(sin_phase=sin_phase)
-        # x_set = mag_set['r_set'] * mag_set['cos_phase']
-        # y_set = mag_set['r_set'] * mag_set['sin_phase']
         impedance_real_set = (50*(1-r_set*r_set))/(1+r_set*r_set-2*r_set*np.cos(mag_set['phase_radians']))
         impedance_imag_set = (2*r_set*np.sin(mag_set['phase_radians'])*50)/(1+r_set*r_set-2*r_set*np.cos(mag_set['phase_radians']))
 
@@ -674,15 +673,16 @@ class DataProcessing(QtWidgets.QMainWindow):
             if self.s11:  # True if GUI user asks for S11
                 if self.check_s11(df):  # Checks to see if S11 measurements exist in file
                     df_s11 = self.dataframe_for_s11(df)  # Create the S11 data frame
-                    self.s11_rectangular_graph(df_s11)  # Graph the S11 measurements in rectangular form
+                    self.s11_rectangular_plot(df_s11)  # Graph the S11 measurements in rectangular form
+                    self.sc.ax.figure.canvas.draw()
                     return
             if self.check_s21(df):  # Checks to see if S21 values are in dataframe
                 df_s21 = self.dataframe_for_s21(df)  # Create the S21 data frame
                 df_s21 = self.sort_file(df_s21)  # Sorts the S21 data frame
                 if self.polar:  # True if GUI user asks for S21 in polar form, else the want rectangular form
-                    self.graph_all_polar(df_s21)  # Graph the S21 measurements in polar form
+                    self.s21_polar_plot(df_s21)  # Graph the S21 measurements in polar form
                 else:
-                    self.graph_all_rect(df_s21)  # Graph the S21 measurements in rectangular form
+                    self.s21_rectangular_plot(df_s21)  # Graph the S21 measurements in rectangular form
             self.sc.ax.figure.canvas.draw()
         return
 

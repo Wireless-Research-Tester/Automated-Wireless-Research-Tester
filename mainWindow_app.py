@@ -13,7 +13,7 @@ from gui.meas_display_app import MeasurementDisplayWindow
 from gui.settingsWindow_app import SettingsWindow
 from gui.progress_bar_app import ProgressBar
 from gui.graph_mode_toolbar_app import GraphModeToolBar
-from data_processing.data_processing import DataProcessing
+from data_processing.data_processing import DataProcessing, Worker
 from measurement_ctrl.measurement_ctrl import MeasurementCtrl
 from measurement_ctrl.data_storage import create_file
 import json
@@ -37,6 +37,13 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
         self.timer = None
+        self.worker = None
+        self.worker_timer = None
+        self.threadpool = qtc.QThreadPool()
+
+        self.is_live = None
+        self.s11 = None
+        self.polar = None
 
         # ------------------------- Initialize Gui Components ----------------------
         # Construct the necessary widgets for MainWindow
@@ -173,7 +180,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.show()
 
     """End __init__() of MyMainWindow"""
-
 
     # ------------------- MeasurementCtrl Transport Model Slots --------------------
     @qtc.pyqtSlot()
@@ -356,7 +362,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     # ------------------------------------------------------------------------------
 
-
     # ----------------- Positioner Connection Management Slots ---------------------
     @qtc.pyqtSlot()
     def connect_positioner(self):
@@ -420,7 +425,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     # ------------------------------------------------------------------------------
 
-
     # ----------------------------- Settings Button Slot ---------------------------
     @qtc.pyqtSlot()
     def toggle_settings(self):
@@ -434,7 +438,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.actionSettings.setChecked(True)
 
     # ------------------------------------------------------------------------------
-
 
     # ----------------------------- Help Button Toggle Slot ------------------------
     @qtc.pyqtSlot()
@@ -556,7 +559,7 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.settings.tilt_label_4.setToolTip('Current elevation angle')
             self.settings.tilt_lcdNumber_4.setToolTip('Current elevation angle')
             self.settings.aligntoCenterButton_4.setToolTip(
-                'Calculates the azimuth and elevation angle offset corrections\n' 
+                'Calculates the azimuth and elevation angle offset corrections\n'
                 + 'required to realign the angular position display for the platform\n'
                 + 'so that the current position is considered a center position\n'
                 + 'displaying an azimuth and elevation angle of 0')
@@ -576,15 +579,15 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.portCombo.setToolTip('Serial port for positioner')
             self.baudLabel.setToolTip('Serial port baud rate')
             self.baudCombo.setToolTip('Serial port baud rate')
-            self.connectQPT.setToolTip('Initialize communications link with the positioner unit\nMake sure correct Port and Baud Rate are selected')
+            self.connectQPT.setToolTip(
+                'Initialize communications link with the positioner unit\nMake sure correct Port and Baud Rate are selected')
             self.disconnectQPT.setToolTip('Terminate commincations link with the positioner unit')
             self.resetSystem.setToolTip('Reset latching faults in hardware and measurement systems')
             # data_processing popups
             self.data_processing.sc.setToolTip('Click on the check boxes in the legend\nto display/hide frequencies')
-            #Initialize positioner communications connection
+            # Initialize positioner communications connection
 
     # ------------------------------------------------------------------------------
-
 
     # ----------------------------- Show Documentation Slot --------------------------
     @qtc.pyqtSlot()
@@ -601,7 +604,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
             msg.exec_()
 
     # --------------------------------------------------------------------------------
-
 
     # ----------------------------- Calibration Prompt Slot ---------------------------
     @qtc.pyqtSlot()
@@ -631,7 +633,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     # ------------------------------------------------------------------------------
 
-
     # ------------------------------Measurement control error messages--------------
     @qtc.pyqtSlot()
     def mc_error(self):
@@ -646,7 +647,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     # ---------------------------------------------------------------------------
 
-
     # ----------------------------- Open Previous Measurement----------------------
     def open_prev_measurement(self):
         # noinspection PyCallByClass
@@ -659,52 +659,74 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     # ------------------------------------------------------------------------------
 
-
     # -------------------- Change displayed data and format of plot-----------------
     def update_plot(self):
         if self.mc_state == 'Running' or self.mc_state == 'SetupRunning':
-            is_live = True
+            self.is_live = True
         else:
-            is_live = False
+            self.is_live = False
+
         if self.data_file is not None:
             if self.graph_mode.polar_rect_comboBox.currentText() == 'Polar':
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
-                    self.data_processing_toolbar.clear()
-                    del self.data_processing
-                    self.data_processing = DataProcessing()
-                    self.data_processing.signals.s11_present.connect(self.show_impedance)
-                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
-                    self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=True, s11=False, is_live=is_live)
+                    self.polar = True
+                    self.s11 = False
+                    if self.is_live is True:
+                        self.worker_timer = qtc.QTimer()
+                        self.worker_timer.setInterval(5000)
+                        self.worker_timer.timeout.connect(self.live_plotting)
+                        self.worker_timer.start()
+                    else:
+                        self.worker_timer = None
+                        self.live_plotting()
                 else:
                     self.hide_polar()
             else:
                 if self.graph_mode.s21_imp_comboBox.currentText() == 'S21':
+                    self.polar = False
+                    self.s11 = False
                     self.show_polar()
-                    self.data_processing_toolbar.clear()
-                    del self.data_processing
-                    self.data_processing = DataProcessing()
-                    self.data_processing.signals.s11_present.connect(self.show_impedance)
-                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
-                    self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=False, is_live=is_live)
+                    if self.is_live is True:
+                        self.worker_timer = qtc.QTimer()
+                        self.worker_timer.setInterval(5000)
+                        self.worker_timer.timeout.connect(self.live_plotting)
+                        self.worker_timer.start()
+                    else:
+                        self.worker_timer = None
+                        self.live_plotting()
                 else:
-                    self.data_processing_toolbar.clear()
-                    del self.data_processing
-                    self.data_processing = DataProcessing()
-                    self.data_processing.signals.s11_present.connect(self.show_impedance)
-                    self.data_processing.signals.s11_absent.connect(self.hide_impedance)
-                    self.data_processing_toolbar.addWidget(self.data_processing)
-                    self.data_processing.begin_measurement(self.data_file, polar=False, s11=True, is_live=is_live)
-            if self.is_help_on:
-                self.data_processing.sc.setToolTip(
-                    'Click on the check boxes in the legend\nto display/hide frequencies')
-            self.data_processing.setFixedHeight(self.height() - 160)
-            self.data_processing.setFixedWidth(self.width())
-            self.data_processing_toolbar.show()
+                    self.polar = False
+                    self.s11 = True
+                    self.hide_polar()
+                    if self.is_live is True:
+                        self.worker_timer = qtc.QTimer()
+                        self.worker_timer.setInterval(5000)
+                        self.worker_timer.timeout.connect(self.live_plotting)
+                        self.worker_timer.start()
+                    else:
+                        self.worker_timer = None
+                        self.live_plotting()
 
+    def live_plotting(self):
+        if self.mc_state == 'NotRunning':
+            self.worker_timer = None
+        self.data_processing_toolbar.clear()
+        del self.data_processing
+        self.data_processing = DataProcessing()
+        self.data_processing.signals.s11_present.connect(self.show_impedance)
+        self.data_processing.signals.s11_absent.connect(self.hide_impedance)
+        self.data_processing_toolbar.addWidget(self.data_processing)
+        if self.is_help_on:
+            self.data_processing.sc.setToolTip(
+                'Click on the check boxes in the legend\nto display/hide frequencies')
+        self.data_processing.setFixedHeight(self.height() - 160)
+        self.data_processing.setFixedWidth(self.width())
+        self.data_processing_toolbar.show()
+        self.worker = Worker(self.data_processing.begin_measurement,
+                             data_file=self.data_file, polar=self.polar, s11=self.s11,
+                             is_live=self.is_live)
+        self.threadpool.start(self.worker)
     # ------------------------------------------------------------------------------
-
 
     # ----------------- Show/hide impedance option in graph options-----------------
     def show_impedance(self):
@@ -725,7 +747,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     # ------------------------------------------------------------------------------
 
-
     # -------------------------------- About window Slot ---------------------------
     @qtc.pyqtSlot()
     def show_about(self):
@@ -739,7 +760,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     # -------------------------------------------------------------------------------
 
-
     # -------------------------------- Window Resize Slot----------------------------
     def resizeEvent(self, event):
         self.timer = qtc.QTimer()
@@ -752,7 +772,7 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.background = self.background_orig.scaledToHeight(self.height())
         self.palette.setBrush(qtg.QPalette.Window, qtg.QBrush(self.background))
         self.setPalette(self.palette)
-        self.data_processing.setFixedHeight(self.height()-160)
+        self.data_processing.setFixedHeight(self.height() - 160)
         self.data_processing.setFixedWidth(self.width())
         if self.qpt_thread:
             if self.qpt_thread.isRunning() and self.qpt_thread.m_connected:
@@ -761,7 +781,6 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.statusBar().showMessage('Positioner Status: Disconnected')
 
     # -------------------------------------------------------------------------------
-
 
     # ---------------------------------- Events ------------------------------------
     # Deal with window being closed via the 'X' button
@@ -774,7 +793,7 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
         if self.mc:
             del self.mc
             self.mc = None
-            
+
     # ------------------------------------------------------------------------------
 
 
