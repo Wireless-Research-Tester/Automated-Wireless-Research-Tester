@@ -143,7 +143,7 @@ class MyMainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         try:
             rm = visa.ResourceManager()
-        except ValueError:
+        except Exception:
             msg = qtw.QMessageBox()
             msg.setWindowIcon(qtg.QIcon(':/images/gui/window_icon.png'))
             msg.setIcon(qtw.QMessageBox.Critical)

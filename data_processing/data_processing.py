@@ -668,14 +668,14 @@ class DataProcessing(QtWidgets.QMainWindow):
         self.tot_num_frequencies(df)  # Total number of frequencies
         self.max_frequency(df)  # Max frequency
         if self.num_of_frequencies:  # If measurements are in dataframe, continue
-            if self.num_of_frequencies > 10:  # If more than ten frequencies are recorded, limit to ten
-                df = self.limit_ten(df)  # Limits the data frame to ten frequencies
             if self.s11:  # True if GUI user asks for S11
                 if self.check_s11(df):  # Checks to see if S11 measurements exist in file
                     df_s11 = self.dataframe_for_s11(df)  # Create the S11 data frame
                     self.s11_rectangular_plot(df_s11)  # Graph the S11 measurements in rectangular form
                     self.sc.ax.figure.canvas.draw()
                     return
+            if self.num_of_frequencies > 10:  # If more than ten frequencies are recorded, limit to ten
+                df = self.limit_ten(df)  # Limits the data frame to ten frequencies
             if self.check_s21(df):  # Checks to see if S21 values are in dataframe
                 df_s21 = self.dataframe_for_s21(df)  # Create the S21 data frame
                 df_s21 = self.sort_file(df_s21)  # Sorts the S21 data frame

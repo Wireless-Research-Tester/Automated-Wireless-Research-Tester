@@ -1,4 +1,10 @@
 # Changelog
+### Version 0.9.4
+- Impedance plotting no longer limited to 10 frequencies
+### Version 0.9.3
+- Minor UI changes
+- User manual finalized
+- Fixed stutters that occur during live plotting
 ### Version 0.9.2
 - Updated user manual
 ### Version 0.9.1

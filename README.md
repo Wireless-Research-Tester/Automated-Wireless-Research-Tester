@@ -1,4 +1,4 @@
-# Automated Wireless Research Tester v0.9.3
+# Automated Wireless Research Tester v0.9.4
 ## About The Project
 
 * The goal of this project is to create software which will automatically <br />
